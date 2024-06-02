@@ -20,7 +20,7 @@ services:
     environment:
       - PUID=${USER_ID}
       - PGID=${GROUP_ID}
-      - TZ=Etc/UTC
+      - TZ=${TIME_ZONE}
     volumes:
       - ./configs/radarr:/config
       - ./movies:/movies
@@ -34,7 +34,7 @@ services:
     environment:
       - PUID=${USER_ID}
       - PGID=${GROUP_ID}
-      - TZ=Etc/UTC
+      - TZ=${TIME_ZONE}
     volumes:
       - ./configs/prowlarr:/config
     ports:
@@ -46,9 +46,40 @@ services:
     environment:
       - PUID=${USER_ID}
       - PGID=${GROUP_ID}
-      - TZ=Etc/UTC
+      - TZ=${TIME_ZONE}
     volumes:
       - ./configs/overseerr/:/config
     ports:
       - 5055:5055
     restart: unless-stopped
+  zurg:
+    image: ghcr.io/debridmediamanager/zurg-testing:latest
+    restart: unless-stopped
+    ports:
+      - 9999:9999
+    volumes:
+      - ./plex_update.sh:/app/plex_update.sh
+      - ./config.yml:/app/config.yml
+      - zurgdata:/app/data
+  rclone:
+    image: rclone/rclone:latest
+    restart: unless-stopped
+    environment:
+      - PUID=${USER_ID}
+      - PGID=${GROUP_ID}
+      - TZ=${TIME_ZONE}
+    volumes:
+      - /mnt/zurg:/data:rshared
+      - ./rclone.conf:/config/rclone/rclone.conf
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    devices:
+      - /dev/fuse:/dev/fuse:rwm
+    depends_on:
+      - zurg
+    command: "mount zurg: /data --allow-other --allow-non-empty --dir-cache-time 10s --vfs-cache-mode full"
+
+volumes:
+  zurgdata:
