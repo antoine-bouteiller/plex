@@ -1,0 +1,54 @@
+name: "plex"
+services:
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=${USER_ID}
+      - PGID=${GROUP_ID}
+      - TZ=Etc/UTC
+    volumes:
+      - ./configs/sonarr:/config
+      - ./tv:/tv
+      - ./downloads:/downloads
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=${USER_ID}
+      - PGID=${GROUP_ID}
+      - TZ=Etc/UTC
+    volumes:
+      - ./configs/radarr:/config
+      - ./movies:/movies
+      - ./downloads:/downloads
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=${USER_ID}
+      - PGID=${GROUP_ID}
+      - TZ=Etc/UTC
+    volumes:
+      - ./configs/prowlarr:/config
+    ports:
+      - 9696:9696
+    restart: unless-stopped
+  overseerr:
+    image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr
+    environment:
+      - PUID=${USER_ID}
+      - PGID=${GROUP_ID}
+      - TZ=Etc/UTC
+    volumes:
+      - ./configs/overseerr/:/config
+    ports:
+      - 5055:5055
+    restart: unless-stopped
