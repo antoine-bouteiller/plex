@@ -52,34 +52,18 @@ services:
     ports:
       - 5055:5055
     restart: unless-stopped
-  zurg:
-    image: ghcr.io/debridmediamanager/zurg-testing:latest
-    restart: unless-stopped
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
     ports:
-      - 9999:9999
-    volumes:
-      - ./plex_update.sh:/app/plex_update.sh
-      - ./config.yml:/app/config.yml
-      - zurgdata:/app/data
-  rclone:
-    image: rclone/rclone:latest
-    restart: unless-stopped
+      - 32400:32400
     environment:
       - PUID=${USER_ID}
       - PGID=${GROUP_ID}
       - TZ=${TIME_ZONE}
+      - ADVERTISE_IP=http://192.168.1.11
     volumes:
-      - /mnt/zurg:/data:rshared
-      - ./rclone.conf:/config/rclone/rclone.conf
-    cap_add:
-      - SYS_ADMIN
-    security_opt:
-      - apparmor:unconfined
-    devices:
-      - /dev/fuse:/dev/fuse:rwm
-    depends_on:
-      - zurg
-    command: "mount zurg: /data --allow-other --allow-non-empty --dir-cache-time 10s --vfs-cache-mode full"
-
-volumes:
-  zurgdata:
+      - ./configs/plex:/config/Library/Application Support/Plex Media Server
+      - ./tv:/tv
+      - ./movies:/movies
+    restart: unless-stopped
