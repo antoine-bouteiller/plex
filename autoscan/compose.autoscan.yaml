@@ -1,0 +1,16 @@
+services:
+  autoscan:
+    container_name: autoscan
+    image: cloudb0x/autoscan:latest
+    extends:
+      file: ../docker/compose.common.yaml
+      service: common
+    ports:
+      - 3030/tcp
+    hostname: autoscan
+    restart: unless-stopped
+    volumes:
+      - ./:/config
+      - ${APP_PATH}/autoscan:/config
+      - ./config.yml:/config/config.yml
+      - ${DATA_PATH}:/data

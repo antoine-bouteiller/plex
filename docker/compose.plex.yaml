@@ -1,0 +1,13 @@
+services:
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    ports:
+      - 32400:32400
+    extends:
+      file: compose.common.yaml
+      service: common
+    volumes:
+      - ${APP_PATH}/plex:/config/Library/Application Support/Plex Media Server
+      - ${DATA_PATH}:/data
+    restart: unless-stopped

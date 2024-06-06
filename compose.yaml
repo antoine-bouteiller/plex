@@ -1,0 +1,7 @@
+include:
+  - path: ./docker/compose.arr.yaml
+  - path: ./docker/compose.plex.yaml
+  - path: ./docker/compose.qbittorrent.yaml
+  - path: ./autoscan/compose.autoscan.yaml
+  - path: ./recyclarr/compose.recyclarr.yaml
+  # - path: ./docker/compose.watchtower.yaml

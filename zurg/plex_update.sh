@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # PLEX PARTIAL SCAN script or PLEX UPDATE script
-# When zurg detects changes, it can trigger this script IF your config.yml contains
+# When zurg detects changes, it can trigger this script IF your config.yaml contains
 # on_library_update: sh plex_update.sh "$@"
 
 # docker compose exec zurg apk add libxml2-utils

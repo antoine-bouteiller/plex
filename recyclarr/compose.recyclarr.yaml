@@ -1,0 +1,11 @@
+services:
+  recyclarr:
+    image: ghcr.io/recyclarr/recyclarr
+    container_name: recyclarr
+    user: ${USER_ID}:${GROUP_ID}
+    volumes:
+      - ${APP_PATH}/recyclarr:/config
+      - ./recyclarr.yaml:/config/recyclarr.yaml
+      - ./secrets.yaml:/config/secrets.yaml
+    environment:
+      - TZ=${TIME_ZONE}

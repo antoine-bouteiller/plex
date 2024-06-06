@@ -1,0 +1,54 @@
+services:
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    extends:
+      file: compose.common.yaml
+      service: common
+    volumes:
+      - ${APP_PATH}/sonarr:/config
+      - ${DATA_PATH}:/data
+    ports:
+      - 8989:8989
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    extends:
+      file: compose.common.yaml
+      service: common
+    volumes:
+      - ${APP_PATH}/radarr:/config
+      - ${DATA_PATH}:/data
+    ports:
+      - 7878:7878
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    extends:
+      file: compose.common.yaml
+      service: common
+    volumes:
+      - ${APP_PATH}/prowlarr:/config
+    ports:
+      - 9696:9696
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    extends:
+      file: compose.common.yaml
+      service: common
+    volumes:
+      - ${APP_PATH}/bazarr:/config
+      - ${DATA_PATH}:/data
+    ports:
+      - 6767:6767
+  overseerr:
+    image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr
+    extends:
+      file: compose.common.yaml
+      service: common
+    volumes:
+      - ${APP_PATH}/overseerr/:/config
+    ports:
+      - 5055:5055

@@ -1,6 +1,4 @@
-downloads
-tv
-movies
-Plex*Media*Server
-configs
+config
 .vscode
+config.yml
+secrets.yaml

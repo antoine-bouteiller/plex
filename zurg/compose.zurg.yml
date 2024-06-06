@@ -1,22 +1,22 @@
 services:
   zurg:
     image: ghcr.io/debridmediamanager/zurg-testing:latest
+    container_name: zurg
     restart: unless-stopped
     ports:
       - 9999:9999
     volumes:
       - ./plex_update.sh:/app/plex_update.sh
-      - ./config.yml:/app/config.yml
-      - zurgdata:/app/data
+      - ./config.yaml:/app/config.yaml
+      - ${APP_PATH}/zurg:/app/data
   rclone:
     image: rclone/rclone:latest
-    restart: unless-stopped
-    environment:
-      - PUID=${USER_ID}
-      - PGID=${GROUP_ID}
-      - TZ=${TIME_ZONE}
+    container_name: rclone
+    extends:
+      file: ../docker/compose.common.yaml
+      service: common
     volumes:
-      - /mnt/zurg:/data:rshared
+      - ${APP_PATH}/zurg:/data:rshared
       - ./rclone.conf:/config/rclone/rclone.conf
     cap_add:
       - SYS_ADMIN
@@ -27,6 +27,3 @@ services:
     depends_on:
       - zurg
     command: "mount zurg: /data --allow-other --allow-non-empty --dir-cache-time 10s --vfs-cache-mode full"
-
-volumes:
-  zurgdata:

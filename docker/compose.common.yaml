@@ -1,0 +1,7 @@
+services:
+  common:
+    restart: unless-stopped
+    environment:
+      - PUID=${USER_ID}
+      - PGID=${GROUP_ID}
+      - TZ=${TIME_ZONE}
