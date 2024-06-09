@@ -1,6 +1,6 @@
 services:
   qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:latest
+    image: lscr.io/linuxserver/qbittorrent:libtorrentv1
     container_name: qbittorrent
     extends:
       file: compose.common.yaml
@@ -10,7 +10,7 @@ services:
       - TORRENTING_PORT=6881
     volumes:
       - ${APP_PATH}/qbittorrent:/config/qBittorrent
-      - ${DATA_PATH}:/downloads
+      - ${DATA_PATH}/torrents:/downloads
     ports:
       - 8080:8080
       - 6881:6881
