@@ -42,13 +42,3 @@ services:
       - ${DATA_PATH}:/data
     ports:
       - 6767:6767
-  overseerr:
-    image: lscr.io/linuxserver/overseerr:latest
-    container_name: overseerr
-    extends:
-      file: compose.common.yaml
-      service: common
-    volumes:
-      - ${APP_PATH}/overseerr/:/config
-    ports:
-      - 5055:5055

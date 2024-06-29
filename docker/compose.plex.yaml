@@ -4,10 +4,32 @@ services:
     container_name: plex
     ports:
       - 32400:32400
+    environment:
+      - VERSION=docker
     extends:
       file: compose.common.yaml
       service: common
     volumes:
       - ${APP_PATH}/plex:/config/Library/Application Support/Plex Media Server
       - ${DATA_PATH}:/data
-    restart: unless-stopped
+      - /tmp/plex:/transcode
+  overseerr:
+    image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr
+    extends:
+      file: compose.common.yaml
+      service: common
+    volumes:
+      - ${APP_PATH}/overseerr/:/config
+    ports:
+      - 5055:5055
+  tautulli:
+    image: ghcr.io/tautulli/tautulli:latest
+    container_name: tautulli
+    extends:
+      file: compose.common.yaml
+      service: common
+    volumes:
+      - ${APP_PATH}/tautulli/:/config
+    ports:
+      - 8181:8181

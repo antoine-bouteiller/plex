@@ -1,7 +1,7 @@
 # <- processor ->
 
 # Override the minimum age before a scan request is sent to the target (Default 10m):
-minimum-age: 0m
+minimum-age: 5m
 
 # Override the delay between processed scans (Default 5s):
 scan-delay: 5s
@@ -16,7 +16,7 @@ triggers:
   sonarr:
     - name: sonarr # /triggers/sonarr
       priority: 1
-      
+
   radarr:
     - name: radarr # /triggers/radarr
       priority: 1
