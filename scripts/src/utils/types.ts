@@ -13,10 +13,22 @@ export type Media = {
 	key: string;
 	title: string;
 	ratingKey: string;
+	type: string;
 };
 
 export type PlexReponse = {
 	MediaContainer: {
 		Metadata: Media[];
+	};
+};
+
+export type Config = {
+	targets: {
+		plex: [
+			{
+				url: string;
+				token: string;
+			},
+		];
 	};
 };

@@ -1,12 +1,9 @@
 import axios from "axios";
 import { headers, plexUrl } from "./environement";
-import type { FastifyRequest } from "fastify";
 import type { Media, MediaStream } from "./types";
+import { logger } from "./logger";
 
-export async function handleUpdateLanguage(
-	media: Media,
-	request: FastifyRequest,
-) {
+export async function handleUpdateLanguage(media: Media) {
 	const partsId = media.Media[0].Part[0].id;
 	const stream = await axios
 		.get(`${plexUrl}${media.key}`, {
@@ -21,8 +18,12 @@ export async function handleUpdateLanguage(
 					!stream?.title?.toLocaleLowerCase().includes("forced"),
 			)[0];
 		});
+	if (!stream) {
+		logger.info(`No englisg stream found for ${media.title}`);
+		return;
+	}
 	if (!stream.selected) {
-		request.log.info(`Setting subtitles for ${media.title} in English`);
+		logger.info(`Setting subtitles for ${media.title} in English`);
 		await axios
 			.put(
 				`${plexUrl}/library/parts/${partsId}?subtitleStreamID=${stream.id}&allParts=1`,
@@ -30,7 +31,9 @@ export async function handleUpdateLanguage(
 				{ headers: headers },
 			)
 			.catch((err) => {
-				request.log.error(err?.reponse?.data);
+				logger.error(err?.reponse?.data);
 			});
+	} else {
+		logger.info(`Subtitles for ${media.title} already set to English`);
 	}
 }

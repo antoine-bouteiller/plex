@@ -1,4 +1,15 @@
 services:
+  autolanguageconfig:
+    container_name: autolanguageconfig
+    build:
+      context: .
+    ports:
+      - 6060:6060
+    volumes:
+      - ./config.yml:/autolanguageconfig/config.yml
+      - ./treatedmovies.json:/autolanguageconfig/treatedmovies.json
+      - ./treatedtv.json:/autolanguageconfig/treatedtv.json
+    restart: unless-stopped
   autoscan:
     container_name: autoscan
     image: cloudb0x/autoscan:latest
@@ -8,7 +19,6 @@ services:
     ports:
       - 3030:3030
     hostname: autoscan
-    restart: unless-stopped
     volumes:
       - ./:/config
       - ${APP_PATH}/autoscan:/config
