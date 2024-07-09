@@ -1,6 +1,4 @@
 .vscode
-config.yml
-secrets.yaml
 node_modules
 autolanguageconfig/.env
 dist
