@@ -21,8 +21,9 @@ services:
       service: common
     volumes:
       - ${APP_PATH}/overseerr/:/config
-    ports:
-      - 5055:5055
+    links:
+      - sonarr
+      - radarr
   tautulli:
     image: ghcr.io/tautulli/tautulli:latest
     container_name: tautulli
@@ -31,5 +32,3 @@ services:
       service: common
     volumes:
       - ${APP_PATH}/tautulli/:/config
-    ports:
-      - 8181:8181

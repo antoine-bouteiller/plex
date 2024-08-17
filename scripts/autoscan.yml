@@ -1,0 +1,27 @@
+# <- processor ->
+
+# Override the minimum age before a scan request is sent to the target (Default 10m):
+minimum-age: 2m
+
+# Override the delay between processed scans (Default 5s):
+scan-delay: 5s
+
+# override the interval scan stats are displayed (defaults to 1 hour / 0s to disable):
+scan-stats: 1h
+
+# Port for Autoscan webhooks to listen on
+port: 3030
+
+triggers:
+  sonarr:
+    - name: sonarr # /triggers/sonarr
+      priority: 1
+
+  radarr:
+    - name: radarr # /triggers/radarr
+      priority: 1
+
+targets:
+  plex:
+    - url: http://plex:32400
+      token: TzUnximVEosb2VGxTScw

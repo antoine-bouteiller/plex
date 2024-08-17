@@ -8,8 +8,10 @@ services:
     volumes:
       - ${APP_PATH}/sonarr:/config
       - ${DATA_PATH}:/data
-    ports:
-      - 8989:8989
+    links:
+      - autolanguageconfig
+      - autoscan
+      - prowlarr
   radarr:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
@@ -19,26 +21,17 @@ services:
     volumes:
       - ${APP_PATH}/radarr:/config
       - ${DATA_PATH}:/data
-    ports:
-      - 7878:7878
+    links:
+      - autolanguageconfig
+      - autoscan
+      - prowlarr
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
     extends:
       file: compose.common.yaml
       service: common
+    links:
+      - flaresolverr
     volumes:
       - ${APP_PATH}/prowlarr:/config
-    ports:
-      - 9696:9696
-  bazarr:
-    image: lscr.io/linuxserver/bazarr:latest
-    container_name: bazarr
-    extends:
-      file: compose.common.yaml
-      service: common
-    volumes:
-      - ${APP_PATH}/bazarr:/config
-      - ${DATA_PATH}:/data
-    ports:
-      - 6767:6767

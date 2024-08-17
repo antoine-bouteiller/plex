@@ -4,5 +4,5 @@ node_modules
 *.md
 dist
 biome.json
-treated*.json
-.env
+treatedMedias.json
+tvdbToken.json

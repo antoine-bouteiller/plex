@@ -2,13 +2,11 @@ services:
   autolanguageconfig:
     container_name: autolanguageconfig
     build:
-      context: .
-    ports:
-      - 6060:6060
+      context: ./autolanguageconfig/
     volumes:
-      - ./config.yml:/autolanguageconfig/config.yml
-      - ./treatedmovies.json:/autolanguageconfig/treatedmovies.json
-      - ./treatedtv.json:/autolanguageconfig/treatedtv.json
+      - ./treatedMedias.json:/autolanguageconfig/config/treatedMedias.json
+      - ./tvdbToken.json:/autolanguageconfig/config/tvdbToken.json
+      - ./.env:/autolanguageconfig/.env
     restart: unless-stopped
   autoscan:
     container_name: autoscan
@@ -16,11 +14,23 @@ services:
     extends:
       file: ../docker/compose.common.yaml
       service: common
-    ports:
-      - 3030:3030
     hostname: autoscan
     volumes:
       - ./:/config
       - ${APP_PATH}/autoscan:/config
-      - ./config.yml:/config/config.yml
+      - ./autoscan.yml:/config/config.yml
       - ${DATA_PATH}:/data
+  recyclarr:
+    image: ghcr.io/recyclarr/recyclarr
+    container_name: recyclarr
+    extends:
+      file: ../docker/compose.common.yaml
+      service: common
+    links:
+      - sonarr
+      - radarr
+    user: ${USER_ID}:${GROUP_ID}
+    volumes:
+      - ${APP_PATH}/recyclarr:/config
+      - ./recyclarr.yaml:/config/recyclarr.yaml
+      - ./secrets.yaml:/config/secrets.yaml
