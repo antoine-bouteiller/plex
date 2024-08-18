@@ -28,10 +28,20 @@ services:
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
-    extends:
-      file: compose.common.yaml
-      service: common
     links:
       - flaresolverr
     volumes:
       - ${APP_PATH}/prowlarr:/config
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    extends:
+      file: compose.common.yaml
+      service: common
+    links:
+      - sonarr
+      - radarr
+    volumes:
+      - ${APP_PATH}/config:/config
+      - ${DATA_PATH}:/data
+    restart: unless-stopped
