@@ -28,6 +28,9 @@ services:
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
+    extends:
+      file: compose.common.yaml
+      service: common
     links:
       - flaresolverr
     volumes:

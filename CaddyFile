@@ -21,3 +21,7 @@ prowlarr.{$DOMAIN} {
 bazarr.{$DOMAIN} {
 	reverse_proxy bazarr:6767
 }
+
+tdarr.{$DOMAIN} {
+	reverse_proxy tdarr:8265
+}

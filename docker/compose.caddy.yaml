@@ -22,5 +22,5 @@ services:
       - prowlarr
       - overseerr
       - tautulli
-      - plex
+      - tdarr
       # - qbittorrent
