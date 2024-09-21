@@ -1,27 +1,13 @@
-# <- processor ->
-
-# Override the minimum age before a scan request is sent to the target (Default 10m):
-minimum-age: 2m
-
-# Override the delay between processed scans (Default 5s):
-scan-delay: 5s
-
-# override the interval scan stats are displayed (defaults to 1 hour / 0s to disable):
-scan-stats: 1h
-
-# Port for Autoscan webhooks to listen on
-port: 3030
-
-triggers:
-  sonarr:
-    - name: sonarr # /triggers/sonarr
-      priority: 1
-
-  radarr:
-    - name: radarr # /triggers/radarr
-      priority: 1
-
-targets:
-  plex:
-    - url: http://plex:32400
-      token: TzUnximVEosb2VGxTScw
+U2FsdGVkX18u7gf3Gv5erJsHr/FAEdcBBSR0Ow4XZBZfJ/wPhOmUaftj0WqoYqe5
+fgxQO9Yj0hxQ+pf7m//DLNRlTWMKWsyDYTYzZVVB4UdcIs54bleKcD7mzp3LncHZ
+77h6sPR7f4h19NWVsNlSEj5iWJ0lz38KNRl9gOYgkT9b+NWT/CkFv0SD0VWMjeps
+qq7HooMxhOpicwbJt0jqsowAkV9wxDMvSSmRYsohdPJvYPhpZq9cxut3DFnBZ+/N
+iX9dKTEWjZTB/0WezNA/2/ocppdG9lPeJQ+Tv7iFdspLPZTLbLTr1yBWajmuIDjw
+S1lASZ4KLpfmQT68rzmT9583JTYjgIiwHPaqW86xswpDFrvh1+zaLNScOYOF5Vai
+HKS8dGQqMX6GPdj9pXGbof5sideAGRUgArnDM+egK0nhIlLWzHhG4UgjKcazYaLQ
+d57Evhdx+5wT8udOPBlb9BrGEiu0LnxySo8KJKI18ALBEmH4ytuDGGk1NSW+SEnS
+pAP7Golq84nFQqvaCiBOFj1FXNWYAOOxwoEp0REUNTh1Zi9KpaurSzALVVy4MI63
+T28ZmNYOWubkwUuH7GlleEDMGXqi7seEXPSKmbhxbhMa19fky1VdZ1jS5TzXkHwp
+QGJErDlrT4RmIgA6Io2qVdb/A4nOeunm90WqhDg9l7AIy2324fDcRxMfBuPLbgOp
+qoZiSxrjksIqn9RIlaZp/bf+J8Z58tsmcE5c4RlsTGbePT6vFduhsTh/PRo9uo7b
+5a6nlziHOq5D5rLOaG/iIBtkanJunCG5fbNca9LBRJ8=
