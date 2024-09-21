@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { readFileSync, writeFileSync } from "node:fs";
-import { HEADERS, PLEX_URL } from "../../config/environement";
-import { logger } from "../../config/logger";
+import { HEADERS, PLEX_URL } from "../../start/environement";
+import { logger } from "../../start/logger";
 import type { Media, MediaStream, TreatedMedias } from "../types/plex";
 import { getMediaByKey, getSectionMedia } from "../utils/plex";
 import { getTvdbMovieByYearAndName, getTvdbSerieById } from "../utils/tvdb";

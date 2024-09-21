@@ -1,5 +1,5 @@
 import axios from "axios";
-import { HEADERS, PLEX_URL } from "../../config/environement";
+import { HEADERS, PLEX_URL } from "../../start/environement";
 import type { PlexReponse } from "../types/plex";
 
 export async function getMediaByKey(key: string) {
@@ -17,4 +17,13 @@ export async function getSectionMedia(id: number) {
     }
   );
   return response.data.MediaContainer.Metadata;
+}
+export async function getSections() {
+  const response = await axios.get<PlexReponse>(
+    `${PLEX_URL}/library/sections`,
+    {
+      headers: HEADERS,
+    }
+  );
+  return response.data.MediaContainer.Directory;
 }

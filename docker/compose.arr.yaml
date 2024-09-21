@@ -9,7 +9,6 @@ services:
       - ${APP_PATH}/sonarr:/config
       - ${DATA_PATH}:/data
     links:
-      - autolanguageconfig
       - autoscan
       - prowlarr
   radarr:
@@ -22,7 +21,6 @@ services:
       - ${APP_PATH}/radarr:/config
       - ${DATA_PATH}:/data
     links:
-      - autolanguageconfig
       - autoscan
       - prowlarr
   prowlarr:

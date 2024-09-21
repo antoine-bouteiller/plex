@@ -1,7 +1,7 @@
 import axios from "axios";
 import { readFileSync, writeFileSync } from "node:fs";
-import { TVDB_URL } from "../../config/environement";
-import { logger } from "../../config/logger";
+import { TVDB_URL } from "../../start/environement";
+import { logger } from "../../start/logger";
 import type { TvdbObject, TvdbToken } from "../types/tvdb";
 
 async function login() {

@@ -2,23 +2,23 @@
   "scripts": {
     "lint": "biome check --write",
     "build": "tsc --outDir dist",
-    "start": "node dist/app/server.js",
-    "dev": "tsc-watch --onsuccess \"node dist/app/server.js\""
+    "start": "node dist/start/server.js",
+    "dev": "tsc-watch --onsuccess \"node dist/start/server.js\""
   },
   "dependencies": {
-    "axios": "^1.7.2",
+    "axios": "^1.7.7",
     "cron": "^3.1.7",
     "dotenv": "^16.4.5",
     "node-tvdb": "^4.1.0",
-    "pino": "^9.2.0",
-    "pino-pretty": "^11.2.1"
+    "pino": "^9.4.0",
+    "pino-pretty": "^11.2.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.8.3",
+    "@biomejs/biome": "^1.9.2",
     "@tsconfig/node20": "^20.1.4",
-    "@types/node": "^20.14.9",
+    "@types/node": "^22.5.5",
     "tsc-watch": "^6.2.0",
-    "typescript": "^5.5.2"
+    "typescript": "^5.6.2"
   },
   "packageManager": "pnpm@9.4.0"
 }

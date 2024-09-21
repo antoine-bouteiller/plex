@@ -3,7 +3,7 @@ include:
   - path: ./docker/compose.plex.yaml
   # - path: ./docker/compose.qbittorrent.yaml
   - path: ./docker/compose.flaresolverr.yaml
-  - path: ./scripts/compose.scripts.yaml
+  - path: ./docker/compose.scripts.yaml
   # - path: ./docker/compose.watchtower.yaml
   - path: ./docker/compose.caddy.yaml
   - path: ./docker/compose.tdarr.yaml

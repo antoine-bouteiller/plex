@@ -26,6 +26,10 @@ export type Media = {
 
 export type PlexReponse = {
   MediaContainer: {
+    Directory: {
+      key: number;
+      title: string;
+    }[];
     Metadata: Media[];
   };
 };
