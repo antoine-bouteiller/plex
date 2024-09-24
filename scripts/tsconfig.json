@@ -1,14 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@tsconfig/node20/tsconfig.json",
-  "include": [
-    "src",
-    "config",
-    "app/utils",
-    "start/server.ts",
-    "start/environement.ts",
-    "start/logger.ts"
-  ],
+  "include": ["app", "start"],
   "compilerOptions": {
     "outDir": "dist"
   }

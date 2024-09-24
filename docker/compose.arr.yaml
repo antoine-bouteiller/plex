@@ -43,6 +43,6 @@ services:
       - sonarr
       - radarr
     volumes:
-      - ${APP_PATH}/config:/config
+      - ${APP_PATH}/bazarr:/config
       - ${DATA_PATH}:/data
     restart: unless-stopped

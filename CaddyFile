@@ -2,10 +2,6 @@
 	reverse_proxy overseerr:5055
 }
 
-tautulli.{$DOMAIN} {
-	reverse_proxy tautulli:8181
-}
-
 sonarr.{$DOMAIN} {
 	reverse_proxy sonarr:8989
 }
@@ -20,8 +16,4 @@ prowlarr.{$DOMAIN} {
 
 bazarr.{$DOMAIN} {
 	reverse_proxy bazarr:6767
-}
-
-tdarr.{$DOMAIN} {
-	reverse_proxy tdarr:8265
 }

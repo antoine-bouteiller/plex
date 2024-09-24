@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "./scripts"
+		}
+	],
+	"settings": {
+		"biome.enabled": true,
+		"editor.defaultFormatter": "biomejs.biome"
+	}
+}

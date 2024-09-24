@@ -6,4 +6,3 @@ include:
   - path: ./docker/compose.scripts.yaml
   # - path: ./docker/compose.watchtower.yaml
   - path: ./docker/compose.caddy.yaml
-  - path: ./docker/compose.tdarr.yaml

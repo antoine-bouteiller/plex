@@ -21,6 +21,4 @@ services:
       - bazarr
       - prowlarr
       - overseerr
-      - tautulli
-      - tdarr
       # - qbittorrent

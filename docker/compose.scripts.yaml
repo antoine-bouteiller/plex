@@ -5,6 +5,7 @@ services:
       context: ../scripts/
     volumes:
       - ${APP_PATH}/scripts:/scripts/config
+      - ${DATA_PATH}:/data
     restart: unless-stopped
   autoscan:
     container_name: autoscan

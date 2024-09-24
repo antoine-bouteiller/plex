@@ -1,50 +1,51 @@
 export type MediaStream = {
-  title: string;
-  selected: boolean;
-  id: number;
-  streamType: number;
-  languageCode: string;
+	title: string;
+	selected: boolean;
+	id: number;
+	streamType: number;
+	languageCode: string;
 };
 
 export type Media = {
-  Media: {
-    Part: {
-      id: number;
-      file: string;
-      Stream: MediaStream[];
-    }[];
-  }[];
-  key: string;
-  title: string;
-  ratingKey: string;
-  type: string;
-  grandparentTitle?: string;
-  parentTitle?: string;
-  primaryExtraKey: string;
-  year: number;
+	librarySectionID: number;
+	Media: {
+		Part: {
+			id: number;
+			file: string;
+			Stream: MediaStream[];
+		}[];
+	}[];
+	key: string;
+	title: string;
+	ratingKey: string;
+	type: string;
+	grandparentTitle?: string;
+	parentTitle?: string;
+	primaryExtraKey: string;
+	year: number;
 };
 
 export type PlexReponse = {
-  MediaContainer: {
-    Directory: {
-      key: number;
-      title: string;
-    }[];
-    Metadata: Media[];
-  };
+	MediaContainer: {
+		Directory: {
+			key: number;
+			title: string;
+		}[];
+		Metadata: Media[];
+	};
 };
 
 export type Config = {
-  targets: {
-    plex: [
-      {
-        url: string;
-        token: string;
-      }
-    ];
-  };
+	targets: {
+		plex: [
+			{
+				url: string;
+				token: string;
+			},
+		];
+	};
 };
 
 export type TreatedMedias = {
-  [key: number]: string[];
+	[key: number]: string[];
 };

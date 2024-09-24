@@ -1,14 +1,23 @@
 import { CronJob } from "cron";
-import { updateLanguage } from "../app/services/updateLanguage";
-import { getSections } from "../app/utils/plex";
+import { existsSync, writeFileSync } from "node:fs";
+import { handleMedias } from "../app/controllers/handleMedia";
 import { logger } from "./logger";
 
-const job = new CronJob("0 */5 * * * *", async () => {
-  const sections = await getSections();
+if (!existsSync("config/treatedMedias.json")) {
+  writeFileSync("config/treatedMedias.json", "{}");
+}
 
-  for (const section of sections) {
-    logger.info(`Scanning section ${section.title}`);
-    await updateLanguage(section.key);
+if (!existsSync("config/tvdbToken.json")) {
+  writeFileSync("config/tvdbToken.json", "{}");
+}
+
+let isAlreadyRunning = false;
+
+const job = new CronJob("* */5 * * * *", async () => {
+  if (!isAlreadyRunning) {
+    isAlreadyRunning = true;
+    await handleMedias();
+    isAlreadyRunning = false;
   }
 });
 
