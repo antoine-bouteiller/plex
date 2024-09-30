@@ -1,0 +1,91 @@
+import axios from "axios";
+import { config } from "#config/environement";
+import executeWithErrorHandler from "#exceptions/handler";
+import { getLanguage } from "#services/languageService";
+import type { PlexMedia, PlexReponse } from "#types/plex";
+
+const headers = {
+  "X-Plex-Token": config.plex.token,
+};
+
+export async function getMediaDetails(plexMedia: PlexMedia) {
+  const mediaTitle = [
+    plexMedia.grandparentTitle,
+    plexMedia.parentTitle,
+    plexMedia.title,
+  ]
+    .filter(Boolean)
+    .join(" - ");
+
+  const file = plexMedia.Media[0].Part[0].file;
+
+  const tmdbId = Number(/{tmdb-(.*?)}/g.exec(file)?.[1]);
+
+  if (!tmdbId) {
+    throw new Error(`[${mediaTitle}] No tmdbId found"`);
+  }
+
+  const originalLanguage = await getLanguage(tmdbId, plexMedia.type);
+
+  return {
+    file,
+    streams: plexMedia.Media[0].Part[0].Stream,
+    originalLanguage,
+    mediaTitle,
+    tmdbId,
+    partsId: plexMedia.Media[0].Part[0].id,
+  };
+}
+
+export async function getSectionMedia(
+  id: number,
+  sectionType: "show" | "movie",
+) {
+  const type = sectionType === "show" ? 4 : 1;
+  const response = await sendPlexGetRequest(
+    `${config.plex.url}/library/sections/${id}/recentlyAdded?type=${type}`,
+  );
+  return response?.Metadata ?? [];
+}
+
+export async function getSections() {
+  const response = await sendPlexGetRequest(
+    `${config.plex.url}/library/sections`,
+  );
+  return response?.Directory ?? [];
+}
+
+async function sendPlexGetRequest(url: string) {
+  const response = await axios.get<PlexReponse>(url, {
+    headers: headers,
+  });
+  return response.data.MediaContainer;
+}
+
+export async function refreshSection(id: number, filePath: string) {
+  await executeWithErrorHandler(() =>
+    axios.get(`${config.plex.url}/library/sections/${id}/refresh`, {
+      headers: headers,
+      params: {
+        path: filePath,
+      },
+    }),
+  );
+}
+
+export async function updateStream(
+  partsId: number,
+  subtitleStreamId: number,
+  originalLanguage: string,
+  type: "audio" | "subtitle",
+) {
+  await executeWithErrorHandler(() =>
+    axios.put(
+      `${config.plex.url}/library/parts/${partsId}?${type}StreamID=${
+        originalLanguage === "fra" ? 0 : subtitleStreamId
+      }`,
+      undefined,
+      { headers: headers, params: { allParts: 1 } },
+    ),
+  );
+}

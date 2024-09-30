@@ -1,23 +1,13 @@
 services:
-  scripts:
-    container_name: scripts
-    build:
-      context: ../scripts/
-    volumes:
-      - ${APP_PATH}/scripts:/scripts/config
-      - ${DATA_PATH}:/data
-    restart: unless-stopped
   autoscan:
     container_name: autoscan
-    image: cloudb0x/autoscan:latest
-    extends:
-      file: ./compose.common.yaml
-      service: common
-    hostname: autoscan
+    build:
+      context: ../autoscan/
     volumes:
-      - ${APP_PATH}/autoscan:/config
-      - ../configs/autoscan.yml:/config/config.yml
+      - ${APP_PATH}/autoscan:/autoscan/resources
+      - ../configs/autoscan.yml:/autoscan/resources/autoscan.yml
       - ${DATA_PATH}:/data
+    restart: unless-stopped
   recyclarr:
     image: ghcr.io/recyclarr/recyclarr
     container_name: recyclarr

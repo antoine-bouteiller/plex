@@ -1,20 +1,12 @@
-import ffmpegPath from "ffmpeg-ffprobe-static";
-import ffmpeg, { type FfprobeStream } from "fluent-ffmpeg";
-import { logger } from "../../start/logger";
-import { executeFfmpeg, getFfprobeData } from "../utils/ffmpeg";
+import { renameSync, unlinkSync } from "node:fs";
+import type { FfprobeData, FfprobeStream } from "fluent-ffmpeg";
+import ffmpeg from "#config/ffmpeg";
+import { logger } from "#config/logger";
 
-if (!ffmpegPath.ffmpegPath || !ffmpegPath.ffprobePath) {
-  throw new Error("ffmpegPath not found");
-}
-
-ffmpeg.setFfprobePath(ffmpegPath.ffprobePath);
-ffmpeg.setFfmpegPath(ffmpegPath.ffmpegPath);
-
-export async function transcodeFiles(
+export async function transcodeFile(
   file: string,
   originalLanguage: string,
   mediaName: string,
-  librarySectionId: number,
 ) {
   const ffProbeData = await getFfprobeData(file);
 
@@ -33,18 +25,15 @@ export async function transcodeFiles(
       ["-map 0", ...command, "-c copy"],
       mediaName,
       fileName,
-      librarySectionId,
     );
-  } else if (extension !== "mkv") {
-    logger.info(`[${mediaName}] Transcoding to mkv`);
-    await executeFfmpeg(
-      file,
-      ["-c copy"],
-      mediaName,
-      fileName,
-      librarySectionId,
-    );
+    return true;
   }
+  if (extension !== "mkv") {
+    logger.info(`[${mediaName}] Transcoding to mkv`);
+    await executeFfmpeg(file, ["-c copy"], mediaName, fileName);
+    return true;
+  }
+  return false;
 }
 
 function cleanAudio(
@@ -127,6 +116,15 @@ function cleanSubtitles(streams: FfprobeStream[], mediaName: string) {
           `[${mediaName}] Subtitle stream 0:s:${subIdx} has unwanted language tag ${stream.tags.language.toLowerCase()}, removing.`,
         );
         command.push(`-map -0:s:${subIdx}`);
+      } else if (
+        stream.tags.title?.toLowerCase().includes("forced") ||
+        stream.tags.title?.toLowerCase().includes("sdh")
+      ) {
+        command.push(`-metadata:s:s:${subIdx} title=${stream.tags.title}`);
+        logger.info(
+          `[${mediaName}] Subtitle stream 0:s:${subIdx} has unwanted sdh or forced tag, removing.`,
+        );
+        command.push(`-map -0:s:${subIdx}`);
       }
 
       if (stream.tags.language.toLowerCase().includes("und")) {
@@ -143,4 +141,53 @@ function cleanSubtitles(streams: FfprobeStream[], mediaName: string) {
   }
 
   return command;
+}
+
+function getFfprobeData(file: string): Promise<FfprobeData> {
+  return new Promise((resolve, reject) => {
+    ffmpeg(file).ffprobe((err, data) => {
+      if (err) {
+        reject(new Error(err));
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
+
+async function executeFfmpeg(
+  file: string,
+  command: string[],
+  mediaName: string,
+  fileName: string | undefined,
+) {
+  let prevProgress = -1;
+  const path = file.split("/");
+  path.pop();
+
+  await new Promise((resolve, reject) =>
+    ffmpeg(file, { logger })
+      .outputOptions(command)
+      .on("progress", (progress) => {
+        const progressPercent = Math.round(progress.percent ?? 0);
+        if (progressPercent % 10 === 0 && progressPercent !== prevProgress) {
+          prevProgress = progressPercent;
+          logger.info(
+            `[${mediaName}] [${"=".repeat(Math.floor(progressPercent / 10))}${"-".repeat(10 - Math.floor(progressPercent / 10))}] ${Math.floor(progressPercent)}%`,
+          );
+        }
+      })
+      .on("error", (err) => {
+        reject(err);
+      })
+      .on("end", resolve)
+      .saveToFile(`/data/transcode_cache/${fileName}.mkv`),
+  );
+
+  unlinkSync(file);
+
+  renameSync(
+    `/data/transcode_cache/${fileName}.mkv`,
+    `${path.join("/")}/${fileName}.mkv`,
+  );
 }

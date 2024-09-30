@@ -1,0 +1,31 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../resources/autoscan.db"
+}
+
+model ProcessedMedia {
+  plexId String   @id @map("plex_id")
+  title  String   @map("title")
+  media  Media    @relation(fields: [tmdbId], references: [tmdbId])
+  tmdbId Int      @map("tmdb_id")
+  date   DateTime @default(now())
+
+  @@map("processed_media")
+}
+
+model Media {
+  tmdbId           Int              @id @map("tmdb_id")
+  title            String           @map("title")
+  originalLanguage String           @map("original_language")
+  date             DateTime         @default(now())
+  ProcessedMedia   ProcessedMedia[]
+
+  @@map("media")
+}
