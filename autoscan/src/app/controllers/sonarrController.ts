@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import type { DefaultResponseLocals, Request, Response } from "hyper-express";
 import { logger } from "#config/logger";
 import { getLanguage } from "#services/languageService";
@@ -11,33 +12,36 @@ export const sonarrController = async (
 ) => {
   const body: SonarrRequest = await request.json();
 
-  if (body.eventType === "Test") {
+  const eventType = body.eventType;
+
+  if (eventType === "Test") {
     response.send("ok");
     return;
   }
 
-  logger.info(JSON.stringify(body));
+  try {
+    if (eventType === "Download") {
+      const file = join(body.series.path, body.episodeFile.relativePath);
 
-  const file = body.episodeFile.path;
+      const originalLanguage = await getLanguage(body.series.tmdbId, "episode");
 
-  if (!file) {
-    logger.error(`[sonarr] No file found: ${JSON.stringify(request.json())}`);
-    response.status(400).send("No file found");
-    return;
-  }
+      await transcodeFile(
+        file,
+        originalLanguage,
+        `${body.series.title} ${body.episodes[0].title}`,
+      );
+    }
 
-  const originalLanguage = await getLanguage(body.series.tmdbId, "episode");
+    const sections = await getSections();
 
-  await transcodeFile(
-    file,
-    originalLanguage,
-    `${body.series.title} ${body.episode[0].title}`,
-  );
-
-  const sections = await getSections();
-
-  for (const section of sections.filter((section) => section.type === "show")) {
-    await refreshSection(section.key, file);
+    for (const section of sections.filter(
+      (section) => section.type === "show",
+    )) {
+      await refreshSection(section.key, body.series.path);
+    }
+  } catch (err) {
+    logger.error(err);
+    logger.error(JSON.stringify(body));
   }
 
   response.send("ok");

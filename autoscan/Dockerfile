@@ -14,9 +14,9 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
     && pnpm run build
 
 FROM base
-RUN npx prisma generate
 COPY --from=prod-deps /autoscan/node_modules /autoscan/node_modules
 COPY --from=build /autoscan/build /autoscan/build
+RUN npx prisma generate
 
 EXPOSE 6060
 CMD [ "sh", "-c", "npx prisma migrate deploy && pnpm start" ]

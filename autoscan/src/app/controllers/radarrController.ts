@@ -1,9 +1,10 @@
-import type { DefaultResponseLocals, Request, Response } from "hyper-express";
 import { logger } from "#config/logger";
 import { getLanguage } from "#services/languageService";
 import { getSections, refreshSection } from "#services/plexService";
 import { transcodeFile } from "#services/transcodeService";
 import type { RadarrRequest } from "#types/radarr";
+import type { DefaultResponseLocals, Request, Response } from "hyper-express";
+import { join } from "node:path";
 
 export const radarrController = async (
   request: Request,
@@ -11,31 +12,30 @@ export const radarrController = async (
 ) => {
   const body: RadarrRequest = await request.json();
 
-  if (body.eventType === "Test") {
+  const eventType = body.eventType;
+
+  if (eventType === "Test") {
     response.send("ok");
     return;
   }
 
-  logger.info(JSON.stringify(body));
+  try {
+    if (eventType === "Download") {
+      const file = join(body.movie.folderPath, body.movieFile.relativePath);
+      const originalLanguage = await getLanguage(body.movie.tmdbId, "episode");
 
-  const file = body.movie.path;
+      await transcodeFile(file, originalLanguage, body.movie.title);
+    }
+    const sections = await getSections();
 
-  if (!file) {
-    logger.error(`[radarr] No file found: ${JSON.stringify(request.json())}`);
-    response.status(400).send("No file found");
-    return;
-  }
-
-  const originalLanguage = await getLanguage(body.movie.tmdbId, "episode");
-
-  await transcodeFile(file, originalLanguage, body.movie.title);
-
-  const sections = await getSections();
-
-  for (const section of sections.filter(
-    (section) => section.type === "movie",
-  )) {
-    await refreshSection(section.key, file);
+    for (const section of sections.filter(
+      (section) => section.type === "movie",
+    )) {
+      await refreshSection(section.key, body.movie.folderPath);
+    }
+  } catch (err) {
+    logger.error(err);
+    logger.error(JSON.stringify(body));
   }
 
   response.send("ok");

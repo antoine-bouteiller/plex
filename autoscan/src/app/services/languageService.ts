@@ -11,8 +11,15 @@ export async function handleUpdateLanguage(
   originalLanguage: string,
   partsId: number,
 ) {
-  await handleSubtitles(streams, mediaName, partsId, originalLanguage);
-  await handleAudio(streams, mediaName, partsId, originalLanguage);
+  const audioStream = getStreams(streams, 2, originalLanguage);
+  if (!audioStream) {
+    logger.warn(`[${mediaName}] No ${originalLanguage} audio stream found`);
+    return;
+  }
+  if (!audioStream.selected) {
+    logger.info(`[${mediaName}] Setting audio in ${originalLanguage}`);
+    await updateStream(partsId, audioStream.id, originalLanguage, "audio");
+  }
 }
 
 function getStreams(
@@ -39,45 +46,6 @@ function getStreams(
     ) ||
     englishStreams[0]
   );
-}
-
-async function handleSubtitles(
-  streams: PlexMediaStream[],
-  mediaName: string,
-  partsId: number,
-  originalLanguage: string,
-) {
-  const subtitleStream = getStreams(streams, 3, "eng");
-  if (!subtitleStream) {
-    logger.warn(`[${mediaName}] No english subtitle stream found`);
-    return;
-  }
-  if (!subtitleStream.selected) {
-    logger.info(`[${mediaName}] Setting subtitles`);
-    await updateStream(
-      partsId,
-      subtitleStream.id,
-      originalLanguage,
-      "subtitle",
-    );
-  }
-}
-
-async function handleAudio(
-  streams: PlexMediaStream[],
-  mediaName: string,
-  partsId: number,
-  originalLanguage: string,
-) {
-  const audioStream = getStreams(streams, 2, originalLanguage);
-  if (!audioStream) {
-    logger.warn(`[${mediaName}] No ${originalLanguage} audio stream found`);
-    return;
-  }
-  if (!audioStream.selected) {
-    logger.info(`[${mediaName}] Setting audio in ${originalLanguage}`);
-    await updateStream(partsId, audioStream.id, originalLanguage, "audio");
-  }
 }
 
 export async function getLanguage(

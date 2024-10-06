@@ -1,21 +1,17 @@
-import { CronJob } from "cron";
 import { logger } from "#config/logger";
 import { languageController } from "#controllers/languageCrontroller";
+import { transcodeController } from "#controllers/transcodeController";
+import { CronJob } from "cron";
 
 class Cron {
-  isAlreadyRunning = false;
-
-  languageCronJob = new CronJob("* * */12 * * *", async () => {
-    if (!this.isAlreadyRunning) {
-      this.isAlreadyRunning = true;
-      await languageController();
-      this.isAlreadyRunning = false;
-    }
+  scannerCronJob = new CronJob("* * */12 * * *", async () => {
+    await transcodeController();
+    await languageController();
   });
 
   start() {
-    logger.info("Setup cron to launch every 5min");
-    this.languageCronJob.start();
+    logger.info("Setup cron to launch every 12h");
+    this.scannerCronJob.start();
   }
 }
 

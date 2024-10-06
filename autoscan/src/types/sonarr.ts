@@ -1,5 +1,5 @@
 type EpisodeFile = {
-  path: string;
+  relativePath: string;
 };
 
 type Episode = {
@@ -14,7 +14,7 @@ type Series = {
 
 export type SonarrRequest = {
   series: Series;
-  episode: Episode[];
+  episodes: Episode[];
   episodeFile: EpisodeFile;
-  eventType: "Test" | "Download" | "EpisodeFileDelete";
+  eventType: "Test" | "Download" | "EpisodeFileDelete" | "SeriesDelete";
 };

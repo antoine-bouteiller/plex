@@ -1,193 +1,192 @@
-import { renameSync, unlinkSync } from "node:fs";
-import type { FfprobeData, FfprobeStream } from "fluent-ffmpeg";
 import ffmpeg from "#config/ffmpeg";
 import { logger } from "#config/logger";
+import type { FfprobeData, FfprobeStream } from "fluent-ffmpeg";
+import { renameSync, unlinkSync } from "node:fs";
 
 export async function transcodeFile(
-  file: string,
-  originalLanguage: string,
-  mediaName: string,
+	file: string,
+	originalLanguage: string,
+	mediaName: string,
 ) {
-  const ffProbeData = await getFfprobeData(file);
+	const ffProbeData = await getFfprobeData(file);
 
-  const command = cleanAudio(ffProbeData.streams, originalLanguage, mediaName);
+	const command = cleanAudio(ffProbeData.streams, originalLanguage, mediaName);
 
-  command.push(...cleanSubtitles(ffProbeData.streams, mediaName));
+	command.push(...cleanSubtitles(ffProbeData.streams, mediaName));
 
-  const [fileName, extension] = [
-    file.slice(0, file.lastIndexOf(".")).split("/").pop(),
-    file.split(".").pop(),
-  ];
+	const [fileName, extension] = [
+		file.slice(0, file.lastIndexOf(".")).split("/").pop(),
+		file.split(".").pop(),
+	];
 
-  if (command.length > 0) {
-    await executeFfmpeg(
-      file,
-      ["-map 0", ...command, "-c copy"],
-      mediaName,
-      fileName,
-    );
-    return true;
-  }
-  if (extension !== "mkv") {
-    logger.info(`[${mediaName}] Transcoding to mkv`);
-    await executeFfmpeg(file, ["-c copy"], mediaName, fileName);
-    return true;
-  }
-  return false;
+	if (command.length > 0) {
+		await executeFfmpeg(
+			file,
+			["-map 0", ...command, "-c copy"],
+			mediaName,
+			fileName,
+		);
+		return true;
+	}
+	if (extension !== "mkv") {
+		logger.info(`[${mediaName}] Transcoding to mkv`);
+		await executeFfmpeg(file, ["-c copy"], mediaName, fileName);
+		return true;
+	}
+	return false;
 }
 
 function cleanAudio(
-  streams: FfprobeStream[],
-  originalLanguage: string,
-  mediaName: string,
+	streams: FfprobeStream[],
+	originalLanguage: string,
+	mediaName: string,
 ) {
-  const command: string[] = [];
+	const command: string[] = [];
 
-  let removedAudio = 0;
-  let audioIdx = 0;
+	let removedAudio = 0;
+	let audioIdx = 0;
 
-  for (const stream of streams) {
-    if (stream.codec_type?.toLowerCase() !== "audio") continue;
+	for (const stream of streams) {
+		if (stream.codec_type?.toLowerCase() !== "audio") continue;
 
-    let kept = true;
+		let kept = true;
 
-    if (
-      typeof stream.tags === "undefined" ||
-      typeof stream.tags.language === "undefined" ||
-      stream.tags.language.toLowerCase() === "und"
-    ) {
-      command.push(`-metadata:s:a:${audioIdx} language=${originalLanguage}`);
-      logger.info(
-        `[${mediaName}] Audio stream 0:a:${audioIdx} detected as having no language, tagging as ${originalLanguage}.`,
-      );
-    } else if (
-      ![originalLanguage, "fre", "eng"].includes(
-        stream.tags.language.toLowerCase(),
-      )
-    ) {
-      logger.info(
-        `[${mediaName}] Audio stream 0:a:${audioIdx} has unwanted language tag ${stream.tags.language.toLowerCase()}, removing.`,
-      );
-      command.push(`-map -0:a:${audioIdx}`);
-      removedAudio += 1;
-      kept = false;
-    }
+		if (
+			typeof stream.tags === "undefined" ||
+			typeof stream.tags.language === "undefined" ||
+			stream.tags.language.toLowerCase() === "und"
+		) {
+			command.push(`-metadata:s:a:${audioIdx} language=${originalLanguage}`);
+			logger.info(
+				`[${mediaName}] Audio stream 0:a:${audioIdx} detected as having no language, tagging as ${originalLanguage}.`,
+			);
+		} else if (
+			![originalLanguage, "fre", "eng"].includes(
+				stream.tags.language.toLowerCase(),
+			)
+		) {
+			logger.info(
+				`[${mediaName}] Audio stream 0:a:${audioIdx} has unwanted language tag ${stream.tags.language.toLowerCase()}, removing.`,
+			);
+			command.push(`-map -0:a:${audioIdx}`);
+			removedAudio += 1;
+			kept = false;
+		}
 
-    if (kept && stream.codec_name?.toLowerCase() === "dts") {
-      command.push(`-map 0:a:${audioIdx} -c:a:${audioIdx} aac`);
-      logger.info(
-        `[${mediaName}] Audio stream 0:a:${audioIdx} is dts, converting to aac.`,
-      );
-    }
-  }
+		if (kept && stream.codec_name?.toLowerCase() === "dts") {
+			command.push(`-map 0:a:${audioIdx} -c:a:${audioIdx} aac`);
+			logger.info(
+				`[${mediaName}] Audio stream 0:a:${audioIdx} is dts, converting to aac.`,
+			);
+		}
 
-  audioIdx += 1;
+		audioIdx += 1;
+	}
 
-  if (removedAudio === audioIdx) {
-    logger.warn(
-      `[${mediaName}] Not removing any audio streams because all streams would be removed.`,
-    );
-    return [];
-  }
+	if (removedAudio === audioIdx) {
+		logger.warn(
+			`[${mediaName}] Not removing any audio streams because all streams would be removed.`,
+		);
+		return [];
+	}
 
-  return command;
+	return command;
 }
 
 function cleanSubtitles(streams: FfprobeStream[], mediaName: string) {
-  const command: string[] = [];
+	const command: string[] = [];
 
-  let subIdx = 0;
+	let subIdx = 0;
 
-  for (const stream of streams) {
-    if (stream.codec_type?.toLowerCase() !== "subtitle") continue;
+	for (const stream of streams) {
+		if (stream.codec_type?.toLowerCase() !== "subtitle") continue;
 
-    try {
-      if (
-        typeof stream.tags === "undefined" ||
-        typeof stream.tags.language === "undefined" ||
-        stream.tags.language.toLowerCase() === "und"
-      ) {
-        command.push(`-metadata:s:s:${subIdx} language=eng`);
-        logger.info(
-          `[${mediaName}] Subtitle stream 0:s:${subIdx} detected as having no language, tagging as eng.`,
-        );
-      } else if (stream.tags.language.toLowerCase() !== "eng") {
-        logger.info(
-          `[${mediaName}] Subtitle stream 0:s:${subIdx} has unwanted language tag ${stream.tags.language.toLowerCase()}, removing.`,
-        );
-        command.push(`-map -0:s:${subIdx}`);
-      } else if (
-        stream.tags.title?.toLowerCase().includes("forced") ||
-        stream.tags.title?.toLowerCase().includes("sdh")
-      ) {
-        command.push(`-metadata:s:s:${subIdx} title=${stream.tags.title}`);
-        logger.info(
-          `[${mediaName}] Subtitle stream 0:s:${subIdx} has unwanted sdh or forced tag, removing.`,
-        );
-        command.push(`-map -0:s:${subIdx}`);
-      }
+		try {
+			if (
+				!stream.tags ||
+				!stream.tags.language ||
+				stream.tags.language.toLowerCase() === "und"
+			) {
+				command.push(`-metadata:s:s:${subIdx} language=eng`);
+				logger.info(
+					`[${mediaName}] Subtitle stream 0:s:${subIdx} detected as having no language, tagging as eng.`,
+				);
+			} else if (stream.tags.language.toLowerCase() !== "eng") {
+				logger.info(
+					`[${mediaName}] Subtitle stream 0:s:${subIdx} has unwanted language tag ${stream.tags.language.toLowerCase()}, removing.`,
+				);
+				command.push(`-map -0:s:${subIdx}`);
+			} else if (
+				stream.tags.title?.toLowerCase().includes("forced") ||
+				stream.tags.title?.toLowerCase().includes("sdh")
+			) {
+				logger.info(
+					`[${mediaName}] Subtitle stream 0:s:${subIdx} has unwanted title ${stream.tags.title}, removing.`,
+				);
+				command.push(`-map -0:s:${subIdx}`);
+			}
 
-      if (stream.tags.language.toLowerCase().includes("und")) {
-        command.push(`-metadata:s:a:${subIdx} language=eng`);
-        logger.info(
-          `[${mediaName}] Subtitle stream 0:s:${subIdx} detected as having no language, tagging as eng.`,
-        );
-      }
+			if (stream.tags.language.toLowerCase().includes("und")) {
+				command.push(`-metadata:s:a:${subIdx} language=eng`);
+				logger.info(
+					`[${mediaName}] Subtitle stream 0:s:${subIdx} detected as having no language, tagging as eng.`,
+				);
+			}
 
-      subIdx += 1;
-    } catch (err) {
-      logger.error(err);
-    }
-  }
+			subIdx += 1;
+		} catch (err) {
+			logger.error(err);
+		}
+	}
 
-  return command;
+	return command;
 }
 
 function getFfprobeData(file: string): Promise<FfprobeData> {
-  return new Promise((resolve, reject) => {
-    ffmpeg(file).ffprobe((err, data) => {
-      if (err) {
-        reject(new Error(err));
-      } else {
-        resolve(data);
-      }
-    });
-  });
+	return new Promise((resolve, reject) => {
+		ffmpeg(file).ffprobe((err, data) => {
+			if (err) {
+				reject(new Error(err));
+			} else {
+				resolve(data);
+			}
+		});
+	});
 }
 
 async function executeFfmpeg(
-  file: string,
-  command: string[],
-  mediaName: string,
-  fileName: string | undefined,
+	file: string,
+	command: string[],
+	mediaName: string,
+	fileName: string | undefined,
 ) {
-  let prevProgress = -1;
-  const path = file.split("/");
-  path.pop();
+	let prevProgress = -1;
+	const path = file.split("/");
+	path.pop();
 
-  await new Promise((resolve, reject) =>
-    ffmpeg(file, { logger })
-      .outputOptions(command)
-      .on("progress", (progress) => {
-        const progressPercent = Math.round(progress.percent ?? 0);
-        if (progressPercent % 10 === 0 && progressPercent !== prevProgress) {
-          prevProgress = progressPercent;
-          logger.info(
-            `[${mediaName}] [${"=".repeat(Math.floor(progressPercent / 10))}${"-".repeat(10 - Math.floor(progressPercent / 10))}] ${Math.floor(progressPercent)}%`,
-          );
-        }
-      })
-      .on("error", (err) => {
-        reject(err);
-      })
-      .on("end", resolve)
-      .saveToFile(`/data/transcode_cache/${fileName}.mkv`),
-  );
+	await new Promise((resolve, reject) =>
+		ffmpeg(file, { logger })
+			.outputOptions(command)
+			.on("progress", (progress) => {
+				const progressPercent = Math.round(progress.percent ?? 0);
+				if (progressPercent % 10 === 0 && progressPercent !== prevProgress) {
+					prevProgress = progressPercent;
+					logger.info(
+						`[${mediaName}] [${"=".repeat(Math.floor(progressPercent / 10))}${"-".repeat(10 - Math.floor(progressPercent / 10))}] ${Math.floor(progressPercent)}%`,
+					);
+				}
+			})
+			.on("error", (err) => {
+				reject(err);
+			})
+			.on("end", resolve)
+			.saveToFile(`/data/transcode_cache/${fileName}.mkv`),
+	);
 
-  unlinkSync(file);
+	unlinkSync(file);
 
-  renameSync(
-    `/data/transcode_cache/${fileName}.mkv`,
-    `${path.join("/")}/${fileName}.mkv`,
-  );
+	renameSync(
+		`/data/transcode_cache/${fileName}.mkv`,
+		`${path.join("/")}/${fileName}.mkv`,
+	);
 }
