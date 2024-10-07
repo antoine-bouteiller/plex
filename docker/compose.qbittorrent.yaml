@@ -11,7 +11,3 @@ services:
     volumes:
       - ${APP_PATH}/qbittorrent:/config/qBittorrent
       - ${DATA_PATH}/torrents:/downloads
-    ports:
-      - 8080:8080
-      - 6881:6881
-      - 6881:6881/udp

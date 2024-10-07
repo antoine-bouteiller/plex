@@ -11,6 +11,7 @@ services:
     links:
       - autoscan
       - prowlarr
+      - qbittorrent
   radarr:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
@@ -23,6 +24,7 @@ services:
     links:
       - autoscan
       - prowlarr
+      - qbittorrent
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr

@@ -21,4 +21,4 @@ services:
       - bazarr
       - prowlarr
       - overseerr
-      # - qbittorrent
+      - qbittorrent

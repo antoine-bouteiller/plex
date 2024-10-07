@@ -17,3 +17,7 @@ prowlarr.{$DOMAIN} {
 bazarr.{$DOMAIN} {
 	reverse_proxy bazarr:6767
 }
+
+qbittorrent.{$DOMAIN} {
+	reverse_proxy qbittorrent:8080
+}
