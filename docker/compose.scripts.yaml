@@ -8,6 +8,8 @@ services:
       - ../configs/autoscan.yml:/autoscan/resources/autoscan.yml
       - ${DATA_PATH}:/data
     restart: unless-stopped
+    ports:
+      - 3030:3030
   recyclarr:
     image: ghcr.io/recyclarr/recyclarr
     container_name: recyclarr

@@ -22,3 +22,4 @@ services:
       - prowlarr
       - overseerr
       - qbittorrent
+      - plex
