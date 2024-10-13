@@ -9,8 +9,13 @@ export async function handleUpdateLanguage(
   mediaName: string,
   streams: PlexMediaStream[],
   originalLanguage: string,
-  partsId: number,
+  partsId: number
 ) {
+  if (!streams.length) {
+    logger.warn(`[${mediaName}] No streams found`);
+    return;
+  }
+
   const audioStream = getStreams(streams, 2, originalLanguage);
   if (!audioStream) {
     logger.warn(`[${mediaName}] No ${originalLanguage} audio stream found`);
@@ -23,13 +28,13 @@ export async function handleUpdateLanguage(
 }
 
 function getStreams(
-  stream: PlexMediaStream[],
+  streams: PlexMediaStream[],
   streamType: number,
-  languageTag: string,
+  languageTag: string
 ) {
-  const englishStreams = stream.filter(
+  const englishStreams = streams.filter(
     (stream: PlexMediaStream) =>
-      stream.streamType === streamType && stream.languageCode === languageTag,
+      stream.streamType === streamType && stream.languageCode === languageTag
   );
   if (englishStreams.length === 0) {
     return null;
@@ -39,10 +44,10 @@ function getStreams(
     englishStreams.find(
       (stream) =>
         !stream.title?.toLocaleLowerCase().includes("sdh") &&
-        !stream.title?.toLocaleLowerCase().includes("forced"),
+        !stream.title?.toLocaleLowerCase().includes("forced")
     ) ||
     englishStreams.find(
-      (stream) => !stream.title?.toLocaleLowerCase().includes("forced"),
+      (stream) => !stream.title?.toLocaleLowerCase().includes("forced")
     ) ||
     englishStreams[0]
   );
@@ -50,7 +55,7 @@ function getStreams(
 
 export async function getLanguage(
   tmdbId: number,
-  mediaType: "movie" | "episode",
+  mediaType: "movie" | "episode"
 ) {
   const mediaDetails = await prisma.media.findUnique({
     where: {

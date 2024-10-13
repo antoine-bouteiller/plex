@@ -1,13 +1,13 @@
-import axios from "axios";
 import { config } from "#config/environement";
 import prisma from "#config/prisma";
 import executeWithErrorHandler from "#exceptions/handler";
 import { countryISOMapping, type iso2 } from "#types/isoCodes";
 import type { TmdbResponse } from "#types/tmdb";
+import axios from "axios";
 
 export async function getLanguageByIdAndType(
   tmdbId: number,
-  type: "movie" | "episode",
+  type: "movie" | "episode"
 ): Promise<iso2> {
   switch (type) {
     case "movie":
@@ -25,7 +25,7 @@ async function getSeriesLanguageById(tmdbId: number): Promise<iso2> {
       headers: {
         Authorization: `Bearer ${config.tmdb.token}`,
       },
-    }),
+    })
   );
 
   if (!response?.data) return "eng";
@@ -47,7 +47,7 @@ async function getMovieLanguageById(tmdbId: number): Promise<iso2> {
       headers: {
         Authorization: `Bearer ${config.tmdb.token}`,
       },
-    }),
+    })
   );
 
   if (!response?.data) return "eng";
