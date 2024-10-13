@@ -6,23 +6,18 @@ import type { iso2 } from "#types/isoCodes";
 import type { PlexMediaStream } from "#types/plex";
 
 export async function handleUpdateLanguage(
-  mediaName: string,
+  mediaTitle: string,
   streams: PlexMediaStream[],
   originalLanguage: string,
   partsId: number
 ) {
-  if (!streams.length) {
-    logger.warn(`[${mediaName}] No streams found`);
-    return;
-  }
-
   const audioStream = getStreams(streams, 2, originalLanguage);
   if (!audioStream) {
-    logger.warn(`[${mediaName}] No ${originalLanguage} audio stream found`);
+    logger.warn(`[${mediaTitle}] No ${originalLanguage} audio stream found`);
     return;
   }
   if (!audioStream.selected) {
-    logger.info(`[${mediaName}] Setting audio in ${originalLanguage}`);
+    logger.info(`[${mediaTitle}] Setting audio in ${originalLanguage}`);
     await updateStream(partsId, audioStream.id, originalLanguage, "audio");
   }
 }

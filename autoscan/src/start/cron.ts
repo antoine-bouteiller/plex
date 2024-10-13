@@ -4,7 +4,7 @@ import { transcodeController } from "#controllers/transcodeController";
 import { CronJob } from "cron";
 
 class Cron {
-  scannerCronJob = new CronJob("* * */12 * * *", async () => {
+  scannerCronJob = new CronJob("0 0 */12 * * *", async () => {
     await transcodeController();
     await languageController();
   });

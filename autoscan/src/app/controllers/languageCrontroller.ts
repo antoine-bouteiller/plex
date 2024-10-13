@@ -1,3 +1,4 @@
+import { logger } from "#config/logger";
 import executeWithErrorHandler from "#exceptions/handler";
 import { handleUpdateLanguage } from "#services/languageService";
 import {
@@ -16,8 +17,15 @@ export async function languageController() {
       const { streams, originalLanguage, mediaTitle, partsId } =
         await getMediaDetails(media);
 
+      if (!streams?.length) {
+        logger.warn(
+          `[${mediaTitle}] No streams found: ${JSON.stringify(media)}`
+        );
+        return;
+      }
+
       await executeWithErrorHandler(async () =>
-        handleUpdateLanguage(mediaTitle, streams, originalLanguage, partsId),
+        handleUpdateLanguage(mediaTitle, streams, originalLanguage, partsId)
       );
     }
   }
