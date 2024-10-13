@@ -73,16 +73,7 @@ function cleanAudio(
       kept = false;
     }
 
-    if (
-      kept &&
-      stream.codec_name?.toLowerCase() === "dts" &&
-      !streams.some(
-        (it) =>
-          it.codec_name?.toLowerCase() !== "dts" &&
-          it.tags?.language?.toLowerCase() ===
-            stream.tags?.language?.toLowerCase()
-      )
-    ) {
+    if (kept && stream.codec_name?.toLowerCase() === "dts") {
       if (
         !streams.some(
           (it) =>
