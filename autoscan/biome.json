@@ -1,27 +1,45 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.8.2/schema.json",
-  "organizeImports": {
-    "enabled": true
-  },
-  "linter": {
+  "$schema": "https://biomejs.dev/schemas/1.9.2/schema.json",
+  "vcs": {
     "enabled": true,
-    "rules": {
-      "recommended": true,
-      "correctness": {
-        "noUnusedImports": "error"
-      },
-      "suspicious": {
-        "noConsoleLog": "error"
-      }
-    }
+    "clientKind": "git"
+  },
+  "files": {
+    "ignoreUnknown": false,
+    "ignore": ["**/routeTree.gen.ts", "*.js"]
   },
   "formatter": {
     "indentWidth": 2,
     "indentStyle": "space",
     "lineEnding": "lf"
   },
-  "vcs": {
+  "linter": {
     "enabled": true,
-    "clientKind": "git"
+    "rules": {
+      "recommended": true,
+      "correctness": {
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error"
+      },
+      "style": {
+        "useFilenamingConvention": {
+          "level": "error",
+          "options": {
+            "filenameCases": ["snake_case"]
+          }
+        }
+      },
+      "a11y": {
+        "useMediaCaption": "off"
+      },
+      "suspicious": {
+        "noConsoleLog": "error"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single"
+    }
   }
 }

@@ -2,8 +2,7 @@ services:
   plex:
     image: lscr.io/linuxserver/plex:latest
     container_name: plex
-    ports:
-      - 32400:32400
+    network_mode: host
     environment:
       - VERSION=docker
     extends:
@@ -24,3 +23,13 @@ services:
     links:
       - sonarr
       - radarr
+  plextraktsync:
+    image: ghcr.io/taxel/plextraktsync
+    container_name: plextraktsync
+    command: sync
+    extends:
+      file: compose.common.yaml
+      service: common
+    restart: on-failure:2
+    volumes:
+      - ${APP_PATH}/plextraktsync:/app/config

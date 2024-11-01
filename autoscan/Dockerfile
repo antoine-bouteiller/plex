@@ -10,13 +10,11 @@ FROM base AS prod-deps
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 FROM base AS build
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile \
-    && npx prisma generate \
     && pnpm run build
 
 FROM base
 COPY --from=prod-deps /autoscan/node_modules /autoscan/node_modules
-COPY --from=build /autoscan/build /autoscan/build
-RUN npx prisma generate
+COPY --from=build /autoscan/build /autoscan
 
 EXPOSE 6060
-CMD [ "sh", "-c", "npx prisma migrate deploy && pnpm start" ]
+CMD [ "sh", "-c", "pnpm dlx prisma migrate deploy && pnpm start" ]

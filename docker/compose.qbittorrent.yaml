@@ -8,6 +8,8 @@ services:
     environment:
       - WEBUI_PORT=8080
       - TORRENTING_PORT=6881
+    ports:
+      - 6881:6881
     volumes:
       - ${APP_PATH}/qbittorrent:/config/qBittorrent
       - ${DATA_PATH}/torrents:/downloads

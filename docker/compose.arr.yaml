@@ -48,3 +48,9 @@ services:
       - ${APP_PATH}/bazarr:/config
       - ${DATA_PATH}:/data
     restart: unless-stopped
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    extends:
+      file: compose.common.yaml
+      service: common
