@@ -21,11 +21,3 @@ bazarr.{$DOMAIN} {
 qbittorrent.{$DOMAIN} {
 	reverse_proxy qbittorrent:8080
 }
-
-plex.{$DOMAIN} {
-	reverse_proxy plex:32400
-}
-
-http://plex.${DOMAIN} {
-	reverse_proxy localhost:32400
-}

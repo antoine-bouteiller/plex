@@ -1,50 +1,62 @@
-import { getFfprobeData, transcodeFile } from '#services/transcode_service';
-import { test } from '@japa/runner';
 import { copyFileSync, mkdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
+import { test } from '@japa/runner';
 import { testTempDir, videosPath } from 'tests/config.js';
+import { getFileStreams, transcodeFile } from '#services/transcode_service';
 
-export const testFile = 'test_aac_dts.mkv';
-export const testDtsFile = 'test_dts.mkv';
-export const tempTestFilePath = join(testTempDir, testFile);
-export const tempTestFileDtsPath = join(testTempDir, testDtsFile);
+const testFiles: Record<string, string> = {
+  'should keep only wanted tracks': 'test_aac_dts.mkv',
+  'should convert dts to aac': 'test_dts.mkv',
+  'should not transcode already correct file': 'test_correct_file.mkv',
+};
 
 test.group('Transcode functionnnal tests', (group) => {
+  let tempTestFilePath: string;
+  let file: string;
+
   group.setup(async () => {
     mkdirSync(join(testTempDir, './transcode_cache'), { recursive: true });
-    copyFileSync(join(videosPath, testFile), tempTestFilePath);
-    copyFileSync(join(videosPath, testDtsFile), tempTestFileDtsPath);
+
+    return () => rmSync(testTempDir, { recursive: true, force: true });
   });
 
-  group.teardown(() => {
-    rmSync(testTempDir, { recursive: true, force: true });
+  group.each.setup(async ({ context }) => {
+    file = testFiles[context.test.title];
+    tempTestFilePath = join(testTempDir, file);
+    copyFileSync(join(videosPath, file), tempTestFilePath);
   });
 
-  test('Assert file is cleaned', async ({ assert }) => {
+  test('should keep only wanted tracks', async ({ assert }) => {
     const executed = await transcodeFile(tempTestFilePath, 'eng', 'test');
 
     assert.isTrue(executed);
 
-    const ffprobeData = await getFfprobeData(tempTestFilePath);
+    const streams = await getFileStreams(tempTestFilePath);
 
-    await assert.fileExists(testFile);
-    assert.equal(ffprobeData.streams.length, 3);
-    assert.equal(ffprobeData.streams[0].codec_type, 'video');
-    assert.equal(ffprobeData.streams[1].codec_type, 'audio');
-    assert.equal(ffprobeData.streams[1].tags?.language, 'eng');
-    assert.equal(ffprobeData.streams[2].codec_type, 'subtitle');
-    assert.equal(ffprobeData.streams[1].tags?.language, 'eng');
+    await assert.fileExists(file);
+    assert.equal(streams.length, 3);
+    assert.equal(streams[0].codec_type, 'video');
+    assert.equal(streams[1].codec_type, 'audio');
+    assert.equal(streams[1].tags?.language, 'eng');
+    assert.equal(streams[2].codec_type, 'subtitle');
+    assert.equal(streams[1].tags?.language, 'eng');
   });
 
-  test('Assert audio is converted to aac', async ({ assert }) => {
-    const executed = await transcodeFile(tempTestFileDtsPath, 'eng', 'test');
+  test('should convert dts to aac', async ({ assert }) => {
+    const executed = await transcodeFile(tempTestFilePath, 'eng', 'test');
 
     assert.isTrue(executed);
 
-    const ffprobeData = await getFfprobeData(tempTestFileDtsPath);
+    const streams = await getFileStreams(tempTestFilePath);
 
-    assert.equal(ffprobeData.streams.length, 3);
-    assert.equal(ffprobeData.streams[1].codec_name, 'aac');
-    await assert.fileExists(testDtsFile);
+    assert.equal(streams.length, 3);
+    assert.equal(streams[1].codec_name, 'aac');
+    await assert.fileExists(file);
+  });
+
+  test('should not transcode already correct file', async ({ assert }) => {
+    const executed = await transcodeFile(tempTestFilePath, 'eng', 'test');
+
+    assert.isFalse(executed);
   });
 });

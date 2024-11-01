@@ -1,7 +1,7 @@
+import { join } from 'node:path';
 import { assert } from '@japa/assert';
 import { fileSystem } from '@japa/file-system';
 import { configure, processCLIArgs, run } from '@japa/runner';
-import { join } from 'node:path';
 
 process.env.NODE_ENV = 'test';
 

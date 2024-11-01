@@ -27,7 +27,7 @@ sonarr:
         upgrade:
           allowed: true
           until_quality: WEB 1080p
-          until_score: 10000
+          until_score: 100
         min_format_score: 0
         quality_sort: top
         qualities:
@@ -56,19 +56,6 @@ sonarr:
               - WEBDL-1080p
               - WEBRip-1080p
               - HDTV-1080p
-          - name: Bluray-720p
-          - name: WEB 720p
-            qualities:
-              - WEBDL-720p
-              - WEBRip-720p
-              - HDTV-720p
-          - name: Bluray-480p
-          - name: WEB 480p
-            qualities:
-              - WEBDL-480p
-              - WEBRip-480p
-          - name: DVD
-          - name: SDTV
     custom_formats:
       - trash_ids:
           # Unwanted
@@ -188,7 +175,7 @@ radarr:
         upgrade:
           allowed: true
           until_quality: Bluray|WEB-1080p
-          until_score: 10000
+          until_score: 100
         min_format_score: 10
         score_set: sqp-1-1080p
         quality_sort: top
@@ -198,9 +185,6 @@ radarr:
               - Bluray-1080p
               - WEBDL-1080p
               - WEBRip-1080p
-              - WEBDL-720p
-              - WEBRip-720p
-          - name: Bluray-720p
 
     custom_formats:
       - trash_ids:

@@ -1,5 +1,5 @@
 import { renameSync, unlinkSync } from 'node:fs';
-import type { FfprobeData, FfprobeStream } from 'fluent-ffmpeg';
+import type { FfprobeStream } from 'fluent-ffmpeg';
 import ffmpeg from '#config/ffmpeg';
 import { logger } from '#config/logger';
 import type { iso2 } from '#types/iso_codes';
@@ -9,19 +9,24 @@ export async function transcodeFile(
   originalLanguage: iso2,
   mediaName: string,
 ) {
-  const ffProbeData = await getFfprobeData(file);
+  const streams = await getFileStreams(file);
 
-  const command = cleanAudio(ffProbeData.streams, originalLanguage, mediaName);
+  const command = cleanAudio(streams, originalLanguage, mediaName);
 
-  command.push(...cleanSubtitles(ffProbeData.streams, mediaName));
+  command.push(...cleanSubtitles(streams, mediaName));
 
   const [fileName, extension] = [
     file.slice(0, file.lastIndexOf('.')).split('/').pop(),
     file.split('.').pop(),
   ];
 
-  if (command.length > 0) {
-    await executeFfmpeg(file, ['-map 0:v', ...command], mediaName, fileName);
+  if (command.length !== streams.length - 1) {
+    await executeFfmpeg(
+      file,
+      ['-map 0:v', '-c copy', ...command],
+      mediaName,
+      fileName,
+    );
     return true;
   }
   if (extension !== 'mkv') {
@@ -115,6 +120,10 @@ export function cleanSubtitles(streams: FfprobeStream[], mediaName: string) {
     (stream) => stream.codec_type?.toLowerCase() === 'subtitle',
   );
 
+  if (subtitleStreams.length === 0) {
+    return [];
+  }
+
   let subtitleStreamToKeep = -1;
   for (const condition of criterias) {
     subtitleStreamToKeep = subtitleStreams.findIndex(
@@ -143,13 +152,13 @@ export function cleanSubtitles(streams: FfprobeStream[], mediaName: string) {
   return command;
 }
 
-export function getFfprobeData(file: string): Promise<FfprobeData> {
+export function getFileStreams(file: string): Promise<FfprobeStream[]> {
   return new Promise((resolve, reject) => {
     ffmpeg(file).ffprobe((err, data) => {
       if (err) {
         reject(new Error(err));
       } else {
-        resolve(data);
+        resolve(data.streams);
       }
     });
   });
@@ -164,6 +173,8 @@ async function executeFfmpeg(
   let prevProgress = -1;
   const path = file.split('/');
   path.pop();
+
+  const newFileName = `${fileName?.replace('[DTS 5.1]', '[AC3 5.1]').replace('[DTS 2.0]', '[AAC 2.0]')}.mkv`;
 
   await new Promise((resolve, reject) =>
     ffmpeg(file, { logger })
@@ -182,17 +193,18 @@ async function executeFfmpeg(
         }
       })
       .on('error', (err) => {
+        logger.error(JSON.stringify(command));
         reject(err);
       })
       .on('end', resolve)
-      .saveToFile(`${config.transcodeCachePath}/${fileName}.mkv`),
+      .saveToFile(`${config.transcodeCachePath}/${newFileName}`),
   );
 
   unlinkSync(file);
 
   renameSync(
-    `${config.transcodeCachePath}/${fileName}.mkv`,
-    `${path.join('/')}/${fileName}.mkv`,
+    `${config.transcodeCachePath}/${newFileName}`,
+    `${path.join('/')}/${newFileName}`,
   );
 }
 

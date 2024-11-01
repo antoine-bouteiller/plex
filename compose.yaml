@@ -2,7 +2,6 @@ include:
   - path: ./docker/compose.arr.yaml
   - path: ./docker/compose.plex.yaml
   - path: ./docker/compose.qbittorrent.yaml
-  - path: ./docker/compose.flaresolverr.yaml
   - path: ./docker/compose.scripts.yaml
   - path: ./docker/compose.caddy.yaml
 services:

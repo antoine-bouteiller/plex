@@ -1,6 +1,6 @@
-import { AxiosError } from "axios";
-import { z } from "zod";
-import { logger } from "#config/logger";
+import { AxiosError } from 'axios';
+import { z } from 'zod';
+import { logger } from '#config/logger';
 
 export async function handleError(error: unknown) {
   if (error instanceof AxiosError) {
@@ -8,8 +8,8 @@ export async function handleError(error: unknown) {
   } else if (error instanceof z.ZodError) {
     logger.error(
       `Validation error : ${JSON.stringify(
-        error.errors.map((e) => `${e.path}: ${e.message}`)
-      )}`
+        error.errors.map((e) => `${e.path}: ${e.message}`),
+      )}`,
     );
   } else if (error instanceof Error) {
     logger.error(`Unknown error: ${error.message}`);
@@ -19,7 +19,7 @@ export async function handleError(error: unknown) {
 }
 
 export default async function executeWithErrorHandler<T>(
-  fn: (...args: unknown[]) => Promise<T>
+  fn: (...args: unknown[]) => Promise<T>,
 ) {
   try {
     return await fn();

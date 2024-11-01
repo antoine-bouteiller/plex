@@ -1,11 +1,11 @@
-import { logger } from "#config/logger";
-import executeWithErrorHandler from "#exceptions/handler";
-import { handleUpdateLanguage } from "#services/language_service";
+import { logger } from '#config/logger';
+import executeWithErrorHandler from '#exceptions/handler';
+import { handleUpdateLanguage } from '#services/language_service';
 import {
   getMediaDetails,
   getSectionMedia,
   getSections,
-} from "#services/plex_service";
+} from '#services/plex_service';
 
 export async function languageController() {
   const sections = await getSections();
@@ -18,13 +18,13 @@ export async function languageController() {
 
       if (!streams?.length) {
         logger.warn(
-          `[${mediaTitle}] No streams found: ${JSON.stringify(media)}`
+          `[${mediaTitle}] No streams found: ${JSON.stringify(media)}`,
         );
         return;
       }
 
       await executeWithErrorHandler(async () =>
-        handleUpdateLanguage(mediaTitle, streams, originalLanguage, partsId)
+        handleUpdateLanguage(mediaTitle, streams, originalLanguage, partsId),
       );
     }
   }

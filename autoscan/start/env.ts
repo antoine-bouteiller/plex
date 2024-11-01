@@ -1,8 +1,8 @@
-import { handleError } from "#exceptions/handler";
-import "dotenv/config";
-import { existsSync, mkdirSync, readFileSync } from "node:fs";
-import { parse } from "yaml";
-import { z } from "zod";
+import { handleError } from '#exceptions/handler';
+import 'dotenv/config';
+import { mkdirSync, readFileSync } from 'node:fs';
+import { parse } from 'yaml';
+import { z } from 'zod';
 
 declare global {
   var config: Config;
@@ -24,10 +24,10 @@ type Config = z.infer<typeof configSchema>;
 
 const getConfigPath = () => {
   switch (process.env.NODE_ENV) {
-    case "dev":
-      return "../configs/autoscan.yml";
+    case 'dev':
+      return '../configs/autoscan.yml';
     default:
-      return "/autoscan/resources/autoscan.yml";
+      return '/autoscan/resources/autoscan.yml';
   }
 };
 
@@ -35,8 +35,8 @@ const loadConfig = () => {
   const path = getConfigPath();
 
   try {
-    const fileContent = readFileSync(path, "utf8");
-    const transcodeCachePath = "/data/transcode_cache";
+    const fileContent = readFileSync(path, 'utf8');
+    const transcodeCachePath = '/data/transcode_cache';
     mkdirSync(transcodeCachePath, { recursive: true });
     const parsedConfig = parse(fileContent);
     return configSchema.parse({ ...parsedConfig, transcodeCachePath });

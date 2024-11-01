@@ -3,7 +3,7 @@ import cron from '#start/cron';
 import { loadConfig } from '#start/env';
 import webserver from '#start/routes';
 
-loadConfig();
+global.config = loadConfig();
 cron.start();
 
 webserver
