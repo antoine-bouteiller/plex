@@ -21,3 +21,7 @@ bazarr.{$DOMAIN} {
 qbittorrent.{$DOMAIN} {
 	reverse_proxy qbittorrent:8080
 }
+
+plex.{$DOMAIN} {
+	reverse_proxy host.docker.internal:32400
+}
