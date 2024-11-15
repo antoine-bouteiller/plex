@@ -13,6 +13,7 @@ services:
   scheduler:
     image: mcuadros/ofelia:latest
     container_name: scheduler
+    restart: unless-stopped
     depends_on:
       - plextraktsync
     command: daemon --docker
