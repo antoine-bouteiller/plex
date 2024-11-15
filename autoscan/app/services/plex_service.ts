@@ -1,26 +1,23 @@
-import axios from 'axios';
-import executeWithErrorHandler from '#exceptions/handler';
-import { getLanguage } from '#services/language_service';
-import type { PlexMedia, PlexReponse } from '#types/plex';
+import axios from 'axios'
+
+import executeWithErrorHandler from '#exceptions/handler'
+import { getLanguage } from '#services/language_service'
+import type { PlexMedia, PlexReponse } from '#types/plex'
 
 export async function getMediaDetails(plexMedia: PlexMedia) {
-  const mediaTitle = [
-    plexMedia.grandparentTitle,
-    plexMedia.parentTitle,
-    plexMedia.title,
-  ]
+  const mediaTitle = [plexMedia.grandparentTitle, plexMedia.parentTitle, plexMedia.title]
     .filter(Boolean)
-    .join(' - ');
+    .join(' - ')
 
-  const file = plexMedia.Media[0].Part[0].file;
+  const file = plexMedia.Media[0].Part[0].file
 
-  const tmdbId = Number(/{tmdb-(.*?)}/g.exec(file)?.[1]);
+  const tmdbId = Number(/{tmdb-(.*?)}/g.exec(file)?.[1])
 
   if (!tmdbId) {
-    throw new Error(`[${mediaTitle}] No tmdbId found"`);
+    throw new Error(`[${mediaTitle}] No tmdbId found"`)
   }
 
-  const originalLanguage = await getLanguage(tmdbId, plexMedia.type);
+  const originalLanguage = await getLanguage(tmdbId, plexMedia.type)
 
   return {
     file,
@@ -29,25 +26,20 @@ export async function getMediaDetails(plexMedia: PlexMedia) {
     mediaTitle,
     tmdbId,
     partsId: plexMedia.Media[0].Part[0].id,
-  };
+  }
 }
 
-export async function getSectionMedia(
-  id: number,
-  sectionType: 'show' | 'movie',
-) {
-  const type = sectionType === 'show' ? 4 : 1;
+export async function getSectionMedia(id: number, sectionType: 'show' | 'movie') {
+  const type = sectionType === 'show' ? 4 : 1
   const response = await sendPlexGetRequest(
-    `${config.plex.url}/library/sections/${id}/recentlyAdded?type=${type}`,
-  );
-  return response?.Metadata ?? [];
+    `${config.plex.url}/library/sections/${id}/recentlyAdded?type=${type}`
+  )
+  return response.Metadata
 }
 
 export async function getSections() {
-  const response = await sendPlexGetRequest(
-    `${config.plex.url}/library/sections`,
-  );
-  return response?.Directory ?? [];
+  const response = await sendPlexGetRequest(`${config.plex.url}/library/sections`)
+  return response.Directory
 }
 
 async function sendPlexGetRequest(url: string) {
@@ -55,8 +47,8 @@ async function sendPlexGetRequest(url: string) {
     headers: {
       'X-Plex-Token': config.plex.token,
     },
-  });
-  return response.data.MediaContainer;
+  })
+  return response.data.MediaContainer
 }
 
 export async function refreshSection(id: number, filePath: string) {
@@ -68,15 +60,15 @@ export async function refreshSection(id: number, filePath: string) {
       params: {
         path: filePath,
       },
-    }),
-  );
+    })
+  )
 }
 
 export async function updateStream(
   partsId: number,
   subtitleStreamId: number,
   originalLanguage: string,
-  type: 'audio' | 'subtitle',
+  type: 'audio' | 'subtitle'
 ) {
   await executeWithErrorHandler(() =>
     axios.put(
@@ -89,7 +81,7 @@ export async function updateStream(
           'X-Plex-Token': config.plex.token,
         },
         params: { allParts: 1 },
-      },
-    ),
-  );
+      }
+    )
+  )
 }

@@ -1,8 +1,8 @@
-import { join } from 'node:path';
+import { join } from 'node:path'
 
-export const testTempDir = join(import.meta.dirname, './tmp');
+export const testTempDir = join(import.meta.dirname, './tmp')
 
-export const videosPath = join(import.meta.dirname, 'videos');
+export const videosPath = join(import.meta.dirname, 'videos')
 
 global.config = {
   transcodeCachePath: join(testTempDir, 'transcode_cache'),
@@ -14,4 +14,4 @@ global.config = {
     url: 'http://localhost:32400',
     token: 'test',
   },
-};
+}

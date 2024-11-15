@@ -1,14 +1,15 @@
-import HyperExpress from 'hyper-express';
-import { radarrController } from '#controllers/radarr_controller';
-import { sonarrController } from '#controllers/sonarr_controller';
-import { transcodeController } from '#controllers/transcode_controller';
+import HyperExpress from 'hyper-express'
 
-const webserver = new HyperExpress.Server();
+import { radarrController } from '#controllers/radarr_controller'
+import { sonarrController } from '#controllers/sonarr_controller'
+import { transcodeController } from '#controllers/transcode_controller'
 
-webserver.post('/sonarr', sonarrController);
+const webserver = new HyperExpress.Server()
 
-webserver.post('/radarr', radarrController);
+webserver.post('/sonarr', sonarrController)
 
-webserver.post('/transcode/all', transcodeController);
+webserver.post('/radarr', radarrController)
 
-export default webserver;
+webserver.post('/transcode/all', transcodeController)
+
+export default webserver

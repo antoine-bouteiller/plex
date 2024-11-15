@@ -1,15 +1,15 @@
-type Movie = {
-  title: string;
-  tmdbId: number;
-  folderPath: string;
-};
+interface Movie {
+  title: string
+  tmdbId: number
+  folderPath: string
+}
 
-type MovieFile = {
-  relativePath: string;
-};
+interface MovieFile {
+  relativePath: string
+}
 
-export type RadarrRequest = {
-  movie: Movie;
-  movieFile: MovieFile;
-  eventType: 'Test' | 'Download';
-};
+export interface RadarrRequest {
+  movie: Movie
+  movieFile: MovieFile
+  eventType: 'Test' | 'Download' | 'DeleteFile'
+}

@@ -35,7 +35,7 @@ export const countryISOMapping = {
   fa: 'fas',
   id: 'ind',
   bn: 'ben',
-} as const;
+} as const
 
-export type iso1 = keyof typeof countryISOMapping;
-export type iso2 = (typeof countryISOMapping)[iso1];
+export type iso1 = keyof typeof countryISOMapping
+export type iso2 = (typeof countryISOMapping)[iso1]

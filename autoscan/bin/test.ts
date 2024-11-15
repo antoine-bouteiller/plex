@@ -1,11 +1,12 @@
-import { join } from 'node:path';
-import { assert } from '@japa/assert';
-import { fileSystem } from '@japa/file-system';
-import { configure, processCLIArgs, run } from '@japa/runner';
+import { join } from 'node:path'
 
-process.env.NODE_ENV = 'test';
+import { assert } from '@japa/assert'
+import { fileSystem } from '@japa/file-system'
+import { configure, processCLIArgs, run } from '@japa/runner'
 
-processCLIArgs(process.argv.splice(2));
+process.env.NODE_ENV = 'test'
+
+processCLIArgs(process.argv.splice(2))
 configure({
   plugins: [
     assert(),
@@ -24,6 +25,6 @@ configure({
       files: ['tests/functional/**/*.spec.ts'],
     },
   ],
-});
+})
 
-run();
+void run()

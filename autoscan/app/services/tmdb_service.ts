@@ -1,20 +1,21 @@
-import axios from 'axios';
-import prisma from '#config/prisma';
-import executeWithErrorHandler from '#exceptions/handler';
-import { countryISOMapping, type iso2 } from '#types/iso_codes';
-import type { TmdbResponse } from '#types/tmdb';
+import axios from 'axios'
+
+import prisma from '#config/prisma'
+import executeWithErrorHandler from '#exceptions/handler'
+import { countryISOMapping, type iso2 } from '#types/iso_codes'
+import type { TmdbResponse } from '#types/tmdb'
 
 export async function getLanguageByIdAndType(
   tmdbId: number,
-  type: 'movie' | 'episode',
+  type: 'movie' | 'episode'
 ): Promise<iso2> {
   switch (type) {
     case 'movie':
-      return getMovieLanguageById(tmdbId);
+      return getMovieLanguageById(tmdbId)
     case 'episode':
-      return getSeriesLanguageById(tmdbId);
+      return getSeriesLanguageById(tmdbId)
     default:
-      throw new Error('Invalid type');
+      throw new Error('Invalid type')
   }
 }
 
@@ -24,20 +25,20 @@ async function getSeriesLanguageById(tmdbId: number): Promise<iso2> {
       headers: {
         Authorization: `Bearer ${config.tmdb.token}`,
       },
-    }),
-  );
+    })
+  )
 
-  if (!response?.data) return 'eng';
+  if (!response?.data) return 'eng'
 
-  const language = countryISOMapping[response.data.original_language];
+  const language = countryISOMapping[response.data.original_language]
   await prisma.media.create({
     data: {
       tmdbId,
       originalLanguage: language,
       title: response.data.name,
     },
-  });
-  return language;
+  })
+  return language
 }
 
 async function getMovieLanguageById(tmdbId: number): Promise<iso2> {
@@ -46,18 +47,18 @@ async function getMovieLanguageById(tmdbId: number): Promise<iso2> {
       headers: {
         Authorization: `Bearer ${config.tmdb.token}`,
       },
-    }),
-  );
+    })
+  )
 
-  if (!response?.data) return 'eng';
+  if (!response?.data) return 'eng'
 
-  const language = countryISOMapping[response.data.original_language];
+  const language = countryISOMapping[response.data.original_language]
   await prisma.media.create({
     data: {
       tmdbId,
       originalLanguage: language,
       title: response.data.title,
     },
-  });
-  return language;
+  })
+  return language
 }

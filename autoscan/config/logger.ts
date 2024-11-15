@@ -1,7 +1,7 @@
-import { pino } from 'pino';
-import pretty from 'pino-pretty';
+import { pino } from 'pino'
+import pretty from 'pino-pretty'
 
-const isTestEnv = process.env.NODE_ENV === 'test';
+const isTestEnv = process.env.NODE_ENV === 'test'
 
 export const logger = pino(
   isTestEnv
@@ -9,5 +9,5 @@ export const logger = pino(
     : pretty({
         destination: process.stderr,
         colorize: true,
-      }),
-);
+      })
+)

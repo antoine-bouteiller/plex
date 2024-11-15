@@ -1,11 +1,11 @@
-import { ffmpegPath, ffprobePath } from 'ffmpeg-ffprobe-static';
-import ffmpeg from 'fluent-ffmpeg';
+import { ffmpegPath, ffprobePath } from 'ffmpeg-ffprobe-static'
+import ffmpeg from 'fluent-ffmpeg'
 
 if (!ffmpegPath || !ffprobePath) {
-  throw new Error('ffmpegPath not found');
+  throw new Error('ffmpegPath not found')
 }
 
-ffmpeg.setFfprobePath(ffprobePath);
-ffmpeg.setFfmpegPath(ffmpegPath);
+ffmpeg.setFfprobePath(ffprobePath)
+ffmpeg.setFfmpegPath(ffmpegPath)
 
-export default ffmpeg;
+export default ffmpeg
