@@ -16,9 +16,14 @@ export async function transcodeFile(file: string, originalLanguage: iso2, mediaN
     file.slice(0, file.lastIndexOf('.')).split('/').pop(),
     file.split('.').pop(),
   ]
+  const audioAndSubStream = streams.filter(
+    (stream) =>
+      stream.codec_type?.toLowerCase() === 'subtitle' ||
+      stream.codec_type?.toLowerCase() === 'audio'
+  )
 
-  if (command.length !== streams.length - 1) {
-    await executeFfmpeg(file, ['-map 0:v', '-c copy', ...command], mediaName, fileName)
+  if (command.length !== audioAndSubStream.length) {
+    await executeFfmpeg(file, ['-map 0:v:0', '-c copy', ...command], mediaName, fileName)
     return true
   }
   if (extension !== 'mkv') {
@@ -169,6 +174,7 @@ async function executeFfmpeg(
       })
       .on('error', (err) => {
         logger.error(JSON.stringify(command))
+        logger.error(`${config.transcodeCachePath}/${newFileName}`)
         reject(err)
       })
       .on('end', resolve)

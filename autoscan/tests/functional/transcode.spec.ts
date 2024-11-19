@@ -1,5 +1,5 @@
 import { copyFileSync, mkdirSync, rmSync } from 'node:fs'
-import { join } from 'node:path'
+import { posix } from 'node:path'
 
 import { test } from '@japa/runner'
 import { testTempDir, videosPath } from 'tests/config.js'
@@ -10,6 +10,7 @@ const testFiles: Record<string, string> = {
   'should keep only wanted tracks': 'test_aac_dts.mkv',
   'should convert dts to aac': 'test_dts.mkv',
   'should not transcode already correct file': 'test_correct_file.mkv',
+  'should convert format to mkv': 'test_correct_file.mp4',
 }
 
 test.group('Transcode functionnnal tests', (group) => {
@@ -17,7 +18,7 @@ test.group('Transcode functionnnal tests', (group) => {
   let file: string
 
   group.setup(async () => {
-    mkdirSync(join(testTempDir, './transcode_cache'), { recursive: true })
+    mkdirSync(posix.join(testTempDir, './transcode_cache'), { recursive: true })
 
     return () => {
       rmSync(testTempDir, { recursive: true, force: true })
@@ -26,8 +27,8 @@ test.group('Transcode functionnnal tests', (group) => {
 
   group.each.setup(async ({ context }) => {
     file = testFiles[context.test.title]
-    tempTestFilePath = join(testTempDir, file)
-    copyFileSync(join(videosPath, file), tempTestFilePath)
+    tempTestFilePath = posix.join(testTempDir, file)
+    copyFileSync(posix.join(videosPath, file), tempTestFilePath)
   })
 
   test('should keep only wanted tracks', async ({ assert }) => {
@@ -62,5 +63,15 @@ test.group('Transcode functionnnal tests', (group) => {
     const executed = await transcodeFile(tempTestFilePath, 'eng', 'test')
 
     assert.isFalse(executed)
+  })
+
+  test('should convert format to mkv', async ({ assert }) => {
+    const executed = await transcodeFile(tempTestFilePath, 'eng', 'test')
+
+    assert.isTrue(executed)
+
+    const outputFileName = file.replace('.mp4', '.mkv')
+
+    await assert.fileExists(outputFileName)
   })
 })

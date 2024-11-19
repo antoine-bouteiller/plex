@@ -1,4 +1,4 @@
-import path from 'node:path'
+import { resolve } from 'node:path'
 
 import { logger } from '#config/logger'
 import executeWithErrorHandler from '#exceptions/handler'
@@ -24,7 +24,7 @@ export async function transcodeController() {
       )
 
       if (executedTranscode) {
-        await refreshSection(section.key, path.resolve(file, '..'))
+        await refreshSection(section.key, resolve(file, '..'))
       }
     }
   }
