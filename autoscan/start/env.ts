@@ -8,7 +8,8 @@ import { z } from 'zod'
 import { handleError } from '#exceptions/handler'
 
 declare global {
-  let config: Config
+  // eslint-disable-next-line no-var
+  var config: Config
 }
 
 const configSchema = z.object({
@@ -42,7 +43,7 @@ const loadConfig = () => {
     const transcodeCachePath = '/data/transcode_cache'
     mkdirSync(transcodeCachePath, { recursive: true })
     const parsedConfig = parse(fileContent)
-    return configSchema.parse({ ...parsedConfig, transcodeCachePath })
+    global.config = configSchema.parse({ ...parsedConfig, transcodeCachePath })
   } catch (error) {
     void handleError(error)
     process.exit(1)
