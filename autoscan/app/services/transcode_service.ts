@@ -8,22 +8,26 @@ import type { StreamData } from '#types/transcode'
 export async function transcodeFile(file: string, originalLanguage: iso2, mediaName: string) {
   const streams = await getFileStreams(file)
 
-  const command = cleanAudio(streams, originalLanguage, mediaName)
-
-  command.push(...cleanSubtitles(streams, mediaName))
+  const videoSettings = cleanVideo(streams, mediaName)
+  const audioSettings = cleanAudio(streams, originalLanguage, mediaName)
+  const subtitleSettings = cleanSubtitles(streams, mediaName)
 
   const [fileName, extension] = [
     file.slice(0, file.lastIndexOf('.')).split('/').pop(),
     file.split('.').pop(),
   ]
-  const audioAndSubStream = streams.filter(
-    (stream) =>
-      stream.codec_type?.toLowerCase() === 'subtitle' ||
-      stream.codec_type?.toLowerCase() === 'audio'
-  )
 
-  if (command.length !== audioAndSubStream.length) {
-    await executeFfmpeg(file, ['-map 0:v:0', '-c copy', ...command], mediaName, fileName)
+  if (
+    videoSettings.shouldExecute ||
+    audioSettings.shouldExecute ||
+    subtitleSettings.shouldExecute
+  ) {
+    await executeFfmpeg(
+      file,
+      ['-c copy', ...videoSettings.command, ...audioSettings.command, ...subtitleSettings.command],
+      mediaName,
+      fileName
+    )
     return true
   }
   if (extension !== 'mkv') {
@@ -83,10 +87,10 @@ export function cleanAudio(streams: StreamData[], originalLanguage: iso2, mediaN
     logger.warn(
       `[${mediaName}] No audio stream respection language criteria, keeping all audio streams.`
     )
-    return ['-map 0:a']
+    return { command: ['-map 0:a'], shouldExecute: false }
   }
 
-  return command
+  return { command, shouldExecute: audioStreams.length !== command.length }
 }
 
 export function cleanSubtitles(streams: StreamData[], mediaName: string) {
@@ -104,7 +108,7 @@ export function cleanSubtitles(streams: StreamData[], mediaName: string) {
   )
 
   if (subtitleStreams.length === 0) {
-    return []
+    return { command: [], shouldExecute: false }
   }
 
   let subtitleStreamToKeep = -1
@@ -115,7 +119,7 @@ export function cleanSubtitles(streams: StreamData[], mediaName: string) {
 
   if (subtitleStreamToKeep === -1) {
     logger.warn(`[${mediaName}] No subtitle stream to keep, removing all subtitles.`)
-    return []
+    return { command: [], shouldExecute: false }
   }
 
   const stream = subtitleStreams[subtitleStreamToKeep]
@@ -125,7 +129,29 @@ export function cleanSubtitles(streams: StreamData[], mediaName: string) {
   if (stream.tags?.language === undefined || stream.tags.language.toLowerCase() === 'und') {
     command.push(`-metadata:s:s:${subtitleStreamToKeep} language=eng`)
   }
-  return command
+  return { command, shouldExecute: subtitleStreams.length !== command.length }
+}
+
+export function cleanVideo(streams: StreamData[], mediaName: string) {
+  const command: string[] = ['-map 0:v:0']
+
+  const videoStreams = streams.filter((stream) => stream.codec_type?.toLowerCase() === 'video')
+
+  if (videoStreams.length === 0) {
+    return { command: [], shouldExecute: false }
+  }
+
+  videoStreams.forEach((stream, index) => {
+    if (
+      stream.codec_name?.toLowerCase() === 'mjpeg' ||
+      stream.codec_name?.toLowerCase() === 'png'
+    ) {
+      command.push(`-map -0:v:${index}`)
+      logger.warn(`[${mediaName}] Video stream 0:v:${index} is mjpeg or png, removing.`)
+    }
+  })
+
+  return { command, shouldExecute: videoStreams.length !== command.length }
 }
 
 export function getFileStreams(file: string): Promise<StreamData[]> {
