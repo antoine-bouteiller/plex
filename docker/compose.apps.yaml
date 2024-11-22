@@ -23,13 +23,20 @@ services:
     links:
       - sonarr
       - radarr
-  plextraktsync:
-    image: ghcr.io/taxel/plextraktsync
-    container_name: plextraktsync
-    command: sync
+  tautulli:
+    image: ghcr.io/tautulli/tautulli
+    container_name: tautulli
     extends:
       file: compose.common.yaml
       service: common
-    restart: on-failure:2
     volumes:
-      - ${APP_PATH}/plextraktsync:/app/config
+      - ${APP_PATH}/tautulli/:/config
+  homer:
+    image: b4bz/homer
+    container_name: homer
+    volumes:
+      - ../configs/homer.yaml:/www/assets/config.yml
+      - ../configs/assets:/www/assets
+    extends:
+      file: compose.common.yaml
+      service: common

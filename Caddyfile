@@ -1,3 +1,11 @@
+(cors) {
+	@origin header Origin {args.0}
+	header @origin {
+		Access-Control-Allow-Origin "{args.0}"
+		Access-Control-Request-Method "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+	}
+}
+
 {$DOMAIN} {
 	reverse_proxy overseerr:5055
 }
@@ -14,14 +22,23 @@ prowlarr.{$DOMAIN} {
 	reverse_proxy prowlarr:9696
 }
 
-bazarr.{$DOMAIN} {
-	reverse_proxy bazarr:6767
-}
-
 qbittorrent.{$DOMAIN} {
 	reverse_proxy qbittorrent:8080
+}
+
+tautulli.{$DOMAIN} {
+	reverse_proxy tautulli:8181
+}
+
+dashboard.{$DOMAIN} {
+    # @not-local not remote_ip 90.22.233.238
+    basic_auth {
+		kalva {$PASSWORD}
+	}
+	reverse_proxy homer:8080
 }
 
 plex.{$DOMAIN} {
 	reverse_proxy host.docker.internal:32400
 }
+

@@ -5,7 +5,7 @@ services:
       context: ../autoscan/
     volumes:
       - ${APP_PATH}/autoscan:/autoscan/resources
-      - ../configs/autoscan.yml:/autoscan/resources/autoscan.yml
+      - ../configs/autoscan.yaml:/autoscan/resources/autoscan.yaml
       - ${DATA_PATH}:/data
     restart: unless-stopped
     ports:
@@ -14,7 +14,6 @@ services:
       - "host.docker.internal:host-gateway"
     labels:
       - "com.centurylinklabs.watchtower.enable=false"
-
   recyclarr:
     image: ghcr.io/recyclarr/recyclarr
     container_name: recyclarr
@@ -29,3 +28,13 @@ services:
       - ${APP_PATH}/recyclarr:/config
       - ../configs/recyclarr.yaml:/config/recyclarr.yaml
       - ../configs/secrets.yaml:/config/secrets.yaml
+  plextraktsync:
+    image: ghcr.io/taxel/plextraktsync
+    container_name: plextraktsync
+    command: sync
+    extends:
+      file: compose.common.yaml
+      service: common
+    restart: on-failure:2
+    volumes:
+      - ${APP_PATH}/plextraktsync:/app/config

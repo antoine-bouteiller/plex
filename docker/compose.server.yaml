@@ -35,22 +35,23 @@ services:
       - flaresolverr
     volumes:
       - ${APP_PATH}/prowlarr:/config
-  bazarr:
-    image: lscr.io/linuxserver/bazarr:latest
-    container_name: bazarr
-    extends:
-      file: compose.common.yaml
-      service: common
-    links:
-      - sonarr
-      - radarr
-    volumes:
-      - ${APP_PATH}/bazarr:/config
-      - ${DATA_PATH}:/data
-    restart: unless-stopped
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr:latest
     container_name: flaresolverr
     extends:
       file: compose.common.yaml
       service: common
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    extends:
+      file: compose.common.yaml
+      service: common
+    environment:
+      - WEBUI_PORT=8080
+      - TORRENTING_PORT=6881
+    ports:
+      - 6881:6881
+    volumes:
+      - ${APP_PATH}/qbittorrent:/config/qBittorrent
+      - ${DATA_PATH}/torrents:/downloads
