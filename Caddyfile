@@ -1,8 +1,6 @@
 (cors) {
-	@origin header Origin {args.0}
-	header @origin {
-		Access-Control-Allow-Origin "{args.0}"
-		Access-Control-Request-Method "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+	header {
+		Access-Control-Allow-Origin https://dashboard.antoinebouteiller.duckdns.org
 	}
 }
 
@@ -23,19 +21,35 @@ prowlarr.{$DOMAIN} {
 }
 
 qbittorrent.{$DOMAIN} {
-	reverse_proxy qbittorrent:8080
+	import cors
+
+	reverse_proxy {
+        to qbittorrent:8080
+        header_up Host {upstream_hostport}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Host {host}
+        header_up X-Forwarded-Proto {scheme}
+    }
 }
 
 tautulli.{$DOMAIN} {
+	import cors
+	
 	reverse_proxy tautulli:8181
 }
 
 dashboard.{$DOMAIN} {
-    # @not-local not remote_ip 90.22.233.238
-    basic_auth {
-		kalva {$PASSWORD}
-	}
-	reverse_proxy homer:8080
+    handle {
+    	@not-local not remote_ip 90.22.233.238 192.168.1.0/24
+		basic_auth @not-local {
+			{$HTTP_BASIC_AUTH_USER} {$HTTP_BASIC_AUTH_PASSWORD}
+		}
+		reverse_proxy homer:8080
+    }
+
+	handle_errors {
+        respond "{http.error.status_code} {http.error.status_text}"
+    } 
 }
 
 plex.{$DOMAIN} {

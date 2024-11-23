@@ -3,9 +3,8 @@ services:
     container_name: caddy
     image: caddy:latest
     restart: unless-stopped
-    environment:
-      - DOMAIN=${DOMAIN}
-      - PASSWORD=${PASSWORD}
+    env_file:
+      - ../.env
     cap_add:
       - NET_ADMIN
     ports:
