@@ -1,7 +1,7 @@
 services:
   common:
     restart: unless-stopped
-    environment:
-      - PUID=${USER_ID}
-      - PGID=${GROUP_ID}
-      - TZ=${TIME_ZONE}
+    env_file:
+      - ../.env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

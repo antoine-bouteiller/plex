@@ -1,6 +1,11 @@
-(cors) {
+(auth) {
 	header {
 		Access-Control-Allow-Origin https://dashboard.antoinebouteiller.duckdns.org
+		Access-Control-Allow-Credentials true
+	}
+	forward_auth authelia:9091 {
+		uri /api/authz/forward-auth
+		copy_headers Remote-User Remote-Groups Remote-Email Remote-Name
 	}
 }
 
@@ -9,50 +14,42 @@
 }
 
 sonarr.{$DOMAIN} {
+	import auth
 	reverse_proxy sonarr:8989
 }
 
 radarr.{$DOMAIN} {
+	import auth
 	reverse_proxy radarr:7878
 }
 
 prowlarr.{$DOMAIN} {
+	import auth
 	reverse_proxy prowlarr:9696
 }
 
 qbittorrent.{$DOMAIN} {
-	import cors
+	import auth
 
 	reverse_proxy {
-        to qbittorrent:8080
-		
-		header_up X-Forwarded-For {remote}
-		header_up Host {host}
-		header_up X-Forwarded-Proto {scheme}
-    }
+		to qbittorrent:8080
+	}
 }
 
 tautulli.{$DOMAIN} {
-	import cors
-
+	import auth
 	reverse_proxy tautulli:8181
 }
 
 dashboard.{$DOMAIN} {
-    handle {
-    	@not-local not remote_ip 90.22.233.238 192.168.1.0/24
-		basic_auth @not-local {
-			{$HTTP_BASIC_AUTH_USER} {$HTTP_BASIC_AUTH_PASSWORD}
-		}
-		reverse_proxy homer:8080
-    }
-
-	handle_errors {
-        respond "{http.error.status_code} {http.error.status_text}"
-    } 
+	import auth
+	reverse_proxy homer:8080
 }
 
 plex.{$DOMAIN} {
 	reverse_proxy host.docker.internal:32400
 }
 
+auth.{$DOMAIN} {
+	reverse_proxy authelia:9091
+}

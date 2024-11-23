@@ -1,0 +1,38 @@
+services:
+  authelia:
+    container_name: "authelia"
+    image: "docker.io/authelia/authelia:latest"
+    extends:
+      file: ./compose.common.yaml
+      service: common
+    ports:
+      - "9091:9091"
+    volumes:
+      - ../configs/authelia.yaml:/config/configuration.yml
+      - ${APP_PATH}/authelia:/config
+  caddy:
+    container_name: caddy
+    image: caddy:latest
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "80:80"
+      - "443:443"
+    extends:
+      file: ./compose.common.yaml
+      service: common
+    volumes:
+      - ../Caddyfile:/etc/caddy/Caddyfile
+      - ${APP_PATH}/caddy/srv:/srv
+      - ${APP_PATH}/caddy/data:/data
+      - ${APP_PATH}/caddy/config:/config
+    links:
+      - authelia
+      # - sonarr
+      # - radarr
+      # - homer
+      # - prowlarr
+      # - overseerr
+      # - tautulli
+      # - qbittorrent
+      # - plex

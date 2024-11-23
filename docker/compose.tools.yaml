@@ -1,31 +1,4 @@
 services:
-  caddy:
-    container_name: caddy
-    image: caddy:latest
-    restart: unless-stopped
-    env_file:
-      - ../.env
-    cap_add:
-      - NET_ADMIN
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ../Caddyfile:/etc/caddy/Caddyfile
-      - ${APP_PATH}/caddy/srv:/srv
-      - ${APP_PATH}/caddy/data:/data
-      - ${APP_PATH}/caddy/config:/config
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    links:
-      - sonarr
-      - radarr
-      - homer
-      - prowlarr
-      - overseerr
-      - tautulli
-      - qbittorrent
-      - plex
   watchtower:
     image: containrrr/watchtower
     container_name: watchtower
