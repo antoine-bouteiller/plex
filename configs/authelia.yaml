@@ -158,11 +158,11 @@ access_control:
         - "192.168.0.0/18"
   rules:
     ## Rules applied to everyone
-    - domain: '{{ env "DOMAIN" }}'
+    - domain: '{{ mustEnv "DOMAIN" }}'
       methods:
         - "GET"
       policy: "one_factor"
-    - domain: '{{ env "DOMAIN" }}'
+    - domain: '{{ mustEnv "DOMAIN" }}'
       policy: "bypass"
       networks:
         - "internal"
@@ -182,7 +182,7 @@ session:
 
       ## The domain to protect.
       ## Note: the Authelia portal must also be in that domain.
-      domain: '{{ env "DOMAIN" }}'
+      domain: '{{ mustEnv "DOMAIN" }}'
 
       ## Required. The fully qualified URI of the portal to redirect users to on proxies that support redirections.
       ## Rules:
@@ -190,7 +190,7 @@ session:
       ##   - The above 'domain' option MUST either:
       ##      - Match the host portion of this URI.
       ##      - Match the suffix of the host portion when prefixed with '.'.
-      authelia_url: 'https://auth.{{ env "DOMAIN" }}'
+      authelia_url: 'https://auth.{{ mustEnv "DOMAIN" }}'
 
 ##
 ## Regulation Configuration
