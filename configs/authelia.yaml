@@ -158,11 +158,11 @@ access_control:
         - "192.168.0.0/18"
   rules:
     ## Rules applied to everyone
-    - domain: '{{ mustEnv "DOMAIN" }}'
+    - domain: '*.{{ mustEnv "DOMAIN" }}'
       methods:
         - "GET"
       policy: "one_factor"
-    - domain: '{{ mustEnv "DOMAIN" }}'
+    - domain: '*.{{ mustEnv "DOMAIN" }}'
       policy: "bypass"
       networks:
         - "internal"
