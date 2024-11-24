@@ -1,8 +1,25 @@
-(auth) {
-	header {
-		Access-Control-Allow-Origin https://dashboard.antoinebouteiller.duckdns.org
-		Access-Control-Allow-Credentials true
+(cors) {
+	@cors_preflight{args.0}  method OPTIONS
+	@cors{args.0} header Origin {args.0}
+
+	header @cors{args.0} {
+		Access-Control-Allow-Origin "{args.0}"
+		Access-Control-Expose-Headers *
+		Access-Control-Allow-Credentials "true"
 	}
+
+	handle @cors_preflight{args.0} {
+		header {
+			Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE"
+			Access-Control-Allow-Headers *
+			Access-Control-Max-Age "3600"
+		}
+		respond "" 204
+	}
+}
+
+(auth) {
+	import cors https://dashboard.{$DOMAIN}
 	forward_auth authelia:9091 {
 		uri /api/authz/forward-auth
 		copy_headers Remote-User Remote-Groups Remote-Email Remote-Name
@@ -15,29 +32,34 @@
 
 sonarr.{$DOMAIN} {
 	import auth
-	reverse_proxy sonarr:8989
+	reverse_proxy sonarr:8989 {
+		header_down -Access-Control-Allow-Origin
+	}
 }
 
 radarr.{$DOMAIN} {
 	import auth
-	reverse_proxy radarr:7878
+	reverse_proxy radarr:7878 {
+		header_down -Access-Control-Allow-Origin
+	}
 }
 
 prowlarr.{$DOMAIN} {
 	import auth
-	reverse_proxy prowlarr:9696
+	reverse_proxy prowlarr:9696 {
+		header_down -Access-Control-Allow-Origin
+	}
 }
 
 qbittorrent.{$DOMAIN} {
 	import auth
 
-	reverse_proxy {
-		to qbittorrent:8080
-	}
+	reverse_proxy  qbittorrent:8080
 }
 
 tautulli.{$DOMAIN} {
 	import auth
+
 	reverse_proxy tautulli:8181
 }
 
