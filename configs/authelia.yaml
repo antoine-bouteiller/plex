@@ -156,18 +156,14 @@ access_control:
         - "10.0.0.0/8"
         - "172.16.0.0/12"
         - "192.168.0.0/18"
-        - "90.22.233.238/32"
   rules:
     - domain: '*.{{ mustEnv "DOMAIN" }}'
-      policy: "one_factor"
-      resources:
-        - "^/.*$"
-    - domain: '*.{{ mustEnv "DOMAIN" }}'
       policy: "bypass"
-      resources:
-        - "^/.*$"
       networks:
         - "internal"
+        - "90.22.233.238/32"
+    - domain: '*.{{ mustEnv "DOMAIN" }}'
+      policy: "one_factor"
 ##
 ## Session Provider Configuration
 ##
