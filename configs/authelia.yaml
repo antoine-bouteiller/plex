@@ -158,10 +158,7 @@ access_control:
         - "192.168.0.0/18"
         - "90.22.233.238/32"
   rules:
-    ## Rules applied to everyone
     - domain: '*.{{ mustEnv "DOMAIN" }}'
-      methods:
-        - "GET"
       policy: "one_factor"
       resources:
         - "^/.*$"

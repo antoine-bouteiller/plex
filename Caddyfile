@@ -65,6 +65,7 @@ tautulli.{$DOMAIN} {
 
 dashboard.{$DOMAIN} {
 	import auth
+	
 	reverse_proxy homer:8080
 }
 
