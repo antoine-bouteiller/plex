@@ -9,7 +9,7 @@ services:
       - SONARR__AUTH__METHOD=External
     volumes:
       - ${APP_PATH}/sonarr:/config
-      - ${DATA_PATH}:/data
+      - ${DATA_PATH}:/mnt/data
     links:
       - autoscan
       - prowlarr
@@ -24,7 +24,8 @@ services:
       - RADARR__AUTH__METHOD=External
     volumes:
       - ${APP_PATH}/radarr:/config
-      - ${DATA_PATH}:/data
+      - ${DATA_PATH}:/mnt/data
+      - ${MOVIES_PATH}:/mnt/movies
     links:
       - autoscan
       - prowlarr
