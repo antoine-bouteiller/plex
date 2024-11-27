@@ -69,6 +69,12 @@ dashboard.{$DOMAIN} {
 	reverse_proxy homer:8080
 }
 
+fancontroller.{$DOMAIN} {
+	import auth
+	
+	reverse_proxy host.docker.internal:11987
+}
+
 plex.{$DOMAIN} {
 	reverse_proxy host.docker.internal:32400
 }
