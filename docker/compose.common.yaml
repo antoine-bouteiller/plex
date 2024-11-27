@@ -1,7 +1,9 @@
 services:
   common:
     restart: unless-stopped
-    env_file:
-      - ../.env
+    environment:
+      - PUID=${PUID}
+      - GUID=${GUID}
+      - TZ=${TZ}
     extra_hosts:
       - "host.docker.internal:host-gateway"

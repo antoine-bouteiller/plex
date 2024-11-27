@@ -5,6 +5,8 @@ services:
     extends:
       file: compose.common.yaml
       service: common
+    environment:
+      - SONARR__AUTH__METHOD=External
     volumes:
       - ${APP_PATH}/sonarr:/config
       - ${DATA_PATH}:/data
@@ -18,6 +20,8 @@ services:
     extends:
       file: compose.common.yaml
       service: common
+    environment:
+      - RADARR__AUTH__METHOD=External
     volumes:
       - ${APP_PATH}/radarr:/config
       - ${DATA_PATH}:/data
@@ -31,6 +35,8 @@ services:
     extends:
       file: compose.common.yaml
       service: common
+    environment:
+      - PRWOLARR__AUTH__METHOD=External
     links:
       - flaresolverr
     volumes:
