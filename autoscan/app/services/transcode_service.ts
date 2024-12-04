@@ -1,4 +1,4 @@
-import { renameSync, unlinkSync } from 'node:fs'
+import { copyFileSync, unlinkSync } from 'node:fs'
 
 import ffmpeg from '#config/ffmpeg'
 import { logger } from '#config/logger'
@@ -146,7 +146,6 @@ export function cleanVideo(streams: StreamData[], mediaName: string) {
       stream.codec_name?.toLowerCase() === 'mjpeg' ||
       stream.codec_name?.toLowerCase() === 'png'
     ) {
-      command.push(`-map -0:v:${index}`)
       logger.warn(`[${mediaName}] Video stream 0:v:${index} is mjpeg or png, removing.`)
     }
   })
@@ -207,9 +206,13 @@ async function executeFfmpeg(
       .saveToFile(`${config.transcodeCachePath}/${newFileName}`)
   )
 
-  unlinkSync(file)
+  copyFileSync(`${config.transcodeCachePath}/${newFileName}`, `${path.join('/')}/${newFileName}`)
 
-  renameSync(`${config.transcodeCachePath}/${newFileName}`, `${path.join('/')}/${newFileName}`)
+  if (file !== `${path.join('/')}/${newFileName}`) {
+    unlinkSync(file)
+  }
+
+  unlinkSync(`${config.transcodeCachePath}/${newFileName}`)
 }
 
 type Criteria =
