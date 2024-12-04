@@ -40,10 +40,9 @@ const loadConfig = () => {
 
   try {
     const fileContent = readFileSync(path, 'utf8')
-    const transcodeCachePath = '/data/transcode_cache'
-    mkdirSync(transcodeCachePath, { recursive: true })
     const parsedConfig = parse(fileContent)
-    global.config = configSchema.parse({ ...parsedConfig, transcodeCachePath })
+    global.config = configSchema.parse({ ...parsedConfig })
+    mkdirSync(config.transcodeCachePath, { recursive: true })
   } catch (error) {
     void handleError(error)
     process.exit(1)

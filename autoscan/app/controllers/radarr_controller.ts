@@ -2,7 +2,7 @@ import { join } from 'node:path'
 
 import type { Request, Response } from 'hyper-express'
 
-import { logger } from '#config/logger'
+import { handleError } from '#exceptions/handler'
 import { getLanguage } from '#services/language_service'
 import { getSections, refreshSection } from '#services/plex_service'
 import { transcodeFile } from '#services/transcode_service'
@@ -31,8 +31,7 @@ export const radarrController = async (request: Request, response: Response) => 
       await refreshSection(section.key, body.movie.folderPath)
     }
   } catch (err) {
-    logger.error(err)
-    logger.error(JSON.stringify(body))
+    await handleError(err)
   }
 
   response.send('ok')

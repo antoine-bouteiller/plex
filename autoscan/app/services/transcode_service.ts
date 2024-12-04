@@ -31,7 +31,7 @@ export async function transcodeFile(file: string, originalLanguage: iso2, mediaN
     return true
   }
   if (extension !== 'mkv') {
-    logger.info(`[${mediaName}] Transcoding to mkv`)
+    logger.warn(`[${mediaName}] Transcoding to mkv`)
     await executeFfmpeg(file, ['-c copy'], mediaName, fileName)
     return true
   }
@@ -74,7 +74,7 @@ export function cleanAudio(streams: StreamData[], originalLanguage: iso2, mediaN
 
     if (stream.codec_name?.toLowerCase() === 'dts') {
       command.push(`-c:a:${audioStreamToKeep} aac`)
-      logger.info(
+      logger.warn(
         `[${mediaName}] ${languageCriteria[0].language} audio stream 0:a:${audioStreamToKeep} is dts, converting to aac.`
       )
     }
