@@ -11,15 +11,6 @@ sonarr:
     delete_old_custom_formats: true
     replace_existing_custom_formats: true
 
-    media_naming:
-      series: plex-tvdb
-      season: default
-      episodes:
-        rename: true
-        standard: default
-        daily: default
-        anime: default
-
     quality_profiles:
       - name: WEB-1080p
         reset_unmatched_scores:
@@ -161,12 +152,6 @@ radarr:
 
     delete_old_custom_formats: true
     replace_existing_custom_formats: true
-
-    media_naming:
-      folder: plex-tmdb
-      movie:
-        rename: true
-        standard: plex-tmdb
 
     quality_profiles:
       - name: SQP-1 (1080p)
