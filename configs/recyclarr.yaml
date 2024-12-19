@@ -6,7 +6,7 @@ sonarr:
     base_url: http://sonarr:8989
 
     quality_definition:
-      type: series
+      type: anime
 
     delete_old_custom_formats: true
     replace_existing_custom_formats: true
