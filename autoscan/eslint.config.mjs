@@ -1,15 +1,24 @@
 import js from '@eslint/js'
 import prettierConfig from 'eslint-config-prettier'
 import simpleImportSort from 'eslint-plugin-simple-import-sort'
+import perfectionist from 'eslint-plugin-perfectionist'
 import unicorn from 'eslint-plugin-unicorn'
 import tseslint from 'typescript-eslint'
+
+const sortRules = {
+  groups: ['top', ['method', 'unknown', 'multiline'], 'bottom'],
+  customGroups: {
+    top: ['.*(?:I|i)d$', '^name$'],
+    bottom: ['^createdAt$', '^orderBy$'],
+  },
+}
 
 export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
+  perfectionist.configs['recommended-natural'],
   {
-    settings: { react: { version: '19.0' } },
     plugins: {
       'simple-import-sort': simpleImportSort,
       '@unicorn': unicorn,
