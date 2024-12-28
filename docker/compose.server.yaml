@@ -62,3 +62,13 @@ services:
     volumes:
       - ${APP_PATH}/qbittorrent:/config/qBittorrent
       - ${DATA_PATH}/torrents:/downloads
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    extends:
+      file: compose.common.yaml
+      service: common
+    volumes:
+      - ${APP_PATH}/bazarr:/config
+      - ${DATA_PATH}:/mnt/data
+      - ${MOVIES_PATH}:/mnt/movies

@@ -82,3 +82,9 @@ plex.{$DOMAIN} {
 auth.{$DOMAIN} {
 	reverse_proxy authelia:9091
 }
+
+bazarr.{$DOMAIN} {
+	import auth
+	
+	reverse_proxy bazarr:6767
+}
