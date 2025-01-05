@@ -1,8 +1,7 @@
-import { CronJob } from 'cron'
-
 import { logger } from '#config/logger'
 import { languageController } from '#controllers/language_crontroller'
 import { transcodeController } from '#controllers/transcode_controller'
+import { CronJob } from 'cron'
 
 class Cron {
   scannerCronJob = new CronJob('0 0 */12 * * *', async () => {

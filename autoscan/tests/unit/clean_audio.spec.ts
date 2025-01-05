@@ -1,9 +1,7 @@
-import { join } from 'node:path'
-
-import { test } from '@japa/runner'
-import { videosPath } from 'tests/config.js'
-
 import { cleanAudio, getFileStreams } from '#services/transcode_service'
+import { test } from '@japa/runner'
+import { join } from 'node:path'
+import { videosPath } from 'tests/config.js'
 
 test.group('Clean audio', () => {
   test('should tag audio stream with language if language is undefined', async ({ assert }) => {

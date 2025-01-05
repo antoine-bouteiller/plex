@@ -1,20 +1,20 @@
-interface EpisodeFile {
-  relativePath: string
+export interface SonarrRequest {
+  episodeFile: EpisodeFile
+  episodes: Episode[]
+  eventType: 'Download' | 'EpisodeFileDelete' | 'SeriesDelete' | 'Test'
+  series: Series
 }
 
 interface Episode {
   title: string
 }
 
-interface Series {
-  title: string
-  path: string
-  tmdbId: number
+interface EpisodeFile {
+  relativePath: string
 }
 
-export interface SonarrRequest {
-  series: Series
-  episodes: Episode[]
-  episodeFile: EpisodeFile
-  eventType: 'Test' | 'Download' | 'EpisodeFileDelete' | 'SeriesDelete'
+interface Series {
+  path: string
+  title: string
+  tmdbId: number
 }

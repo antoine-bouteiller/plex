@@ -1,8 +1,7 @@
-import { join } from 'node:path'
-
 import { assert } from '@japa/assert'
 import { fileSystem } from '@japa/file-system'
 import { configure, processCLIArgs, run } from '@japa/runner'
+import { join } from 'node:path'
 
 process.env.NODE_ENV = 'test'
 
@@ -11,18 +10,18 @@ configure({
   plugins: [
     assert(),
     fileSystem({
-      basePath: join(import.meta.dirname, '../tests/tmp'),
       autoClean: false,
+      basePath: join(import.meta.dirname, '../tests/tmp'),
     }),
   ],
   suites: [
     {
-      name: 'unit',
       files: ['tests/unit/**/*.spec.ts'],
+      name: 'unit',
     },
     {
-      name: 'functional',
       files: ['tests/functional/**/*.spec.ts'],
+      name: 'functional',
     },
   ],
 })

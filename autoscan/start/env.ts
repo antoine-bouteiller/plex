@@ -1,11 +1,8 @@
 import 'dotenv/config'
-
+import { handleError } from '#exceptions/handler'
 import { mkdirSync, readFileSync } from 'node:fs'
-
 import { parse } from 'yaml'
 import { z } from 'zod'
-
-import { handleError } from '#exceptions/handler'
 
 declare global {
   // eslint-disable-next-line no-var
@@ -13,15 +10,15 @@ declare global {
 }
 
 const configSchema = z.object({
-  transcodeCachePath: z.string(),
   plex: z.object({
-    url: z.string(),
     token: z.string(),
+    url: z.string(),
   }),
   tmdb: z.object({
-    url: z.string(),
     token: z.string(),
+    url: z.string(),
   }),
+  transcodeCachePath: z.string(),
 })
 
 type Config = z.infer<typeof configSchema>

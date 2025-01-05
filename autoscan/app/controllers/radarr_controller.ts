@@ -1,12 +1,11 @@
-import { join } from 'node:path'
-
+import type { RadarrRequest } from '#types/radarr'
 import type { Request, Response } from 'hyper-express'
 
 import { handleError } from '#exceptions/handler'
 import { getLanguage } from '#services/language_service'
 import { getSections, refreshSection } from '#services/plex_service'
 import { transcodeFile } from '#services/transcode_service'
-import type { RadarrRequest } from '#types/radarr'
+import { join } from 'node:path'
 
 export const radarrController = async (request: Request, response: Response) => {
   const body: RadarrRequest = await request.json()

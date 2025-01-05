@@ -20,7 +20,6 @@ export default tseslint.config(
   perfectionist.configs['recommended-natural'],
   {
     plugins: {
-      'simple-import-sort': simpleImportSort,
       '@unicorn': unicorn,
     },
     rules: {
@@ -53,9 +52,6 @@ export default tseslint.config(
           },
         },
       ],
-
-      'simple-import-sort/imports': 'error',
-      'simple-import-sort/exports': 'error',
     },
     languageOptions: {
       parserOptions: {

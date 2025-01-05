@@ -1,16 +1,14 @@
+import { getFileStreams, transcodeFile } from '#services/transcode_service'
+import { test } from '@japa/runner'
 import { copyFileSync, mkdirSync, rmSync } from 'node:fs'
 import { posix } from 'node:path'
-
-import { test } from '@japa/runner'
 import { testTempDir, videosPath } from 'tests/config.js'
 
-import { getFileStreams, transcodeFile } from '#services/transcode_service'
-
 const testFiles: Record<string, string> = {
-  'should keep only wanted tracks': 'test_aac_dts.mkv',
   'should convert dts to aac': 'test_dts.mkv',
-  'should not transcode already correct file': 'test_correct_file.mkv',
   'should convert format to mkv': 'test_correct_file.mp4',
+  'should keep only wanted tracks': 'test_aac_dts.mkv',
+  'should not transcode already correct file': 'test_correct_file.mkv',
 }
 
 test.group('Transcode functionnnal tests', (group) => {
@@ -21,7 +19,7 @@ test.group('Transcode functionnnal tests', (group) => {
     mkdirSync(posix.join(testTempDir, './transcode_cache'), { recursive: true })
 
     return () => {
-      rmSync(testTempDir, { recursive: true, force: true })
+      rmSync(testTempDir, { force: true, recursive: true })
     }
   })
 

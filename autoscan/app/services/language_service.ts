@@ -1,9 +1,27 @@
+import type { iso2 } from '#types/iso_codes'
+import type { PlexMediaStream } from '#types/plex'
+
 import { logger } from '#config/logger'
 import prisma from '#config/prisma'
 import { updateStream } from '#services/plex_service'
 import { getLanguageByIdAndType } from '#services/tmdb_service'
-import type { iso2 } from '#types/iso_codes'
-import type { PlexMediaStream } from '#types/plex'
+
+export async function getLanguage(tmdbId: number, mediaType: 'episode' | 'movie') {
+  const mediaDetails = await prisma.media.findUnique({
+    where: {
+      tmdbId,
+    },
+  })
+
+  let originalLanguage: iso2
+  if (!mediaDetails) {
+    originalLanguage = tmdbId ? await getLanguageByIdAndType(tmdbId, mediaType) : 'eng'
+  } else {
+    originalLanguage = mediaDetails.originalLanguage as iso2
+  }
+
+  return originalLanguage
+}
 
 export async function handleUpdateLanguage(
   mediaTitle: string,
@@ -22,21 +40,4 @@ export async function handleUpdateLanguage(
     logger.info(`[${mediaTitle}] Setting audio in ${originalLanguage}`)
     await updateStream(partsId, audioStream.id, originalLanguage, 'audio')
   }
-}
-
-export async function getLanguage(tmdbId: number, mediaType: 'movie' | 'episode') {
-  const mediaDetails = await prisma.media.findUnique({
-    where: {
-      tmdbId,
-    },
-  })
-
-  let originalLanguage: iso2
-  if (!mediaDetails) {
-    originalLanguage = tmdbId ? await getLanguageByIdAndType(tmdbId, mediaType) : 'eng'
-  } else {
-    originalLanguage = mediaDetails.originalLanguage as iso2
-  }
-
-  return originalLanguage
 }

@@ -1,42 +1,20 @@
-import { copyFileSync, unlinkSync } from 'node:fs'
-
-import ffmpeg from '#config/ffmpeg'
-import { logger } from '#config/logger'
 import type { iso2 } from '#types/iso_codes'
 import type { StreamData } from '#types/transcode'
 
-export async function transcodeFile(file: string, originalLanguage: iso2, mediaName: string) {
-  const streams = await getFileStreams(file)
+import ffmpeg from '#config/ffmpeg'
+import { logger } from '#config/logger'
+import { copyFileSync, unlinkSync } from 'node:fs'
 
-  const videoSettings = cleanVideo(streams, mediaName)
-  const audioSettings = cleanAudio(streams, originalLanguage, mediaName)
-  const subtitleSettings = cleanSubtitles(streams, mediaName)
-
-  const [fileName, extension] = [
-    file.slice(0, file.lastIndexOf('.')).split('/').pop(),
-    file.split('.').pop(),
-  ]
-
-  if (
-    videoSettings.shouldExecute ||
-    audioSettings.shouldExecute ||
-    subtitleSettings.shouldExecute
-  ) {
-    await executeFfmpeg(
-      file,
-      ['-c copy', ...videoSettings.command, ...audioSettings.command, ...subtitleSettings.command],
-      mediaName,
-      fileName
-    )
-    return true
-  }
-  if (extension !== 'mkv') {
-    logger.warn(`[${mediaName}] Transcoding to mkv`)
-    await executeFfmpeg(file, ['-c copy'], mediaName, fileName)
-    return true
-  }
-  return false
-}
+type Criteria =
+  | {
+      exclude?: string[]
+      excludedEncodings?: string[]
+      language: iso2
+    }
+  | {
+      excludedEncodings?: string[]
+      language: 'und'
+    }
 
 export function cleanAudio(streams: StreamData[], originalLanguage: iso2, mediaName: string) {
   const command: string[] = []
@@ -45,19 +23,19 @@ export function cleanAudio(streams: StreamData[], originalLanguage: iso2, mediaN
 
   const criterias: Criteria[][] = [
     [
-      { language: originalLanguage, excludedEncodings: ['dts'] },
-      { language: 'und', excludedEncodings: ['dts'] },
+      { excludedEncodings: ['dts'], language: originalLanguage },
+      { excludedEncodings: ['dts'], language: 'und' },
       { language: originalLanguage },
       { language: 'und' },
     ],
   ]
 
-  if (originalLanguage !== 'eng') {
-    criterias.push([{ language: 'eng', excludedEncodings: ['dts'] }, { language: 'eng' }])
+  if (originalLanguage !== 'eng' && originalLanguage !== 'fre') {
+    criterias.push([{ excludedEncodings: ['dts'], language: 'eng' }, { language: 'eng' }])
   }
 
   if (originalLanguage !== 'fre') {
-    criterias.push([{ language: 'fre', excludedEncodings: ['dts'] }, { language: 'fre' }])
+    criterias.push([{ excludedEncodings: ['dts'], language: 'fre' }, { language: 'fre' }])
   }
 
   for (const languageCriteria of criterias) {
@@ -93,12 +71,12 @@ export function cleanAudio(streams: StreamData[], originalLanguage: iso2, mediaN
   return { command, shouldExecute: audioStreams.length !== command.length }
 }
 
-export function cleanSubtitles(streams: StreamData[], mediaName: string) {
+export function cleanSubtitles(streams: StreamData[], mediaName: string, originalLanguage: iso2) {
   const command: string[] = []
 
   const criterias: Criteria[] = [
-    { language: 'eng', exclude: ['forced', 'sdh'] },
-    { language: 'eng', exclude: ['forced'] },
+    { exclude: ['forced', 'sdh'], language: 'eng' },
+    { exclude: ['forced'], language: 'eng' },
     { language: 'und' },
     { language: 'eng' },
   ]
@@ -106,6 +84,10 @@ export function cleanSubtitles(streams: StreamData[], mediaName: string) {
   const subtitleStreams = streams.filter(
     (stream) => stream.codec_type?.toLowerCase() === 'subtitle'
   )
+
+  if (originalLanguage === 'fre') {
+    return { command: [], shouldExecute: subtitleStreams.length > 0 }
+  }
 
   if (subtitleStreams.length === 0) {
     return { command: [], shouldExecute: false }
@@ -171,6 +153,40 @@ export function getFileStreams(file: string): Promise<StreamData[]> {
   })
 }
 
+export async function transcodeFile(file: string, originalLanguage: iso2, mediaName: string) {
+  const streams = await getFileStreams(file)
+
+  const videoSettings = cleanVideo(streams, mediaName)
+  const audioSettings = cleanAudio(streams, originalLanguage, mediaName)
+
+  const subtitleSettings = cleanSubtitles(streams, mediaName, originalLanguage)
+
+  const [fileName, extension] = [
+    file.slice(0, file.lastIndexOf('.')).split('/').pop(),
+    file.split('.').pop(),
+  ]
+
+  if (
+    videoSettings.shouldExecute ||
+    audioSettings.shouldExecute ||
+    subtitleSettings.shouldExecute
+  ) {
+    await executeFfmpeg(
+      file,
+      ['-c copy', ...videoSettings.command, ...audioSettings.command, ...subtitleSettings.command],
+      mediaName,
+      fileName
+    )
+    return true
+  }
+  if (extension !== 'mkv') {
+    logger.warn(`[${mediaName}] Transcoding to mkv`)
+    await executeFfmpeg(file, ['-c copy'], mediaName, fileName)
+    return true
+  }
+  return false
+}
+
 async function executeFfmpeg(
   file: string,
   command: string[],
@@ -214,17 +230,6 @@ async function executeFfmpeg(
 
   unlinkSync(`${config.transcodeCachePath}/${newFileName}`)
 }
-
-type Criteria =
-  | {
-      language: iso2
-      exclude?: string[]
-      excludedEncodings?: string[]
-    }
-  | {
-      language: 'und'
-      excludedEncodings?: string[]
-    }
 
 function respectCriteria(criteria: Criteria) {
   return (stream: StreamData) => {

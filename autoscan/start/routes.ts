@@ -1,8 +1,7 @@
-import HyperExpress from 'hyper-express'
-
 import { radarrController } from '#controllers/radarr_controller'
 import { sonarrController } from '#controllers/sonarr_controller'
 import { transcodeController } from '#controllers/transcode_controller'
+import HyperExpress from 'hyper-express'
 
 const webserver = new HyperExpress.Server()
 

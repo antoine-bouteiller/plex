@@ -7,7 +7,7 @@ export const logger = pino(
   isTestEnv
     ? { level: 'silent' }
     : pretty({
-        destination: process.stderr,
         colorize: true,
+        destination: process.stderr,
       })
 )

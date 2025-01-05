@@ -1,28 +1,28 @@
-export interface PlexMediaStream {
-  title?: string
-  selected: boolean
-  id: number
-  streamType: number
-  languageCode: string
-}
-
 export interface PlexMedia {
+  grandparentTitle?: string
+  key: string
   librarySectionID: number
   Media: {
     Part: {
-      id: number
       file: string
+      id: number
       Stream: PlexMediaStream[]
     }[]
   }[]
-  key: string
-  title: string
-  ratingKey: string
-  type: 'episode' | 'movie'
-  grandparentTitle?: string
   parentTitle?: string
   primaryExtraKey: string
+  ratingKey: string
+  title: string
+  type: 'episode' | 'movie'
   year: number
+}
+
+export interface PlexMediaStream {
+  id: number
+  languageCode: string
+  selected: boolean
+  streamType: number
+  title?: string
 }
 
 export interface PlexReponse {

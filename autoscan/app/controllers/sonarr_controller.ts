@@ -1,12 +1,11 @@
-import { join } from 'node:path'
-
+import type { SonarrRequest } from '#types/sonarr'
 import type { Request, Response } from 'hyper-express'
 
 import { handleError } from '#exceptions/handler'
 import { getLanguage } from '#services/language_service'
 import { getSections, refreshSection } from '#services/plex_service'
 import { transcodeFile } from '#services/transcode_service'
-import type { SonarrRequest } from '#types/sonarr'
+import { join } from 'node:path'
 
 export const sonarrController = async (request: Request, response: Response) => {
   const body: SonarrRequest = await request.json()
