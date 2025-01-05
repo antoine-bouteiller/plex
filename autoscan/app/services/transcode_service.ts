@@ -58,7 +58,7 @@ export function cleanAudio(streams: StreamData[], originalLanguage: iso2, mediaN
     }
 
     if (stream.tags?.language === undefined || stream.tags.language.toLowerCase() === 'und') {
-      command.push(`-metadata:s:a:${audioStreamToKeep} language=eng`)
+      command.push(`-metadata:s:a:${audioStreamToKeep} language=${originalLanguage}`)
     }
   }
   if (command.length === 0) {

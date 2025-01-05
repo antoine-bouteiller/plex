@@ -6,10 +6,15 @@ import { videosPath } from 'tests/config.js'
 test.group('Clean audio', () => {
   test('should tag audio stream with language if language is undefined', async ({ assert }) => {
     const streams = await getFileStreams(join(videosPath, 'test_audio_tag.mkv'))
-    const audioArgs = cleanAudio(streams, 'eng', 'test').command
+    const audioArgsEng = cleanAudio(streams, 'eng', 'test').command
 
-    assert.equal(audioArgs.length, 2)
-    assert.equal(audioArgs[1], '-metadata:s:a:0 language=eng')
+    assert.equal(audioArgsEng.length, 2)
+    assert.equal(audioArgsEng[1], '-metadata:s:a:0 language=eng')
+
+    const audioArgsFre = cleanAudio(streams, 'fre', 'test').command
+
+    assert.equal(audioArgsFre.length, 2)
+    assert.equal(audioArgsFre[1], '-metadata:s:a:0 language=fre')
   })
 
   test('should convert dts to aac', async ({ assert }) => {
