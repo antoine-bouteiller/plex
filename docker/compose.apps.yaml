@@ -30,8 +30,12 @@ services:
     extends:
       file: compose.common.yaml
       service: common
+    environment:
+      - PLEX_URL=${PLEX_URL}
+      - PLEX_TOKEN=${PLEX_TOKEN}
     volumes:
       - ${APP_PATH}/tautulli/:/config
+      - ../scripts/:/scripts
   homer:
     image: b4bz/homer
     container_name: homer
