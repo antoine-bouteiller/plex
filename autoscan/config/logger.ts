@@ -9,5 +9,6 @@ export const logger = pino(
     : pretty({
         colorize: true,
         destination: process.stderr,
+        translateTime: 'SYS:standard',
       })
 )
