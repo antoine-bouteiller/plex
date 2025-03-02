@@ -44,3 +44,4 @@ services:
       - tautulli
       - qbittorrent
       - plex
+      - grafana
