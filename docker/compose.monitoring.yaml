@@ -5,6 +5,35 @@ services:
     restart: unless-stopped
     volumes:
       - ../configs/loki.yml:/etc/loki/config.yaml
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ../config/prometheus.yaml/:/etc/prometheus/config.yaml
+      - prometheus_data:/prometheus
+    links:
+      - cadvisor
+      - node-exporter
+    restart: unless-stopped
+  node-exporter:
+    image: prom/node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    restart: unless-stopped
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    restart: unless-stopped
   grafana:
     image: grafana/grafana
     container_name: grafana
@@ -25,3 +54,5 @@ services:
       - GF_AUTH_GENERIC_OAUTH_GROUPS_ATTRIBUTE_PATH=groups
       - GF_AUTH_GENERIC_OAUTH_NAME_ATTRIBUTE_PATH=name
       - GF_AUTH_GENERIC_OAUTH_USE_PKCE=true
+    links:
+      - prometheus
