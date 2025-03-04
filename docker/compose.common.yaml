@@ -9,6 +9,7 @@ services:
         loki-batch-size: 400
         max-size: 10m
         max-file: 2
+        keep-file: "true"
     environment:
       - PUID=${PUID}
       - GUID=${GUID}
