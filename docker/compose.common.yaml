@@ -4,7 +4,7 @@ services:
     logging:
       driver: loki
       options:
-        loki-url: http://loki:3100/loki/api/v1/push
+        loki-url: http://host.docker.internal:3100/loki/api/v1/push
         loki-retries: 2
         loki-batch-size: 400
         max-size: 10m
@@ -13,7 +13,5 @@ services:
       - PUID=${PUID}
       - GUID=${GUID}
       - TZ=${TZ}
-    links:
-      - loki
     extra_hosts:
       - "host.docker.internal:host-gateway"

@@ -45,3 +45,4 @@ services:
       - qbittorrent
       - plex
       - grafana
+      - loki
