@@ -7,20 +7,23 @@ services:
     extends:
       file: ./compose.common.yaml
       service: common
-    ports:
-      - "3100:3100"
   prometheus:
     container_name: prometheus
     image: prom/prometheus:latest
+    extends:
+      file: compose.common.yaml
+      service: common
     volumes:
       - ../config/prometheus.yaml/:/etc/prometheus/config.yaml
     links:
       - cadvisor
       - node-exporter
-    restart: unless-stopped
   node-exporter:
     container_name: node-exporter
     image: prom/node-exporter
+    extends:
+      file: compose.common.yaml
+      service: common
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -30,16 +33,28 @@ services:
       - "--path.sysfs=/host/sys"
       - --collector.filesystem.ignored-mount-points
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
-    restart: unless-stopped
   cadvisor:
     container_name: cadvisor
     image: gcr.io/cadvisor/cadvisor
+    extends:
+      file: compose.common.yaml
+      service: common
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
-    restart: unless-stopped
+  promtail:
+    container_name: promtail
+    image: grafana/promtail:latest
+    extends:
+      file: compose.common.yaml
+      service: common
+    volumes:
+      - ../configs/promtail.yaml:/etc/promtail/config.yaml
+      - /var/lib/docker/containers:/var/lib/docker/containers
+    links:
+      - loki
   grafana:
     container_name: grafana
     image: grafana/grafana
@@ -47,14 +62,14 @@ services:
       file: compose.common.yaml
       service: common
     volumes:
-      - ../grafana/provisioning/:/etc/grafana/provisioning/
+      - ../grafana/:/etc/grafana/provisioning/
     environment:
       - GF_SERVER_ROOT_URL=https://grafana.${DOMAIN}
       - GF_AUTH_GENERIC_OAUTH_ENABLED=true
       - GF_AUTH_GENERIC_OAUTH_NAME=Authelia
       - GF_AUTH_GENERIC_OAUTH_CLIENT_ID=${GRAFANA_CLIENT_ID}
       - GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET=${GRAFANA_CLIENT_SECRET}
-      - GF_AUTH_GENERIC_OAUTH_SCOPES=openid profile email
+      - GF_AUTH_GENERIC_OAUTH_SCOPES="openid profile email"
       - GF_AUTH_GENERIC_OAUTH_AUTH_URL=https://auth.${DOMAIN}/api/authz/forward-auth
       - GF_AUTH_GENERIC_OAUTH_TOKEN_URL=https://auth.${DOMAIN}/api/authz/forward-auth/token
       - GF_AUTH_GENERIC_OAUTH_API_URL=https://auth.${DOMAIN}/api/authz/forward-auth/userinfo
@@ -64,3 +79,4 @@ services:
       - GF_AUTH_GENERIC_OAUTH_USE_PKCE=true
     links:
       - prometheus
+      - loki

@@ -8,13 +8,15 @@ import { copyFileSync, unlinkSync } from 'node:fs'
 type Criteria =
   | {
       exclude?: string[]
-      excludedEncodings?: string[]
       language: iso2
+      wantedEncodings?: string[]
     }
   | {
-      excludedEncodings?: string[]
       language: 'und'
+      wantedEncodings?: string[]
     }
+
+const wantedEncodings = ['aac', 'ac3']
 
 export function cleanAudio(streams: StreamData[], originalLanguage: iso2, mediaName: string) {
   const command: string[] = []
@@ -23,19 +25,19 @@ export function cleanAudio(streams: StreamData[], originalLanguage: iso2, mediaN
 
   const criterias: Criteria[][] = [
     [
-      { excludedEncodings: ['dts'], language: originalLanguage },
-      { excludedEncodings: ['dts'], language: 'und' },
+      { language: originalLanguage, wantedEncodings: wantedEncodings },
+      { language: 'und', wantedEncodings: wantedEncodings },
       { language: originalLanguage },
       { language: 'und' },
     ],
   ]
 
   if (originalLanguage !== 'eng' && originalLanguage !== 'fre') {
-    criterias.push([{ excludedEncodings: ['dts'], language: 'eng' }, { language: 'eng' }])
+    criterias.push([{ language: 'eng', wantedEncodings: wantedEncodings }, { language: 'eng' }])
   }
 
   if (originalLanguage !== 'fre') {
-    criterias.push([{ excludedEncodings: ['dts'], language: 'fre' }, { language: 'fre' }])
+    criterias.push([{ language: 'fre', wantedEncodings: wantedEncodings }, { language: 'fre' }])
   }
 
   for (const languageCriteria of criterias) {
@@ -50,10 +52,12 @@ export function cleanAudio(streams: StreamData[], originalLanguage: iso2, mediaN
     const stream = audioStreams[audioStreamToKeep]
     command.push(`-map 0:a:${audioStreamToKeep}`)
 
-    if (stream.codec_name?.toLowerCase() === 'dts') {
+    const codec = stream.codec_name?.toLowerCase()
+
+    if (!codec || !wantedEncodings.includes(codec)) {
       command.push(`-c:a:${audioStreamToKeep} aac`)
       logger.warn(
-        `[${mediaName}] ${languageCriteria[0].language} audio stream 0:a:${audioStreamToKeep} is dts, converting to aac.`
+        `[${mediaName}] ${languageCriteria[0].language} audio stream 0:a:${audioStreamToKeep} is ${codec}, converting to aac.`
       )
     }
 
@@ -193,42 +197,32 @@ async function executeFfmpeg(
   mediaName: string,
   fileName: string | undefined
 ) {
-  let prevProgress = -1
   const path = file.split('/')
   path.pop()
 
-  const newFileName = `${fileName?.replace('[DTS 5.1]', '[AC3 5.1]').replace('[DTS 2.0]', '[AAC 2.0]')}.mkv`
+  const newFileName = `${fileName?.replace(/\[.+? 5.1\]/g, '[AC3 5.1]').replace(/\[.+? 2.0\]/g, '[AAC 2.0]')}.mkv`
 
-  await new Promise((resolve, reject) =>
-    ffmpeg(file, { logger })
-      .outputOptions(command)
-      .on('progress', (progress) => {
-        const progressPercent = Math.round(progress.percent ?? 0)
-        if (progressPercent % 10 === 0 && progressPercent !== prevProgress) {
-          prevProgress = progressPercent
-          logger.info(
-            `[${mediaName}] [${'='.repeat(Math.floor(progressPercent / 10))}${'-'.repeat(
-              Math.max(10 - Math.floor(progressPercent / 10), 0)
-            )}] ${Math.floor(progressPercent)}%`
-          )
-        }
-      })
-      .on('error', (err) => {
-        logger.error(JSON.stringify(command))
-        logger.error(`${config.transcodeCachePath}/${newFileName}`)
-        reject(err)
-      })
-      .on('end', resolve)
-      .saveToFile(`${config.transcodeCachePath}/${newFileName}`)
-  )
+  logger.info(`[${mediaName}] Transcoding to ${newFileName}`)
 
-  copyFileSync(`${config.transcodeCachePath}/${newFileName}`, `${path.join('/')}/${newFileName}`)
+  // await new Promise((resolve, reject) =>
+  //   ffmpeg(file, { logger })
+  //     .outputOptions(command)
+  //     .on('error', (err) => {
+  //       logger.error(JSON.stringify(command))
+  //       logger.error(`${config.transcodeCachePath}/${newFileName}`)
+  //       reject(err)
+  //     })
+  //     .on('end', resolve)
+  //     .saveToFile(`${config.transcodeCachePath}/${newFileName}`)
+  // )
 
-  if (file !== `${path.join('/')}/${newFileName}`) {
-    unlinkSync(file)
-  }
+  // copyFileSync(`${config.transcodeCachePath}/${newFileName}`, `${path.join('/')}/${newFileName}`)
 
-  unlinkSync(`${config.transcodeCachePath}/${newFileName}`)
+  // if (file !== `${path.join('/')}/${newFileName}`) {
+  //   unlinkSync(file)
+  // }
+
+  // unlinkSync(`${config.transcodeCachePath}/${newFileName}`)
 }
 
 function respectCriteria(criteria: Criteria) {
@@ -240,9 +234,8 @@ function respectCriteria(criteria: Criteria) {
       stream.tags?.language?.toLowerCase() === criteria.language &&
       (!criteria.exclude?.length ||
         !criteria.exclude.some((term) => stream.tags?.title?.toLowerCase().includes(term))) &&
-      (!criteria.excludedEncodings?.length ||
-        (stream.codec_name &&
-          !criteria.excludedEncodings.includes(stream.codec_name.toLowerCase())))
+      (!criteria.wantedEncodings?.length ||
+        (stream.codec_name && criteria.wantedEncodings.includes(stream.codec_name.toLowerCase())))
     )
   }
 }

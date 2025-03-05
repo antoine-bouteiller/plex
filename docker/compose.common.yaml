@@ -2,14 +2,10 @@ services:
   common:
     restart: unless-stopped
     logging:
-      driver: loki
+      driver: json-file
       options:
-        loki-url: http://host.docker.internal:3100/loki/api/v1/push
-        loki-retries: 2
-        loki-batch-size: 400
         max-size: 10m
         max-file: 2
-        keep-file: "true"
     environment:
       - PUID=${PUID}
       - GUID=${GUID}
