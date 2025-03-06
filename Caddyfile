@@ -94,3 +94,10 @@ grafana.{$DOMAIN} {
 	
 	reverse_proxy grafana:3000
 }
+
+alloy.{$DOMAIN} {
+	import auth
+	
+	reverse_proxy alloy:12345
+}
+

@@ -48,4 +48,4 @@ services:
       - qbittorrent
       - plex
       - grafana
-      - loki
+      - alloy

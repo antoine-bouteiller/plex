@@ -2,11 +2,37 @@ services:
   loki:
     container_name: loki
     image: grafana/loki:latest
+    user: root
     volumes:
-      - ../configs/loki.yml:/etc/loki/config.yaml
+      - ../configs/loki.yaml:/etc/loki/loki.yaml
+      - ${APP_PATH}/loki:/data
+    command: -config.file=/etc/loki/loki.yaml
     extends:
       file: ./compose.common.yaml
       service: common
+  alloy:
+    container_name: alloy
+    image: grafana/alloy:latest
+    privileged: true
+    cap_add:
+      - SYS_TIME
+    extends:
+      file: compose.common.yaml
+      service: common
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /dev/disk/:/dev/disk:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /run/udev/data:/run/udev/data:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ../configs/config.alloy:/etc/alloy/config.alloy
+    command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
+    pid: host
+    links:
+      - prometheus
+      - loki
   prometheus:
     container_name: prometheus
     image: prom/prometheus:latest
@@ -14,47 +40,9 @@ services:
       file: compose.common.yaml
       service: common
     volumes:
-      - ../config/prometheus.yaml/:/etc/prometheus/config.yaml
-    links:
-      - cadvisor
-      - node-exporter
-  node-exporter:
-    container_name: node-exporter
-    image: prom/node-exporter
-    extends:
-      file: compose.common.yaml
-      service: common
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
+      - ../configs/prometheus.yaml:/prometheus/prometheus.yml
     command:
-      - "--path.procfs=/host/proc"
-      - "--path.sysfs=/host/sys"
-      - --collector.filesystem.ignored-mount-points
-      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
-  cadvisor:
-    container_name: cadvisor
-    image: gcr.io/cadvisor/cadvisor
-    extends:
-      file: compose.common.yaml
-      service: common
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:rw
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-  promtail:
-    container_name: promtail
-    image: grafana/promtail:latest
-    extends:
-      file: compose.common.yaml
-      service: common
-    volumes:
-      - ../configs/promtail.yaml:/etc/promtail/config.yaml
-      - /var/lib/docker/containers:/var/lib/docker/containers
-    links:
-      - loki
+      - --web.enable-remote-write-receiver
   grafana:
     container_name: grafana
     image: grafana/grafana
@@ -77,6 +65,7 @@ services:
       - GF_AUTH_GENERIC_OAUTH_GROUPS_ATTRIBUTE_PATH=groups
       - GF_AUTH_GENERIC_OAUTH_NAME_ATTRIBUTE_PATH=name
       - GF_AUTH_GENERIC_OAUTH_USE_PKCE=true
+      - GF_INSTALL_PLUGINS=https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/grafana-lokiexplore-app-latest.zip;grafana-lokiexplore-app
     links:
       - prometheus
       - loki

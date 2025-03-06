@@ -202,27 +202,27 @@ async function executeFfmpeg(
 
   const newFileName = `${fileName?.replace(/\[.+? 5.1\]/g, '[AC3 5.1]').replace(/\[.+? 2.0\]/g, '[AAC 2.0]')}.mkv`
 
-  logger.info(`[${mediaName}] Transcoding to ${newFileName}`)
+  logger.info(`[${mediaName}] Transcoding with command ${command.join(' ')}`)
 
-  // await new Promise((resolve, reject) =>
-  //   ffmpeg(file, { logger })
-  //     .outputOptions(command)
-  //     .on('error', (err) => {
-  //       logger.error(JSON.stringify(command))
-  //       logger.error(`${config.transcodeCachePath}/${newFileName}`)
-  //       reject(err)
-  //     })
-  //     .on('end', resolve)
-  //     .saveToFile(`${config.transcodeCachePath}/${newFileName}`)
-  // )
+  await new Promise((resolve, reject) =>
+    ffmpeg(file, { logger })
+      .outputOptions(command)
+      .on('error', (err) => {
+        logger.error(JSON.stringify(command))
+        logger.error(`${config.transcodeCachePath}/${newFileName}`)
+        reject(err)
+      })
+      .on('end', resolve)
+      .saveToFile(`${config.transcodeCachePath}/${newFileName}`)
+  )
 
-  // copyFileSync(`${config.transcodeCachePath}/${newFileName}`, `${path.join('/')}/${newFileName}`)
+  copyFileSync(`${config.transcodeCachePath}/${newFileName}`, `${path.join('/')}/${newFileName}`)
 
-  // if (file !== `${path.join('/')}/${newFileName}`) {
-  //   unlinkSync(file)
-  // }
+  if (file !== `${path.join('/')}/${newFileName}`) {
+    unlinkSync(file)
+  }
 
-  // unlinkSync(`${config.transcodeCachePath}/${newFileName}`)
+  unlinkSync(`${config.transcodeCachePath}/${newFileName}`)
 }
 
 function respectCriteria(criteria: Criteria) {

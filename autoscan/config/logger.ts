@@ -1,14 +1,19 @@
+import type { DestinationStream, LoggerOptions } from 'pino'
+
 import { pino } from 'pino'
-import pretty from 'pino-pretty'
 
-const isTestEnv = process.env.NODE_ENV === 'test'
-
-export const logger = pino(
-  isTestEnv
-    ? { level: 'silent' }
-    : pretty({
+const optionsMap: Record<string, DestinationStream | LoggerOptions> = {
+  development: {
+    transport: {
+      options: {
         colorize: true,
-        destination: process.stderr,
         translateTime: 'SYS:standard',
-      })
-)
+      },
+      target: 'pino-pretty',
+    },
+  },
+  production: {},
+  test: { level: 'silent' },
+}
+
+export const logger = pino(optionsMap[process.env.NODE_ENV ?? 'development'])

@@ -25,7 +25,7 @@ type Config = z.infer<typeof configSchema>
 
 const getConfigPath = () => {
   switch (process.env.NODE_ENV) {
-    case 'dev':
+    case 'development':
       return '../configs/autoscan.yaml'
     default:
       return '/autoscan/resources/autoscan.yaml'

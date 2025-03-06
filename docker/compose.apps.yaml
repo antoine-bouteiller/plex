@@ -39,7 +39,6 @@ services:
     image: b4bz/homer
     container_name: homer
     volumes:
-      - ../configs/homer.yaml:/www/assets/config.yml
       - ../homer:/www/assets
     extends:
       file: compose.common.yaml

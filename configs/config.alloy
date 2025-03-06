@@ -1,0 +1,72 @@
+// ###############################
+// #### Metrics Configuration ####
+// ###############################
+
+// Host Cadvisor on the Docker socket to expose container metrics.
+prometheus.exporter.cadvisor "docker" {
+  docker_host = "unix:///var/run/docker.sock"
+  store_container_labels = true
+  docker_only = true
+  enabled_metrics = ["cpu", "memory", "network"]
+}
+
+prometheus.scrape "cadvisor" {
+  targets    = prometheus.exporter.cadvisor.docker.targets
+  forward_to = [prometheus.remote_write.prometheus.receiver]
+}
+
+prometheus.exporter.unix "system" {
+    rootfs_path = "/rootfs"
+    procfs_path = "/rootfs/proc"
+    sysfs_path = "/rootfs/sys"
+    set_collectors = ["boottime", "cpu", "filesystem", "meminfo"]
+}
+
+prometheus.scrape "system" {
+  targets    = prometheus.exporter.unix.system.targets
+  forward_to = [prometheus.remote_write.prometheus.receiver]
+}
+
+// Configure a prometheus.remote_write component to send metrics to a Prometheus server.
+prometheus.remote_write "prometheus" {
+  endpoint {
+    url = "http://prometheus:9090/api/v1/write"
+  }
+}
+
+// ###############################
+// #### Logging Configuration ####
+// ###############################
+
+// Discover Docker containers and extract metadata.
+discovery.docker "linux" {
+  host = "unix:///var/run/docker.sock"
+}
+
+// Define a relabeling rule to create a service name from the container name.
+discovery.relabel "logs_integrations_docker" {
+      targets = []
+  
+      rule {
+          source_labels = ["__meta_docker_container_name"]
+          regex = "/(.*)"
+          target_label = "service_name"
+      }
+
+  }
+
+
+// Configure a loki.source.docker component to collect logs from Docker containers.
+loki.source.docker "default" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.docker.linux.targets
+  labels     = {"platform" = "docker"}
+  relabel_rules = discovery.relabel.logs_integrations_docker.rules
+  forward_to = [loki.write.local.receiver]
+}
+
+loki.write "local" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

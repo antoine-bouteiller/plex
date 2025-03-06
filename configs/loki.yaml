@@ -9,11 +9,22 @@ common:
     kvstore:
       store: inmemory
   replication_factor: 1
-  path_prefix: /tmp/loki
+  path_prefix: /data
+
+compactor:
+  working_directory: /data/retention
+  compaction_interval: 10m
+  retention_enabled: true
+  retention_delete_delay: 2h
+  retention_delete_worker_count: 150
+  delete_request_store: filesystem
+
+limits_config:
+  retention_period: 168h
 
 schema_config:
   configs:
-    - from: 2020-05-15
+    - from: 2025-01-01
       store: tsdb
       object_store: filesystem
       schema: v13
@@ -23,4 +34,4 @@ schema_config:
 
 storage_config:
   filesystem:
-    directory: /tmp/loki/chunks
+    directory: /data/chunks
