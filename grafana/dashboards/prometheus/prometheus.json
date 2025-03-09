@@ -1158,7 +1158,7 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "expr": "sum by(id, name) (rate(container_cpu_usage_seconds_total{image!=\"\"}[2m])) / on() group_left() sum(machine_cpu_cores)",
+          "expr": "topk(5, sum by(id, name) (rate(container_cpu_usage_seconds_total{image!=\"\"}[2m])) / on() group_left() sum(machine_cpu_cores))",
           "format": "time_series",
           "interval": "10s",
           "intervalFactor": 1,
@@ -1263,7 +1263,7 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "expr": "container_memory_working_set_bytes{image!=\"\"}",
+          "expr": "topk(10, container_memory_working_set_bytes{image!=\"\"})",
           "format": "time_series",
           "interval": "10s",
           "intervalFactor": 1,
@@ -1368,7 +1368,7 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "expr": "sort_desc(sum by (name) (rate(container_network_receive_bytes_total{image!=\"\"}[2m] ) ))",
+          "expr": "topk(5, sort_desc(sum by (name) (rate(container_network_receive_bytes_total{image!=\"\"}[2m] ) )))",
           "interval": "10s",
           "intervalFactor": 1,
           "legendFormat": "{{ name }}",
@@ -1472,7 +1472,7 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "expr": "sort_desc(sum by (name) (rate(container_network_transmit_bytes_total{image!=\"\"}[2m] ) ))",
+          "expr": "topk(5, sort_desc(sum by (name) (rate(container_network_transmit_bytes_total{image!=\"\"}[2m] ) )))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{ name }}",

@@ -48,59 +48,63 @@ services:
       - name: "Sonarr"
         type: "Sonarr"
         apikey: c95034dea8e54e349b025bd34bd8f853
-        logo: assets/tools/sonarr.svg
+        logo: assets/logos/sonarr.svg
         url: https://sonarr.antoinebouteiller.duckdns.org
         target: "_blank"
       - name: "Radarr"
         type: "Radarr"
         apikey: 2b89e613730e4685b838498435a7486d
-        logo: assets/tools/radarr.svg
+        logo: assets/logos/radarr.svg
         url: https://radarr.antoinebouteiller.duckdns.org
         target: "_blank"
       - name: "Prowlarr"
         type: "Prowlarr"
         apikey: 60f8b32a7c6d471d9837701d20e3ac42
-        logo: assets/tools/prowlarr.svg
+        logo: assets/logos/prowlarr.svg
         url: https://prowlarr.antoinebouteiller.duckdns.org
         target: "_blank"
       - name: "qBittorrent"
         type: "qBittorrent"
-        logo: assets/tools/qbittorrent.svg
+        logo: assets/logos/qbittorrent.svg
         url: https://qbittorrent.antoinebouteiller.duckdns.org
         target: "_blank"
       - name: "DuckDns"
-        logo: assets/tools/duckdns.png
+        logo: assets/logos/duckdns.png
         url: https://www.duckdns.org
         target: "_blank"
       - name: "Bazarr"
-        logo: assets/tools/bazarr.svg
+        logo: assets/logos/bazarr.svg
         url: https://bazarr.antoinebouteiller.duckdns.org
         target: "_blank"
   - name: "Applications"
     icon: "fas fa-microchip"
     items:
       - name: "Plex"
-        logo: assets/tools/plex.svg
+        logo: assets/logos/plex.svg
         url: https://plex.antoinebouteiller.duckdns.org
         target: "_blank"
       - name: "Overseerr"
-        logo: assets/tools/overseerr.svg
+        logo: assets/logos/overseerr.svg
         url: https://antoinebouteiller.duckdns.org
         target: "_blank"
   - name: "Monitoring"
     icon: "fas fa-microchip"
     items:
       - name: "Trakt"
-        logo: assets/tools/trakt.svg
+        logo: assets/logos/trakt.svg
         url: https://trakt.tv
         target: "_blank"
       - name: "Tautulli"
         type: "Tautulli"
         apikey: 2c4bf6057dbf4a18869c950a286fd260
-        logo: assets/tools/tautulli.svg
+        logo: assets/logos/tautulli.svg
         url: https://tautulli.antoinebouteiller.duckdns.org
         target: "_blank"
       - name: "Fan Controller"
-        logo: assets/tools/coolercontrol.svg
+        logo: assets/logos/coolercontrol.svg
         url: https://fancontroller.antoinebouteiller.duckdns.org
+        target: "_blank"
+      - name: "Grafana"
+        logo: assets/logos/grafana.svg
+        url: https://grafana.antoinebouteiller.duckdns.org
         target: "_blank"
