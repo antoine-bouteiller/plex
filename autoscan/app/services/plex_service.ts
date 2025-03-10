@@ -11,6 +11,8 @@ export async function getMediaDetails(plexMedia: PlexMedia) {
 
   const file = plexMedia.Media[0].Part[0].file
 
+  const details = await sendPlexGetRequest(`${config.plex.url}/${plexMedia.key}`)
+
   const tmdbId = Number(/{tmdb-(.*?)}/g.exec(file)?.[1])
 
   if (!tmdbId) {
@@ -23,8 +25,8 @@ export async function getMediaDetails(plexMedia: PlexMedia) {
     file,
     mediaTitle,
     originalLanguage,
-    partsId: plexMedia.Media[0].Part[0].id,
-    streams: plexMedia.Media[0].Part[0].Stream,
+    partsId: details.Metadata[0].Media[0].Part[0].id,
+    streams: details.Metadata[0].Media[0].Part[0].Stream,
     tmdbId,
   }
 }

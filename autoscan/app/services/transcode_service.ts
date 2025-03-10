@@ -200,7 +200,9 @@ async function executeFfmpeg(
   const path = file.split('/')
   path.pop()
 
-  const newFileName = `${fileName?.replace(/\[.+? 5.1\]/g, '[AC3 5.1]').replace(/\[.+? 2.0\]/g, '[AAC 2.0]')}.mkv`
+  // const newFileName = `${fileName?.replace(/\[.+? 5.1\]/g, '[AC3 5.1]').replace(/\[.+? 2.0\]/g, '[AAC 2.0]')}.mkv`
+
+  const newFileName = fileName
 
   logger.info(`[${mediaName}] Transcoding with command ${command.join(' ')}`)
 
