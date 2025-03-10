@@ -62,7 +62,118 @@ loki.source.docker "default" {
   targets    = discovery.docker.linux.targets
   labels     = {"platform" = "docker"}
   relabel_rules = discovery.relabel.logs_integrations_docker.rules
+  forward_to = [loki.process.autoscan.receiver]
+}
+
+loki.process "autoscan" {
   forward_to = [loki.write.local.receiver]
+
+  stage.docker {}
+
+  stage.drop {
+    expression = "^$"
+  }
+
+  stage.match {
+    selector = "{service_name=\"autoscan\"}"
+
+    stage.regex {
+      expression = "(?P<json_content>\\{.+\\})"
+    }
+
+    stage.labels {
+      values = {
+        json_content = "",
+      }
+    }
+
+    stage.match {
+      selector = "{json_content!~\".+\"}"
+
+      stage.static_labels {
+        values = {
+          json_reformat = "true",
+        }
+      }
+
+      stage.template {
+        source   = "new_output"
+        template = "{\"level\":{{if eq .stream \"stderr\"}}50{{else}}30{{end}},\"hostname\":\"{{.hostname}}\",\"name\":\"{{.name}}\",\"msg\":\"{{ .Entry }}\"}"
+      }
+
+      stage.output {
+        source = "new_output"
+      }
+    }
+
+    stage.label_drop {
+      values = ["json_content"]
+    }
+
+    stage.json {
+      expressions = {
+        level    = "",
+        time     = "",
+        pid      = "",
+        hostname = "",
+        name     = "",
+        scope    = "",
+        msg      = "",
+        err      = "",
+      }
+    }
+
+    stage.timestamp {
+      source = "time"
+      format = "UnixMs"
+    }
+
+    stage.replace {
+      expression = "^(1\\d)$"
+      source     = "level"
+      replace    = "trace"
+    }
+
+    stage.replace {
+      expression = "^(2\\d)$"
+      source     = "level"
+      replace    = "debug"
+    }
+
+    stage.replace {
+      expression = "^(3\\d)$"
+      source     = "level"
+      replace    = "info"
+    }
+
+    stage.replace {
+      expression = "^(4\\d)$"
+      source     = "level"
+      replace    = "warn"
+    }
+
+    stage.replace {
+      expression = "^(5\\d)$"
+      source     = "level"
+      replace    = "error"
+    }
+
+    stage.replace {
+      expression = "^(6\\d)$"
+      source     = "level"
+      replace    = "fatal"
+    }
+
+    stage.labels {
+      values = {
+        level    = "",
+        hostname = "",
+        name     = "",
+        scope    = "",
+        msg      = "",
+      }
+    }
+  }
 }
 
 loki.write "local" {
