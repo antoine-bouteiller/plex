@@ -16,7 +16,8 @@ type Criteria =
       wantedEncodings?: string[]
     }
 
-const wantedEncodings = ['aac', 'ac3']
+const wantedAudioEncodings = ['aac', 'ac3', 'eac3']
+const wantedSubtitleEncodings = ['subrip']
 
 export function cleanAudio(streams: StreamData[], originalLanguage: iso2, mediaName: string) {
   const command: string[] = []
@@ -25,19 +26,25 @@ export function cleanAudio(streams: StreamData[], originalLanguage: iso2, mediaN
 
   const criterias: Criteria[][] = [
     [
-      { language: originalLanguage, wantedEncodings: wantedEncodings },
-      { language: 'und', wantedEncodings: wantedEncodings },
+      { language: originalLanguage, wantedEncodings: wantedAudioEncodings },
+      { language: 'und', wantedEncodings: wantedAudioEncodings },
       { language: originalLanguage },
       { language: 'und' },
     ],
   ]
 
   if (originalLanguage !== 'eng' && originalLanguage !== 'fre') {
-    criterias.push([{ language: 'eng', wantedEncodings: wantedEncodings }, { language: 'eng' }])
+    criterias.push([
+      { language: 'eng', wantedEncodings: wantedAudioEncodings },
+      { language: 'eng' },
+    ])
   }
 
   if (originalLanguage !== 'fre') {
-    criterias.push([{ language: 'fre', wantedEncodings: wantedEncodings }, { language: 'fre' }])
+    criterias.push([
+      { language: 'fre', wantedEncodings: wantedAudioEncodings },
+      { language: 'fre' },
+    ])
   }
 
   for (const languageCriteria of criterias) {
@@ -54,7 +61,7 @@ export function cleanAudio(streams: StreamData[], originalLanguage: iso2, mediaN
 
     const codec = stream.codec_name?.toLowerCase()
 
-    if (!codec || !wantedEncodings.includes(codec)) {
+    if (!codec || !wantedAudioEncodings.includes(codec)) {
       command.push(`-c:a:${audioStreamToKeep} aac`)
       logger.warn(
         `[${mediaName}] ${languageCriteria[0].language} audio stream 0:a:${audioStreamToKeep} is ${codec}, converting to aac.`
@@ -79,15 +86,16 @@ export function cleanSubtitles(streams: StreamData[], mediaName: string, origina
   const command: string[] = []
 
   const criterias: Criteria[] = [
-    { exclude: ['forced', 'sdh'], language: 'eng' },
-    { exclude: ['forced'], language: 'eng' },
-    { language: 'und' },
-    { language: 'eng' },
+    { exclude: ['forced', 'sdh'], language: 'eng', wantedEncodings: wantedSubtitleEncodings },
+    { exclude: ['forced'], language: 'eng', wantedEncodings: wantedSubtitleEncodings },
+    { language: 'und', wantedEncodings: wantedSubtitleEncodings },
   ]
 
   const subtitleStreams = streams.filter(
     (stream) => stream.codec_type?.toLowerCase() === 'subtitle'
   )
+
+  console.log('subtitleStreams', subtitleStreams)
 
   if (originalLanguage === 'fre') {
     return { command: [], shouldExecute: subtitleStreams.length > 0 }
@@ -183,8 +191,8 @@ export async function transcodeFile(file: string, originalLanguage: iso2, mediaN
     )
     return true
   }
-  if (extension !== 'mkv') {
-    logger.warn(`[${mediaName}] Transcoding to mkv`)
+  if (extension !== 'mp4') {
+    logger.warn(`[${mediaName}] Transcoding to mp4`)
     await executeFfmpeg(file, ['-c copy'], mediaName, fileName)
     return true
   }
@@ -200,9 +208,7 @@ async function executeFfmpeg(
   const path = file.split('/')
   path.pop()
 
-  // const newFileName = `${fileName?.replace(/\[.+? 5.1\]/g, '[AC3 5.1]').replace(/\[.+? 2.0\]/g, '[AAC 2.0]')}.mkv`
-
-  const newFileName = fileName
+  const newFileName = `${fileName}.mp4`
 
   logger.info(`[${mediaName}] Transcoding with command ${command.join(' ')}`)
 
