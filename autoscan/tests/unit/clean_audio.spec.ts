@@ -1,43 +1,82 @@
-import { cleanAudio, getFileStreams } from '#services/transcode_service'
+import { TranscodeService } from '#services/transcode_service'
+import { iso2 } from '#types/iso_codes'
 import { test } from '@japa/runner'
 import { join } from 'node:path'
 import { videosPath } from 'tests/config.js'
 
+type TestCase = {
+  title: string
+  file: string
+  language: iso2
+  expected: {
+    length: number
+    commandAt?: { index: number; value: string }[]
+  }
+}
+
+const dataset: TestCase[] = [
+  {
+    title: 'should tag audio stream with language if language is undefined - eng',
+    file: 'test_audio_tag.mkv',
+    language: 'eng',
+    expected: {
+      length: 3,
+      commandAt: [{ index: 2, value: '-metadata:s:a:0 language=eng' }],
+    },
+  },
+  {
+    title: 'should tag audio stream with language if language is undefined - fre',
+    file: 'test_audio_tag.mkv',
+    language: 'fre',
+    expected: {
+      length: 3,
+      commandAt: [{ index: 2, value: '-metadata:s:a:0 language=fre' }],
+    },
+  },
+  {
+    title: 'should convert dts to aac',
+    file: 'test_dts.mkv',
+    language: 'eng',
+    expected: {
+      length: 4,
+      commandAt: [{ index: 2, value: '-c:a:0 aac' }],
+    },
+  },
+  {
+    title: 'should keep aac over dts',
+    file: 'test_aac_dts.mkv',
+    language: 'eng',
+    expected: {
+      length: 2,
+      commandAt: [{ index: 1, value: '-map 0:a:0' }],
+    },
+  },
+  {
+    title: 'should keep fre, eng and original language',
+    file: 'test_fre_eng_original_language.mkv',
+    language: 'spa',
+    expected: {
+      length: 4,
+    },
+  },
+]
+
 test.group('Clean audio', () => {
-  test('should tag audio stream with language if language is undefined', async ({ assert }) => {
-    const streams = await getFileStreams(join(videosPath, 'test_audio_tag.mkv'))
-    const audioArgsEng = cleanAudio(streams, 'eng', 'test').command
+  test('{title}')
+    .with(dataset)
+    .run(async ({ assert }, { file, language, expected }) => {
+      const filePath = join(videosPath, file)
+      const transcodeService = new TranscodeService(filePath, 'test', language)
+      await transcodeService.init()
 
-    assert.equal(audioArgsEng.length, 2)
-    assert.equal(audioArgsEng[1], '-metadata:s:a:0 language=eng')
+      transcodeService.cleanAudio()
 
-    const audioArgsFre = cleanAudio(streams, 'fre', 'test').command
+      const command = transcodeService.command
 
-    assert.equal(audioArgsFre.length, 2)
-    assert.equal(audioArgsFre[1], '-metadata:s:a:0 language=fre')
-  })
+      assert.equal(command.length, expected.length)
 
-  test('should convert dts to aac', async ({ assert }) => {
-    const streams = await getFileStreams(join(videosPath, 'test_dts.mkv'))
-    const audioArgs = cleanAudio(streams, 'eng', 'test').command
-
-    assert.equal(audioArgs.length, 3)
-    assert.equal(audioArgs[1], '-c:a:0 aac')
-  })
-
-  test('should keep aac over dts', async ({ assert }) => {
-    const streams = await getFileStreams(join(videosPath, 'test_aac_dts.mkv'))
-    const audioArgs = cleanAudio(streams, 'eng', 'test').command
-
-    assert.equal(audioArgs.length, 1)
-
-    assert.equal(audioArgs[0], '-map 0:a:0')
-  })
-
-  test('should keep fre, eng and original language', async ({ assert }) => {
-    const streams = await getFileStreams(join(videosPath, 'test_fre_eng_original_language.mkv'))
-    const audioArgs = cleanAudio(streams, 'spa', 'test').command
-
-    assert.equal(audioArgs.length, 3)
-  })
+      expected.commandAt?.forEach(({ index, value }) => {
+        assert.equal(command[index], value)
+      })
+    })
 })

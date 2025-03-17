@@ -24,17 +24,6 @@ services:
     links:
       - sonarr
       - radarr
-  tautulli:
-    image: ghcr.io/tautulli/tautulli
-    container_name: tautulli
-    extends:
-      file: compose.common.yaml
-      service: common
-    environment:
-      - PLEX_URL=${PLEX_URL}
-      - PLEX_TOKEN=${PLEX_TOKEN}
-    volumes:
-      - ${APP_PATH}/tautulli/:/config
   homer:
     image: b4bz/homer
     container_name: homer

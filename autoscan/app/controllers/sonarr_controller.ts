@@ -4,7 +4,7 @@ import type { Request, Response } from 'hyper-express'
 import { handleError } from '#exceptions/handler'
 import { getLanguage } from '#services/language_service'
 import { getSections, refreshSection } from '#services/plex_service'
-import { transcodeFile } from '#services/transcode_service'
+import { TranscodeService } from '#services/transcode_service'
 import { join } from 'node:path'
 
 export const sonarrController = async (request: Request, response: Response) => {
@@ -23,7 +23,13 @@ export const sonarrController = async (request: Request, response: Response) => 
 
       const originalLanguage = await getLanguage(body.series.tmdbId, 'episode')
 
-      await transcodeFile(file, originalLanguage, `${body.series.title} ${body.episodes[0].title}`)
+      const transcodeService = new TranscodeService(
+        file,
+        `${body.series.title} ${body.episodes[0].title}`,
+        originalLanguage
+      )
+
+      await transcodeService.transcodeFile()
     }
 
     const sections = await getSections()

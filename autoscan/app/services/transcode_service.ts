@@ -1,9 +1,12 @@
 import type { iso2 } from '#types/iso_codes'
+import type { PlexMedia } from '#types/plex'
 import type { StreamData } from '#types/transcode'
 
 import ffmpeg from '#config/ffmpeg'
 import { logger } from '#config/logger'
+import { getMediaDetails, refreshSection } from '#services/plex_service'
 import { copyFileSync, unlinkSync } from 'node:fs'
+import { resolve } from 'node:path'
 
 type Criteria =
   | {
@@ -17,134 +20,197 @@ type Criteria =
     }
 
 const wantedAudioEncodings = ['aac', 'ac3', 'eac3']
-const wantedSubtitleEncodings = ['subrip']
+const wantedSubtitleEncodings = ['subrip', 'ass']
 
-export function cleanAudio(streams: StreamData[], originalLanguage: iso2, mediaName: string) {
-  const command: string[] = []
+export class TranscodeService {
+  private audioStreams: StreamData[] = []
+  private subtitleStreams: StreamData[] = []
+  private videoStreams: StreamData[] = []
 
-  const audioStreams = streams.filter((stream) => stream.codec_type?.toLowerCase() === 'audio')
+  private file: string
+  private mediaTitle: string
+  private originalLanguage: iso2
+  private fileName: string | undefined
+  private extension: string | undefined
 
-  const criterias: Criteria[][] = [
-    [
-      { language: originalLanguage, wantedEncodings: wantedAudioEncodings },
-      { language: 'und', wantedEncodings: wantedAudioEncodings },
-      { language: originalLanguage },
-      { language: 'und' },
-    ],
-  ]
+  command: string[] = ['-c copy']
+  shouldExecute = false
 
-  if (originalLanguage !== 'eng' && originalLanguage !== 'fre') {
-    criterias.push([
-      { language: 'eng', wantedEncodings: wantedAudioEncodings },
-      { language: 'eng' },
+  constructor(file: string, mediaTitle: string, originalLanguage: iso2) {
+    this.file = file
+    this.mediaTitle = mediaTitle
+    this.originalLanguage = originalLanguage
+  }
+
+  async init() {
+    const streams = await getFileStreams(this.file)
+
+    this.videoStreams = streams.filter((stream) => stream.codec_type === 'video')
+    this.audioStreams = streams.filter((stream) => stream.codec_type === 'audio')
+    this.subtitleStreams = streams.filter((stream) => stream.codec_type === 'subtitle')
+
+    this.fileName = this.file.slice(0, this.file.lastIndexOf('.')).split('/').pop()
+    this.extension = this.file.split('.').pop()
+  }
+
+  async transcodeFile() {
+    await this.init()
+
+    this.cleanVideo()
+    this.cleanAudio()
+    await this.extractSubtitles()
+
+    if (this.shouldExecute || this.extension !== 'mp4') {
+      const newFileName = `${this.fileName}.mp4`
+      await executeFfmpeg(this.file, newFileName, this.command)
+      if (newFileName !== this.fileName) {
+        unlinkSync(this.file)
+      }
+      logger.info(`[${this.mediaTitle}] Transcoded with command: ${this.command.join(' ')}`)
+      return true
+    }
+    return false
+  }
+
+  cleanVideo() {
+    if (this.videoStreams.length === 0) {
+      return
+    }
+
+    let countVideoStreamToKeep = 0
+
+    this.videoStreams.forEach((stream, index) => {
+      if (
+        stream.codec_name?.toLowerCase() === 'mjpeg' ||
+        stream.codec_name?.toLowerCase() === 'png'
+      ) {
+        logger.warn(`[${this.mediaTitle}] Video stream 0:v:${index} is mjpeg or png, removing.`)
+      } else {
+        this.command.push(`-map 0:v:${index}`)
+        countVideoStreamToKeep++
+      }
+    })
+
+    if (countVideoStreamToKeep !== this.videoStreams.length) {
+      this.shouldExecute = true
+    }
+  }
+
+  cleanAudio() {
+    const criterias: Criteria[][] = [
+      [
+        { language: this.originalLanguage, wantedEncodings: wantedAudioEncodings },
+        { language: 'und', wantedEncodings: wantedAudioEncodings },
+        { language: this.originalLanguage },
+        { language: 'und' },
+      ],
+    ]
+
+    if (this.originalLanguage !== 'eng' && this.originalLanguage !== 'fre') {
+      criterias.push([
+        { language: 'eng', wantedEncodings: wantedAudioEncodings },
+        { language: 'eng' },
+      ])
+    }
+
+    if (this.originalLanguage !== 'fre') {
+      criterias.push([
+        { language: 'fre', wantedEncodings: wantedAudioEncodings },
+        { language: 'fre' },
+      ])
+    }
+
+    let countAudioStreamToKeep = 0
+
+    for (const languageCriteria of criterias) {
+      let audioStreamToKeep = -1
+      for (const condition of languageCriteria) {
+        audioStreamToKeep = this.audioStreams.findIndex(isStreamWanted(condition))
+        if (audioStreamToKeep !== -1) break
+      }
+
+      if (audioStreamToKeep === -1) continue
+
+      const stream = this.audioStreams[audioStreamToKeep]
+      this.command.push(`-map 0:a:${audioStreamToKeep}`)
+      countAudioStreamToKeep++
+
+      const codec = stream.codec_name?.toLowerCase()
+
+      if (!codec || !wantedAudioEncodings.includes(codec)) {
+        this.command.push(`-c:a:${audioStreamToKeep} aac`)
+
+        logger.warn(
+          `[${this.mediaTitle}] ${languageCriteria[0].language} audio stream 0:a:${audioStreamToKeep} is ${codec}, converting to aac.`
+        )
+      }
+
+      if (stream.tags?.language === undefined || stream.tags.language.toLowerCase() === 'und') {
+        this.command.push(`-metadata:s:a:${audioStreamToKeep} language=${this.originalLanguage}`)
+      }
+    }
+
+    if (countAudioStreamToKeep !== this.audioStreams.length) {
+      this.shouldExecute = true
+    }
+
+    return
+  }
+
+  async extractSubtitles() {
+    const criterias: Criteria[] = [
+      { exclude: ['forced', 'sdh'], language: 'eng', wantedEncodings: wantedSubtitleEncodings },
+      { exclude: ['forced'], language: 'eng', wantedEncodings: wantedSubtitleEncodings },
+      { language: 'und', wantedEncodings: wantedSubtitleEncodings },
+    ]
+
+    if (this.originalLanguage === 'fre' || this.subtitleStreams.length === 0) {
+      return
+    }
+
+    if (this.subtitleStreams.length > 0) {
+      this.shouldExecute = true
+    }
+
+    let subtitleStreamToKeep = -1
+    for (const condition of criterias) {
+      subtitleStreamToKeep = this.subtitleStreams.findIndex(isStreamWanted(condition))
+      if (subtitleStreamToKeep !== -1) break
+    }
+
+    if (subtitleStreamToKeep === -1) {
+      return
+    }
+
+    const stream = this.subtitleStreams[subtitleStreamToKeep]
+
+    const language = stream.tags?.language?.toLowerCase() ?? 'eng'
+
+    await executeFfmpeg(this.file, `${this.fileName}.${language}.srt`, [
+      `-map 0:s:${subtitleStreamToKeep}`,
+      `-c:s:${subtitleStreamToKeep} srt`,
     ])
+
+    logger.info(`[${this.fileName}] Subtitle extracted`)
   }
-
-  if (originalLanguage !== 'fre') {
-    criterias.push([
-      { language: 'fre', wantedEncodings: wantedAudioEncodings },
-      { language: 'fre' },
-    ])
-  }
-
-  for (const languageCriteria of criterias) {
-    let audioStreamToKeep = -1
-    for (const condition of languageCriteria) {
-      audioStreamToKeep = audioStreams.findIndex(respectCriteria(condition))
-      if (audioStreamToKeep !== -1) break
-    }
-
-    if (audioStreamToKeep === -1) continue
-
-    const stream = audioStreams[audioStreamToKeep]
-    command.push(`-map 0:a:${audioStreamToKeep}`)
-
-    const codec = stream.codec_name?.toLowerCase()
-
-    if (!codec || !wantedAudioEncodings.includes(codec)) {
-      command.push(`-c:a:${audioStreamToKeep} aac`)
-      logger.warn(
-        `[${mediaName}] ${languageCriteria[0].language} audio stream 0:a:${audioStreamToKeep} is ${codec}, converting to aac.`
-      )
-    }
-
-    if (stream.tags?.language === undefined || stream.tags.language.toLowerCase() === 'und') {
-      command.push(`-metadata:s:a:${audioStreamToKeep} language=${originalLanguage}`)
-    }
-  }
-  if (command.length === 0) {
-    logger.warn(
-      `[${mediaName}] No audio stream respection language criteria, keeping all audio streams.`
-    )
-    return { command: ['-map 0:a'], shouldExecute: false }
-  }
-
-  return { command, shouldExecute: audioStreams.length !== command.length }
 }
 
-export function cleanSubtitles(streams: StreamData[], mediaName: string, originalLanguage: iso2) {
-  const command: string[] = []
+async function executeFfmpeg(input: string, output: string, command: string[]) {
+  const path = input.split('/')
+  path.pop()
 
-  const criterias: Criteria[] = [
-    { exclude: ['forced', 'sdh'], language: 'eng', wantedEncodings: wantedSubtitleEncodings },
-    { exclude: ['forced'], language: 'eng', wantedEncodings: wantedSubtitleEncodings },
-    { language: 'und', wantedEncodings: wantedSubtitleEncodings },
-  ]
-
-  const subtitleStreams = streams.filter(
-    (stream) => stream.codec_type?.toLowerCase() === 'subtitle'
+  await new Promise((resolve, reject) =>
+    ffmpeg(input, { logger })
+      .outputOptions(command)
+      .on('error', (err) => {
+        reject(err)
+      })
+      .on('end', resolve)
+      .saveToFile(`${config.transcodeCachePath}/${output}`)
   )
 
-  console.log('subtitleStreams', subtitleStreams)
-
-  if (originalLanguage === 'fre') {
-    return { command: [], shouldExecute: subtitleStreams.length > 0 }
-  }
-
-  if (subtitleStreams.length === 0) {
-    return { command: [], shouldExecute: false }
-  }
-
-  let subtitleStreamToKeep = -1
-  for (const condition of criterias) {
-    subtitleStreamToKeep = subtitleStreams.findIndex(respectCriteria(condition))
-    if (subtitleStreamToKeep !== -1) break
-  }
-
-  if (subtitleStreamToKeep === -1) {
-    logger.warn(`[${mediaName}] No subtitle stream to keep, removing all subtitles.`)
-    return { command: [], shouldExecute: false }
-  }
-
-  const stream = subtitleStreams[subtitleStreamToKeep]
-
-  command.push(`-map 0:s:${subtitleStreamToKeep}`)
-
-  if (stream.tags?.language === undefined || stream.tags.language.toLowerCase() === 'und') {
-    command.push(`-metadata:s:s:${subtitleStreamToKeep} language=eng`)
-  }
-  return { command, shouldExecute: subtitleStreams.length !== command.length }
-}
-
-export function cleanVideo(streams: StreamData[], mediaName: string) {
-  const command: string[] = ['-map 0:v:0']
-
-  const videoStreams = streams.filter((stream) => stream.codec_type?.toLowerCase() === 'video')
-
-  if (videoStreams.length === 0) {
-    return { command: [], shouldExecute: false }
-  }
-
-  videoStreams.forEach((stream, index) => {
-    if (
-      stream.codec_name?.toLowerCase() === 'mjpeg' ||
-      stream.codec_name?.toLowerCase() === 'png'
-    ) {
-      logger.warn(`[${mediaName}] Video stream 0:v:${index} is mjpeg or png, removing.`)
-    }
-  })
-
-  return { command, shouldExecute: videoStreams.length !== command.length }
+  copyFileSync(`${config.transcodeCachePath}/${output}`, `${path.join('/')}/${output}`)
+  unlinkSync(`${config.transcodeCachePath}/${output}`)
 }
 
 export function getFileStreams(file: string): Promise<StreamData[]> {
@@ -165,75 +231,7 @@ export function getFileStreams(file: string): Promise<StreamData[]> {
   })
 }
 
-export async function transcodeFile(file: string, originalLanguage: iso2, mediaName: string) {
-  const streams = await getFileStreams(file)
-
-  const videoSettings = cleanVideo(streams, mediaName)
-  const audioSettings = cleanAudio(streams, originalLanguage, mediaName)
-
-  const subtitleSettings = cleanSubtitles(streams, mediaName, originalLanguage)
-
-  const [fileName, extension] = [
-    file.slice(0, file.lastIndexOf('.')).split('/').pop(),
-    file.split('.').pop(),
-  ]
-
-  if (
-    videoSettings.shouldExecute ||
-    audioSettings.shouldExecute ||
-    subtitleSettings.shouldExecute
-  ) {
-    await executeFfmpeg(
-      file,
-      ['-c copy', ...videoSettings.command, ...audioSettings.command, ...subtitleSettings.command],
-      mediaName,
-      fileName
-    )
-    return true
-  }
-  if (extension !== 'mp4') {
-    logger.warn(`[${mediaName}] Transcoding to mp4`)
-    await executeFfmpeg(file, ['-c copy'], mediaName, fileName)
-    return true
-  }
-  return false
-}
-
-async function executeFfmpeg(
-  file: string,
-  command: string[],
-  mediaName: string,
-  fileName: string | undefined
-) {
-  const path = file.split('/')
-  path.pop()
-
-  const newFileName = `${fileName}.mp4`
-
-  logger.info(`[${mediaName}] Transcoding with command ${command.join(' ')}`)
-
-  await new Promise((resolve, reject) =>
-    ffmpeg(file, { logger })
-      .outputOptions(command)
-      .on('error', (err) => {
-        logger.error(JSON.stringify(command))
-        logger.error(`${config.transcodeCachePath}/${newFileName}`)
-        reject(err)
-      })
-      .on('end', resolve)
-      .saveToFile(`${config.transcodeCachePath}/${newFileName}`)
-  )
-
-  copyFileSync(`${config.transcodeCachePath}/${newFileName}`, `${path.join('/')}/${newFileName}`)
-
-  if (file !== `${path.join('/')}/${newFileName}`) {
-    unlinkSync(file)
-  }
-
-  unlinkSync(`${config.transcodeCachePath}/${newFileName}`)
-}
-
-function respectCriteria(criteria: Criteria) {
+function isStreamWanted(criteria: Criteria) {
   return (stream: StreamData) => {
     if (criteria.language === 'und') {
       return stream.tags?.language === undefined || stream.tags.language.toLowerCase() === 'und'

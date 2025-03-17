@@ -4,7 +4,7 @@ import type { Request, Response } from 'hyper-express'
 import { handleError } from '#exceptions/handler'
 import { getLanguage } from '#services/language_service'
 import { getSections, refreshSection } from '#services/plex_service'
-import { transcodeFile } from '#services/transcode_service'
+import { TranscodeService } from '#services/transcode_service'
 import { join } from 'node:path'
 
 export const radarrController = async (request: Request, response: Response) => {
@@ -22,7 +22,9 @@ export const radarrController = async (request: Request, response: Response) => 
       const file = join(body.movie.folderPath, body.movieFile.relativePath)
       const originalLanguage = await getLanguage(body.movie.tmdbId, 'episode')
 
-      await transcodeFile(file, originalLanguage, body.movie.title)
+      const transcodeService = new TranscodeService(file, body.movie.title, originalLanguage)
+
+      await transcodeService.transcodeFile()
     }
     const sections = await getSections()
 

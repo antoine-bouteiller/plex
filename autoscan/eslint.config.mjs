@@ -47,11 +47,14 @@ export default tseslint.config(
         'error',
         {
           cases: {
-            kebabCase: true,
             snakeCase: true,
           },
         },
       ],
+
+      'perfectionist/sort-interfaces': ['error', sortRules],
+      'perfectionist/sort-objects': ['error', { ...sortRules, partitionByNewLine: true }],
+      'perfectionist/sort-class': ['error', { partitionByNewLine: true }],
     },
     languageOptions: {
       parserOptions: {

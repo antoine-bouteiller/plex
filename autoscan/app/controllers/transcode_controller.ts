@@ -6,7 +6,7 @@ import {
   getSections,
   refreshSection,
 } from '#services/plex_service'
-import { transcodeFile } from '#services/transcode_service'
+import { TranscodeService } from '#services/transcode_service'
 import { resolve } from 'node:path'
 
 export async function transcodeController() {
@@ -18,8 +18,10 @@ export async function transcodeController() {
     for (const media of medias) {
       const { file, mediaTitle, originalLanguage } = await getMediaDetails(media)
 
+      const transcodeService = new TranscodeService(file, mediaTitle, originalLanguage)
+
       const executedTranscode = await executeWithErrorHandler(() =>
-        transcodeFile(file, originalLanguage, mediaTitle)
+        transcodeService.transcodeFile()
       )
 
       if (executedTranscode) {

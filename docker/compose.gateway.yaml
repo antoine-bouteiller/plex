@@ -45,4 +45,3 @@ services:
       - qbittorrent
       - plex
       - grafana
-      - alloy
