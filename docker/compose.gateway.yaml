@@ -41,7 +41,6 @@ services:
       - homer
       - prowlarr
       - overseerr
-      - tautulli
       - qbittorrent
       - plex
       - grafana

@@ -1,10 +1,5 @@
 ---
-# Homepage configuration
-# See https://fontawesome.com/search for icons options
-
-# Optional: Use external configuration file.
-# Using this will ignore remaining config in this file
-# externalConfig: https://example.com/server-luci/config.yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bastienwirtz/homer/main/.schema/config-schema.json
 
 title: "Dashboard"
 subtitle: "Antoine Bouteiller"
@@ -27,19 +22,23 @@ links:
   - name: "Trash guide SQP"
     icon: "fas fa-trash"
     url: "https://trash-guides.info/SQP/"
-    target: "_blank" # optional html tag target attribute
+    target: "_blank"
   - name: "Github"
     icon: "fab fa-github"
     url: "https://github.com/AntoBouteiller"
-    target: "_blank" # optional html tag target attribute
+    target: "_blank"
   - name: "The Poster DB"
     icon: "fas fa-database"
     url: "https://theposterdb.com/"
-    target: "_blank" # optional html tag target attribute
+    target: "_blank"
   - name: "Piracy Megathread"
     icon: "fab fa-reddit"
     url: "https://www.reddit.com/r/Piracy/wiki/megathread/"
-    target: "_blank" # optional html tag target attribute
+    target: "_blank"
+  - name: "DuckDns"
+    icon: assets/logos/duckdns.png
+    url: https://www.duckdns.org
+    target: "_blank"
 
 services:
   - name: "Serveur"
@@ -68,10 +67,6 @@ services:
         logo: assets/logos/qbittorrent.svg
         url: https://qbittorrent.antoinebouteiller.duckdns.org
         target: "_blank"
-      - name: "DuckDns"
-        logo: assets/logos/duckdns.png
-        url: https://www.duckdns.org
-        target: "_blank"
       - name: "Bazarr"
         logo: assets/logos/bazarr.svg
         url: https://bazarr.antoinebouteiller.duckdns.org
@@ -90,16 +85,6 @@ services:
   - name: "Monitoring"
     icon: "fas fa-microchip"
     items:
-      - name: "Trakt"
-        logo: assets/logos/trakt.svg
-        url: https://trakt.tv
-        target: "_blank"
-      - name: "Tautulli"
-        type: "Tautulli"
-        apikey: 2c4bf6057dbf4a18869c950a286fd260
-        logo: assets/logos/tautulli.svg
-        url: https://tautulli.antoinebouteiller.duckdns.org
-        target: "_blank"
       - name: "Fan Controller"
         logo: assets/logos/coolercontrol.svg
         url: https://fancontroller.antoinebouteiller.duckdns.org
