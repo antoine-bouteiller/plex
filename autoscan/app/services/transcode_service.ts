@@ -23,24 +23,21 @@ const wantedAudioEncodings = ['aac', 'ac3', 'eac3']
 const wantedSubtitleEncodings = ['subrip', 'ass']
 
 export class TranscodeService {
-  private audioStreams: StreamData[] = []
-  private subtitleStreams: StreamData[] = []
-  private videoStreams: StreamData[] = []
+  declare audioStreams: StreamData[]
+  declare subtitleStreams: StreamData[]
+  declare videoStreams: StreamData[]
 
-  private file: string
-  private mediaTitle: string
-  private originalLanguage: iso2
-  private fileName: string | undefined
-  private extension: string | undefined
+  declare fileName: string | undefined
+  declare extension: string | undefined
 
   command: string[] = ['-c copy']
   shouldExecute = false
 
-  constructor(file: string, mediaTitle: string, originalLanguage: iso2) {
-    this.file = file
-    this.mediaTitle = mediaTitle
-    this.originalLanguage = originalLanguage
-  }
+  constructor(
+    private file: string,
+    private mediaTitle: string,
+    private originalLanguage: iso2
+  ) {}
 
   async init() {
     const streams = await getFileStreams(this.file)
