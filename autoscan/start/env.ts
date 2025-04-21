@@ -1,6 +1,7 @@
-import 'dotenv/config'
 import { handleError } from '#exceptions/handler'
+import 'dotenv/config'
 import { mkdirSync, readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { parse } from 'yaml'
 import { z } from 'zod'
 
@@ -26,7 +27,7 @@ type Config = z.infer<typeof configSchema>
 const getConfigPath = () => {
   switch (process.env.NODE_ENV) {
     case 'development':
-      return '../configs/autoscan.yaml'
+      return join(import.meta.dirname, '../autoscan.yaml')
     default:
       return '/autoscan/resources/autoscan.yaml'
   }

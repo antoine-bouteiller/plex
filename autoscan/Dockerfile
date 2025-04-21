@@ -18,4 +18,4 @@ COPY --from=prod-deps /autoscan/node_modules /autoscan/node_modules
 COPY --from=build /autoscan/build /autoscan
 
 EXPOSE 6060
-CMD [ "sh", "-c", "pnpm dlx prisma migrate deploy && pnpm start" ]
+CMD [ "pnpm", "start" ]

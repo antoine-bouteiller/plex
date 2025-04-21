@@ -2,10 +2,30 @@ import { logger } from '#config/logger'
 import cron from '#start/cron'
 import { loadConfig } from '#start/env'
 import webserver from '#start/routes'
+import { exec } from 'node:child_process'
+import { promisify } from 'node:util'
+
+const execPromise = promisify(exec)
 
 loadConfig()
 
 cron.start()
+
+try {
+  try {
+    const { stdout } = await execPromise('npx prisma migrate status')
+
+    if (stdout.includes('The following migration(s) are pending')) {
+      await execPromise('npx prisma migrate deploy')
+    }
+  } catch {
+    logger.info('Error while checking migrations, deploying...')
+    await execPromise('npx prisma migrate deploy')
+  }
+} catch (error) {
+  logger.error('Error during migrations', error)
+  process.exit(1)
+}
 
 webserver
   .listen(3030)

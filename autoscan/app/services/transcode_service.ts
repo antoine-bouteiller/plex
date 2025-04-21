@@ -1,12 +1,9 @@
 import type { iso2 } from '#types/iso_codes'
-import type { PlexMedia } from '#types/plex'
 import type { StreamData } from '#types/transcode'
 
 import ffmpeg from '#config/ffmpeg'
 import { logger } from '#config/logger'
-import { getMediaDetails, refreshSection } from '#services/plex_service'
 import { copyFileSync, unlinkSync } from 'node:fs'
-import { resolve } from 'node:path'
 
 type Criteria =
   | {
@@ -23,75 +20,21 @@ const wantedAudioEncodings = ['aac', 'ac3', 'eac3']
 const wantedSubtitleEncodings = ['subrip', 'ass']
 
 export class TranscodeService {
-  declare audioStreams: StreamData[]
-  declare subtitleStreams: StreamData[]
-  declare videoStreams: StreamData[]
-
-  declare fileName: string | undefined
-  declare extension: string | undefined
-
   command: string[] = ['-c copy']
   shouldExecute = false
+
+  declare subtitleStreams: StreamData[]
+  declare videoStreams: StreamData[]
+  private audioStreams: StreamData[] = []
+
+  private extension: string | undefined
+  private fileName: string | undefined
 
   constructor(
     private file: string,
     private mediaTitle: string,
     private originalLanguage: iso2
   ) {}
-
-  async init() {
-    const streams = await getFileStreams(this.file)
-
-    this.videoStreams = streams.filter((stream) => stream.codec_type === 'video')
-    this.audioStreams = streams.filter((stream) => stream.codec_type === 'audio')
-    this.subtitleStreams = streams.filter((stream) => stream.codec_type === 'subtitle')
-
-    this.fileName = this.file.slice(0, this.file.lastIndexOf('.')).split('/').pop()
-    this.extension = this.file.split('.').pop()
-  }
-
-  async transcodeFile() {
-    await this.init()
-
-    this.cleanVideo()
-    this.cleanAudio()
-    await this.extractSubtitles()
-
-    if (this.shouldExecute || this.extension !== 'mp4') {
-      const newFileName = `${this.fileName}.mp4`
-      await executeFfmpeg(this.file, newFileName, this.command)
-      if (newFileName !== this.fileName) {
-        unlinkSync(this.file)
-      }
-      logger.info(`[${this.mediaTitle}] Transcoded with command: ${this.command.join(' ')}`)
-      return true
-    }
-    return false
-  }
-
-  cleanVideo() {
-    if (this.videoStreams.length === 0) {
-      return
-    }
-
-    let countVideoStreamToKeep = 0
-
-    this.videoStreams.forEach((stream, index) => {
-      if (
-        stream.codec_name?.toLowerCase() === 'mjpeg' ||
-        stream.codec_name?.toLowerCase() === 'png'
-      ) {
-        logger.warn(`[${this.mediaTitle}] Video stream 0:v:${index} is mjpeg or png, removing.`)
-      } else {
-        this.command.push(`-map 0:v:${index}`)
-        countVideoStreamToKeep++
-      }
-    })
-
-    if (countVideoStreamToKeep !== this.videoStreams.length) {
-      this.shouldExecute = true
-    }
-  }
 
   cleanAudio() {
     const criterias: Criteria[][] = [
@@ -154,6 +97,30 @@ export class TranscodeService {
     return
   }
 
+  cleanVideo() {
+    if (this.videoStreams.length === 0) {
+      return
+    }
+
+    let countVideoStreamToKeep = 0
+
+    this.videoStreams.forEach((stream, index) => {
+      if (
+        stream.codec_name?.toLowerCase() === 'mjpeg' ||
+        stream.codec_name?.toLowerCase() === 'png'
+      ) {
+        logger.warn(`[${this.mediaTitle}] Video stream 0:v:${index} is mjpeg or png, removing.`)
+      } else {
+        this.command.push(`-map 0:v:${index}`)
+        countVideoStreamToKeep++
+      }
+    })
+
+    if (countVideoStreamToKeep !== this.videoStreams.length) {
+      this.shouldExecute = true
+    }
+  }
+
   async extractSubtitles() {
     const criterias: Criteria[] = [
       { exclude: ['forced', 'sdh'], language: 'eng', wantedEncodings: wantedSubtitleEncodings },
@@ -190,24 +157,36 @@ export class TranscodeService {
 
     logger.info(`[${this.fileName}] Subtitle extracted`)
   }
-}
 
-async function executeFfmpeg(input: string, output: string, command: string[]) {
-  const path = input.split('/')
-  path.pop()
+  async init() {
+    const streams = await getFileStreams(this.file)
 
-  await new Promise((resolve, reject) =>
-    ffmpeg(input, { logger })
-      .outputOptions(command)
-      .on('error', (err) => {
-        reject(err)
-      })
-      .on('end', resolve)
-      .saveToFile(`${config.transcodeCachePath}/${output}`)
-  )
+    this.videoStreams = streams.filter((stream) => stream.codec_type === 'video')
+    this.audioStreams = streams.filter((stream) => stream.codec_type === 'audio')
+    this.subtitleStreams = streams.filter((stream) => stream.codec_type === 'subtitle')
 
-  copyFileSync(`${config.transcodeCachePath}/${output}`, `${path.join('/')}/${output}`)
-  unlinkSync(`${config.transcodeCachePath}/${output}`)
+    this.fileName = this.file.slice(0, this.file.lastIndexOf('.')).split('/').pop()
+    this.extension = this.file.split('.').pop()
+  }
+
+  async transcodeFile() {
+    await this.init()
+
+    this.cleanVideo()
+    this.cleanAudio()
+    await this.extractSubtitles()
+
+    if (this.shouldExecute || this.extension !== 'mp4') {
+      const newFileName = `${this.fileName}.mp4`
+      await executeFfmpeg(this.file, newFileName, this.command)
+      if (newFileName !== this.fileName) {
+        unlinkSync(this.file)
+      }
+      logger.info(`[${this.mediaTitle}] Transcoded with command: ${this.command.join(' ')}`)
+      return true
+    }
+    return false
+  }
 }
 
 export function getFileStreams(file: string): Promise<StreamData[]> {
@@ -226,6 +205,24 @@ export function getFileStreams(file: string): Promise<StreamData[]> {
       }
     })
   })
+}
+
+async function executeFfmpeg(input: string, output: string, command: string[]) {
+  const path = input.split('/')
+  path.pop()
+
+  await new Promise((resolve, reject) =>
+    ffmpeg(input, { logger })
+      .outputOptions(command)
+      .on('error', (err) => {
+        reject(err)
+      })
+      .on('end', resolve)
+      .saveToFile(`${config.transcodeCachePath}/${output}`)
+  )
+
+  copyFileSync(`${config.transcodeCachePath}/${output}`, `${path.join('/')}/${output}`)
+  unlinkSync(`${config.transcodeCachePath}/${output}`)
 }
 
 function isStreamWanted(criteria: Criteria) {

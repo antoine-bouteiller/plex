@@ -1,6 +1,5 @@
 import js from '@eslint/js'
 import prettierConfig from 'eslint-config-prettier'
-import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import perfectionist from 'eslint-plugin-perfectionist'
 import unicorn from 'eslint-plugin-unicorn'
 import tseslint from 'typescript-eslint'
@@ -52,9 +51,10 @@ export default tseslint.config(
         },
       ],
 
+      'no-console': 'error',
+
       'perfectionist/sort-interfaces': ['error', sortRules],
       'perfectionist/sort-objects': ['error', { ...sortRules, partitionByNewLine: true }],
-      'perfectionist/sort-class': ['error', { partitionByNewLine: true }],
     },
     languageOptions: {
       parserOptions: {

@@ -33,9 +33,9 @@ async function getMovieLanguageById(tmdbId: number): Promise<iso2> {
   const language = countryISOMapping[response.data.original_language]
   await prisma.media.create({
     data: {
+      tmdbId,
       originalLanguage: language,
       title: response.data.title,
-      tmdbId,
     },
   })
   return language
@@ -55,9 +55,9 @@ async function getSeriesLanguageById(tmdbId: number): Promise<iso2> {
   const language = countryISOMapping[response.data.original_language]
   await prisma.media.create({
     data: {
+      tmdbId,
       originalLanguage: language,
       title: response.data.name,
-      tmdbId,
     },
   })
   return language

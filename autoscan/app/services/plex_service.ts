@@ -22,12 +22,12 @@ export async function getMediaDetails(plexMedia: PlexMedia) {
   const originalLanguage = await getLanguage(tmdbId, plexMedia.type)
 
   return {
+    partsId: details.Metadata[0].Media[0].Part[0].id,
+    tmdbId,
     file,
     mediaTitle,
     originalLanguage,
-    partsId: details.Metadata[0].Media[0].Part[0].id,
     streams: details.Metadata[0].Media[0].Part[0].Stream,
-    tmdbId,
   }
 }
 

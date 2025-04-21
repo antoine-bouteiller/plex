@@ -35,6 +35,9 @@ importers:
       pino:
         specifier: ^9.6.0
         version: 9.6.0
+      prisma:
+        specifier: ^6.4.1
+        version: 6.4.1(typescript@5.8.2)
       yaml:
         specifier: ^2.7.0
         version: 2.7.0
@@ -84,9 +87,6 @@ importers:
       prettier:
         specifier: ^3.5.3
         version: 3.5.3
-      prisma:
-        specifier: ^6.4.1
-        version: 6.4.1(typescript@5.8.2)
       tsc-watch:
         specifier: ^6.2.1
         version: 6.2.1(typescript@5.8.2)
