@@ -2,6 +2,5 @@ include:
   - path: ./docker/compose.server.yaml
   - path: ./docker/compose.apps.yaml
   - path: ./docker/compose.scripts.yaml
-  - path: ./docker/compose.tools.yaml
   - path: ./docker/compose.gateway.yaml
   - path: ./docker/compose.monitoring.yaml
