@@ -3,7 +3,7 @@ import type { StreamData } from '#types/transcode'
 
 import ffmpeg from '#config/ffmpeg'
 import { logger } from '#config/logger'
-import { copyFileSync, mkdirSync, unlinkSync } from 'node:fs'
+import { copyFileSync, mkdirSync, rmSync, unlinkSync } from 'node:fs'
 
 type Criteria =
   | {
@@ -227,7 +227,7 @@ async function executeFfmpeg(input: string, output: string, command: string[]) {
   )
 
   copyFileSync(`${path.join('/')}/transcode/${output}`, `${path.join('/')}/${output}`)
-  unlinkSync(`${path.join('/')}/transcode/${output}`)
+  rmSync(`${path.join('/')}/transcode`, { recursive: true })
 }
 
 function isStreamWanted(criteria: Criteria) {
