@@ -3,7 +3,7 @@ import type { StreamData } from '#types/transcode'
 
 import ffmpeg from '#config/ffmpeg'
 import { logger } from '#config/logger'
-import { copyFileSync, unlinkSync } from 'node:fs'
+import { copyFileSync, mkdirSync, unlinkSync } from 'node:fs'
 
 type Criteria =
   | {
@@ -107,9 +107,12 @@ export class TranscodeService {
     this.videoStreams.forEach((stream, index) => {
       if (
         stream.codec_name?.toLowerCase() === 'mjpeg' ||
-        stream.codec_name?.toLowerCase() === 'png'
+        stream.codec_name?.toLowerCase() === 'png' ||
+        stream.codec_name?.toLowerCase() === 'gif'
       ) {
-        logger.warn(`[${this.mediaTitle}] Video stream 0:v:${index} is mjpeg or png, removing.`)
+        logger.warn(
+          `[${this.mediaTitle}] Video stream 0:v:${index} is ${stream.codec_name.toLowerCase()} removing.`
+        )
       } else {
         this.command.push(`-map 0:v:${index}`)
         countVideoStreamToKeep++
@@ -211,6 +214,8 @@ async function executeFfmpeg(input: string, output: string, command: string[]) {
   const path = input.split('/')
   path.pop()
 
+  mkdirSync(`${path.join('/')}/transcode`, { recursive: true })
+
   await new Promise((resolve, reject) =>
     ffmpeg(input, { logger })
       .outputOptions(command)
@@ -218,11 +223,11 @@ async function executeFfmpeg(input: string, output: string, command: string[]) {
         reject(err)
       })
       .on('end', resolve)
-      .saveToFile(`${config.transcodeCachePath}/${output}`)
+      .saveToFile(`${path.join('/')}/transcode/${output}`)
   )
 
-  copyFileSync(`${config.transcodeCachePath}/${output}`, `${path.join('/')}/${output}`)
-  unlinkSync(`${config.transcodeCachePath}/${output}`)
+  copyFileSync(`${path.join('/')}/transcode/${output}`, `${path.join('/')}/${output}`)
+  unlinkSync(`${path.join('/')}/transcode/${output}`)
 }
 
 function isStreamWanted(criteria: Criteria) {

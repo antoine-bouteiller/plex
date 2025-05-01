@@ -1,6 +1,6 @@
 import { handleError } from '#exceptions/handler'
 import 'dotenv/config'
-import { mkdirSync, readFileSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { parse } from 'yaml'
 import { z } from 'zod'
@@ -19,7 +19,6 @@ const configSchema = z.object({
     token: z.string(),
     url: z.string(),
   }),
-  transcodeCachePath: z.string(),
 })
 
 type Config = z.infer<typeof configSchema>
@@ -40,7 +39,6 @@ const loadConfig = () => {
     const fileContent = readFileSync(path, 'utf8')
     const parsedConfig = parse(fileContent)
     global.config = configSchema.parse({ ...parsedConfig })
-    mkdirSync(config.transcodeCachePath, { recursive: true })
   } catch (error) {
     void handleError(error)
     process.exit(1)

@@ -16,12 +16,12 @@ configure({
   ],
   suites: [
     {
-      files: ['tests/unit/**/*.spec.ts'],
       name: 'unit',
+      files: ['tests/unit/**/*.spec.ts'],
     },
     {
-      files: ['tests/functional/**/*.spec.ts'],
       name: 'functional',
+      files: ['tests/functional/**/*.spec.ts'],
     },
   ],
 })

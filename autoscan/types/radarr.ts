@@ -5,9 +5,9 @@ export interface RadarrRequest {
 }
 
 interface Movie {
+  tmdbId: number
   folderPath: string
   title: string
-  tmdbId: number
 }
 
 interface MovieFile {

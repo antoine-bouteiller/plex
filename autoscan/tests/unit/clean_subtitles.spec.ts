@@ -1,41 +1,42 @@
+import type { iso2 } from '#types/iso_codes'
+
 import { TranscodeService } from '#services/transcode_service'
-import { iso2 } from '#types/iso_codes'
 import { test } from '@japa/runner'
 import { copyFileSync, mkdirSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { testTempDir, videosPath } from 'tests/config.js'
 
-type TestCase = {
-  title: string
+interface TestCase {
+  exists: boolean
   file: string
   language: iso2
-  exists: boolean
+  title: string
 }
 
 const dataset: TestCase[] = [
   {
-    title: 'should tag subtitle stream with language if language is undefined - eng',
+    exists: true,
     file: 'test_subtitle_tag.mkv',
     language: 'eng',
-    exists: true,
+    title: 'should tag subtitle stream with language if language is undefined - eng',
   },
   {
-    title: 'should keep non forced eng subtitle',
+    exists: true,
     file: 'test_subtitle_forced.mkv',
     language: 'eng',
-    exists: true,
+    title: 'should keep non forced eng subtitle',
   },
   {
-    title: 'should keep undefined over forced eng subtitle',
+    exists: true,
     file: 'test_subtitle_forced_no_eng.mkv',
     language: 'eng',
-    exists: true,
+    title: 'should keep undefined over forced eng subtitle',
   },
   {
-    title: 'should not keep subilte if original language is fre',
+    exists: false,
     file: 'test_subtitle_forced.mkv',
     language: 'fre',
-    exists: false,
+    title: 'should not keep subilte if original language is fre',
   },
 ]
 
@@ -50,7 +51,7 @@ test.group('Extract subtitles', (group) => {
 
   test('{title}')
     .with(dataset)
-    .run(async ({ assert }, { file, language, exists }) => {
+    .run(async ({ assert }, { exists, file, language }) => {
       const tempTestFilePath = join(testTempDir, file)
       copyFileSync(join(videosPath, file), tempTestFilePath)
       const transcodeService = new TranscodeService(tempTestFilePath, 'test', language)

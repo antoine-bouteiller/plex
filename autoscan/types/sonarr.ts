@@ -14,7 +14,7 @@ interface EpisodeFile {
 }
 
 interface Series {
+  tmdbId: number
   path: string
   title: string
-  tmdbId: number
 }

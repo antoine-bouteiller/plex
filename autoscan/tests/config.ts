@@ -13,5 +13,4 @@ global.config = {
     token: 'test',
     url: 'http://localhost:32400',
   },
-  transcodeCachePath: join(testTempDir, 'transcode_cache'),
 }

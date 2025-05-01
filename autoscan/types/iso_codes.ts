@@ -1,4 +1,5 @@
 export const countryISOMapping = {
+  id: 'ind',
   ar: 'ara',
   bg: 'bul',
   bn: 'ben',
@@ -15,7 +16,6 @@ export const countryISOMapping = {
   hi: 'hin',
   hr: 'hrv',
   hu: 'hun',
-  id: 'ind',
   is: 'isl',
   it: 'ita',
   ja: 'jpn',

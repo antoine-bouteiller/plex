@@ -1,58 +1,59 @@
+import type { iso2 } from '#types/iso_codes'
+
 import { getFileStreams, TranscodeService } from '#services/transcode_service'
-import { iso2 } from '#types/iso_codes'
 import { test } from '@japa/runner'
 import { copyFileSync, mkdirSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { testTempDir, videosPath } from 'tests/config.js'
 
-type FileDataset = {
-  title: string
+interface FileDataset {
   filename: string
-  shouldExecute: boolean
-  outputStreams: Array<{
-    index: number
-    codecType: string
+  outputStreams: {
     codecName: string
+    codecType: string
+    index: number
     language?: iso2
-  }>
+  }[]
+  shouldExecute: boolean
+  title: string
 }
 
 const dataset: FileDataset[] = [
   {
-    title: 'should convert dts to aac',
     filename: 'test_dts.mkv',
-    shouldExecute: true,
     outputStreams: [
-      { index: 0, codecType: 'video', codecName: 'h264' },
-      { index: 1, codecType: 'audio', codecName: 'aac', language: 'eng' },
+      { codecName: 'h264', codecType: 'video', index: 0 },
+      { codecName: 'aac', codecType: 'audio', index: 1, language: 'eng' },
     ],
+    shouldExecute: true,
+    title: 'should convert dts to aac',
   },
   {
-    title: 'should convert format to mp4',
     filename: 'test_correct_file.mkv',
-    shouldExecute: true,
     outputStreams: [
-      { index: 0, codecType: 'video', codecName: 'h264' },
-      { index: 1, codecType: 'audio', codecName: 'aac', language: 'eng' },
+      { codecName: 'h264', codecType: 'video', index: 0 },
+      { codecName: 'aac', codecType: 'audio', index: 1, language: 'eng' },
     ],
+    shouldExecute: true,
+    title: 'should convert format to mp4',
   },
   {
-    title: 'should keep only wanted tracks',
     filename: 'test_aac_dts.mkv',
-    shouldExecute: true,
     outputStreams: [
-      { index: 0, codecType: 'video', codecName: 'h264' },
-      { index: 1, codecType: 'audio', codecName: 'aac', language: 'eng' },
+      { codecName: 'h264', codecType: 'video', index: 0 },
+      { codecName: 'aac', codecType: 'audio', index: 1, language: 'eng' },
     ],
+    shouldExecute: true,
+    title: 'should keep only wanted tracks',
   },
   {
-    title: 'should not transcode already correct file',
     filename: 'test_correct_file.mp4',
-    shouldExecute: false,
     outputStreams: [
-      { index: 0, codecType: 'video', codecName: 'h264' },
-      { index: 1, codecType: 'audio', codecName: 'aac', language: 'eng' },
+      { codecName: 'h264', codecType: 'video', index: 0 },
+      { codecName: 'aac', codecType: 'audio', index: 1, language: 'eng' },
     ],
+    shouldExecute: false,
+    title: 'should not transcode already correct file',
   },
 ]
 
@@ -69,7 +70,7 @@ test.group('Transcode', (group) => {
 
   test('{title}')
     .with(dataset)
-    .run(async ({ assert }, { filename, shouldExecute, outputStreams }) => {
+    .run(async ({ assert }, { filename, outputStreams, shouldExecute }) => {
       tempTestFilePath = join(testTempDir, filename)
       copyFileSync(join(videosPath, filename), tempTestFilePath)
 
