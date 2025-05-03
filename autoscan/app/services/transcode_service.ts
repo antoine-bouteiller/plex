@@ -215,6 +215,8 @@ export class TranscodeService {
       logger.info(`[${this.mediaTitle}] Transcoded with command: ${this.command.join(' ')}`)
     }
 
+    await this.cleanUp()
+
     return this.shouldExecute
   }
 }
