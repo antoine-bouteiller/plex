@@ -100,7 +100,7 @@ export class TranscodeService {
 
   async cleanUp() {
     const paths = this.file.split('/')
-    paths.pop()
+    const oldFileName = paths.pop()
     const newFileName = `${this.fileName}.mp4`
 
     const streams = await getFileStreams(`${paths.join('/')}/${newFileName}`)
@@ -109,11 +109,11 @@ export class TranscodeService {
     const audioStreams = streams.filter((stream) => stream.codec_type === 'audio')
 
     if (videoStreams.length === 0 || audioStreams.length === 0) {
-      if (newFileName !== this.fileName) {
+      if (newFileName !== oldFileName) {
         rmSync(`${paths.join('/')}/${newFileName}`)
       }
     } else {
-      if (newFileName !== this.fileName) {
+      if (newFileName !== oldFileName) {
         rmSync(this.file)
       }
     }

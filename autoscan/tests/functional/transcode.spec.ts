@@ -79,7 +79,10 @@ test.group('Transcode', (group) => {
 
       assert.equal(executed, shouldExecute)
 
-      if (!executed) return
+      if (!executed) {
+        await assert.fileExists(filename)
+        return
+      }
 
       const outputFileName = filename.replace('.mkv', '.mp4')
       await assert.fileExists(outputFileName)
