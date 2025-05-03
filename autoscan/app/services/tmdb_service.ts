@@ -1,3 +1,4 @@
+import type { MediaType } from '#types/plex'
 import type { TmdbResponse } from '#types/tmdb'
 
 import prisma from '#config/prisma'
@@ -5,15 +6,12 @@ import executeWithErrorHandler from '#exceptions/handler'
 import { countryISOMapping, type iso2 } from '#types/iso_codes'
 import axios from 'axios'
 
-export async function getLanguageByIdAndType(
-  tmdbId: number,
-  type: 'episode' | 'movie'
-): Promise<iso2> {
+export async function getLanguageByIdAndType(tmdbId: number, type: MediaType): Promise<iso2> {
   switch (type) {
-    case 'episode':
-      return getSeriesLanguageById(tmdbId)
     case 'movie':
       return getMovieLanguageById(tmdbId)
+    case 'show':
+      return getSeriesLanguageById(tmdbId)
     default:
       throw new Error('Invalid type')
   }

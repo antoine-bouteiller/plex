@@ -184,7 +184,7 @@ export class TranscodeService {
       `-c:s:${subtitleStreamToKeep} srt`,
     ])
 
-    logger.info(`[${this.fileName}] Subtitle extracted`)
+    logger.info(`[${this.mediaTitle}] Subtitle extracted`)
   }
 
   async init() {

@@ -1,3 +1,5 @@
+export type MediaType = 'movie' | 'show'
+
 export interface PlexMedia {
   grandparentTitle?: string
   key: string
@@ -30,10 +32,8 @@ export interface PlexReponse {
     Directory: {
       key: number
       title: string
-      type: SectionType
+      type: MediaType
     }[]
     Metadata: PlexMedia[]
   }
 }
-
-export type SectionType = 'movie' | 'show'

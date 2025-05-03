@@ -21,7 +21,7 @@ export const sonarrController = async (request: Request, response: Response) => 
     if (eventType === 'Download') {
       const file = join(body.series.path, body.episodeFile.relativePath)
 
-      const originalLanguage = await getLanguage(body.series.tmdbId, 'episode')
+      const originalLanguage = await getLanguage(body.series.tmdbId, 'show')
 
       const transcodeService = new TranscodeService(
         file,

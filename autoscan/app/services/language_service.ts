@@ -1,12 +1,12 @@
 import type { iso2 } from '#types/iso_codes'
-import type { PlexMediaStream } from '#types/plex'
+import type { MediaType, PlexMediaStream } from '#types/plex'
 
 import { logger } from '#config/logger'
 import prisma from '#config/prisma'
 import { updateStream } from '#services/plex_service'
 import { getLanguageByIdAndType } from '#services/tmdb_service'
 
-export async function getLanguage(tmdbId: number, mediaType: 'episode' | 'movie') {
+export async function getLanguage(tmdbId: number, mediaType: MediaType) {
   const mediaDetails = await prisma.media.findUnique({
     where: {
       tmdbId,

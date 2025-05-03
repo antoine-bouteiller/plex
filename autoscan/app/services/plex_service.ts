@@ -19,7 +19,10 @@ export async function getMediaDetails(plexMedia: PlexMedia) {
     throw new Error(`[${mediaTitle}] No tmdbId found"`)
   }
 
-  const originalLanguage = await getLanguage(tmdbId, plexMedia.type)
+  const originalLanguage = await getLanguage(
+    tmdbId,
+    plexMedia.type === 'episode' ? 'show' : plexMedia.type
+  )
 
   return {
     partsId: details.Metadata[0].Media[0].Part[0].id,
