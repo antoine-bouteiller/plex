@@ -10,6 +10,7 @@ export async function getLanguage(tmdbId: number, mediaType: 'episode' | 'movie'
   const mediaDetails = await prisma.media.findUnique({
     where: {
       tmdbId,
+      type: mediaType,
     },
   })
 
@@ -30,7 +31,8 @@ export async function handleUpdateLanguage(
   partsId: number
 ) {
   const audioStream = streams.find(
-    (stream: PlexMediaStream) => stream.streamType === 2 && stream.languageCode === originalLanguage
+    (stream: PlexMediaStream) =>
+      stream.streamType === 2 && stream.languageCode === originalLanguage.replace('fre', 'fra')
   )
   if (!audioStream) {
     logger.warn(`[${mediaTitle}] No ${originalLanguage} audio stream found`)

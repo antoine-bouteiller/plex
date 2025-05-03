@@ -20,7 +20,7 @@ export const radarrController = async (request: Request, response: Response) => 
   try {
     if (eventType === 'Download') {
       const file = join(body.movie.folderPath, body.movieFile.relativePath)
-      const originalLanguage = await getLanguage(body.movie.tmdbId, 'episode')
+      const originalLanguage = await getLanguage(body.movie.tmdbId, 'movie')
 
       const transcodeService = new TranscodeService(file, body.movie.title, originalLanguage)
 

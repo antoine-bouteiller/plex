@@ -34,7 +34,7 @@ export async function getMediaDetails(plexMedia: PlexMedia) {
 export async function getSectionMedia(id: number, sectionType: 'movie' | 'show') {
   const type = sectionType === 'show' ? 4 : 1
   const response = await sendPlexGetRequest(
-    `${config.plex.url}/library/sections/${id}/recentlyAdded?type=${type}`
+    `${config.plex.url}/library/sections/${id}/all?type=${type}`
   )
   return response.Metadata
 }

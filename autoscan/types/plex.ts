@@ -30,8 +30,10 @@ export interface PlexReponse {
     Directory: {
       key: number
       title: string
-      type: 'movie' | 'show'
+      type: SectionType
     }[]
     Metadata: PlexMedia[]
   }
 }
+
+export type SectionType = 'movie' | 'show'

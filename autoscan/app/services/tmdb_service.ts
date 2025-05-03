@@ -36,6 +36,7 @@ async function getMovieLanguageById(tmdbId: number): Promise<iso2> {
       tmdbId,
       originalLanguage: language,
       title: response.data.title,
+      type: 'movie',
     },
   })
   return language
@@ -58,6 +59,7 @@ async function getSeriesLanguageById(tmdbId: number): Promise<iso2> {
       tmdbId,
       originalLanguage: language,
       title: response.data.name,
+      type: 'episode',
     },
   })
   return language

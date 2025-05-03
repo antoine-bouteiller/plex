@@ -3,7 +3,7 @@ import type { StreamData } from '#types/transcode'
 
 import ffmpeg from '#config/ffmpeg'
 import { logger } from '#config/logger'
-import { copyFileSync, mkdirSync, rmSync, unlinkSync } from 'node:fs'
+import { copyFileSync, existsSync, mkdirSync, rmSync } from 'node:fs'
 
 type Criteria =
   | {
@@ -21,7 +21,6 @@ const wantedSubtitleEncodings = ['subrip', 'ass']
 
 export class TranscodeService {
   command: string[] = ['-c copy']
-  shouldExecute = false
 
   declare subtitleStreams: StreamData[]
   declare videoStreams: StreamData[]
@@ -29,6 +28,8 @@ export class TranscodeService {
 
   private extension: string | undefined
   private fileName: string | undefined
+
+  private shouldExecute = false
 
   constructor(
     private file: string,
@@ -95,6 +96,31 @@ export class TranscodeService {
     }
 
     return
+  }
+
+  async cleanUp() {
+    const paths = this.file.split('/')
+    paths.pop()
+    const newFileName = `${this.fileName}.mp4`
+
+    const streams = await getFileStreams(`${paths.join('/')}/${newFileName}`)
+
+    const videoStreams = streams.filter((stream) => stream.codec_type === 'video')
+    const audioStreams = streams.filter((stream) => stream.codec_type === 'audio')
+
+    if (videoStreams.length === 0 || audioStreams.length === 0) {
+      if (newFileName !== this.fileName) {
+        rmSync(`${paths.join('/')}/${newFileName}`)
+      }
+    } else {
+      if (newFileName !== this.fileName) {
+        rmSync(this.file)
+      }
+    }
+
+    if (existsSync(`${paths.join('/')}/transcode`)) {
+      rmSync(`${paths.join('/')}/transcode`, { recursive: true })
+    }
   }
 
   cleanVideo() {
@@ -179,16 +205,17 @@ export class TranscodeService {
     this.cleanAudio()
     await this.extractSubtitles()
 
-    if (this.shouldExecute || this.extension !== 'mp4') {
+    if (this.extension !== 'mp4') {
+      this.shouldExecute = true
+    }
+
+    if (this.shouldExecute) {
       const newFileName = `${this.fileName}.mp4`
       await executeFfmpeg(this.file, newFileName, this.command)
-      if (newFileName !== this.fileName) {
-        unlinkSync(this.file)
-      }
       logger.info(`[${this.mediaTitle}] Transcoded with command: ${this.command.join(' ')}`)
-      return true
     }
-    return false
+
+    return this.shouldExecute
   }
 }
 
@@ -227,7 +254,6 @@ async function executeFfmpeg(input: string, output: string, command: string[]) {
   )
 
   copyFileSync(`${path.join('/')}/transcode/${output}`, `${path.join('/')}/${output}`)
-  rmSync(`${path.join('/')}/transcode`, { recursive: true })
 }
 
 function isStreamWanted(criteria: Criteria) {

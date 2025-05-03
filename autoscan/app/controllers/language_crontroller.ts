@@ -11,8 +11,13 @@ export async function languageController() {
     for (const media of medias) {
       const { partsId, mediaTitle, originalLanguage, streams } = await getMediaDetails(media)
 
-      if (!streams.length) {
-        logger.warn(`[${mediaTitle}] No streams found: ${JSON.stringify(media)}`)
+      if (!streams.filter((stream) => stream.streamType === 2).length) {
+        logger.error(`[${mediaTitle}] No audio streams found: ${JSON.stringify(media)}`)
+        return
+      }
+
+      if (!streams.filter((stream) => stream.streamType === 1).length) {
+        logger.error(`[${mediaTitle}] No video streams found: ${JSON.stringify(media)}`)
         return
       }
 

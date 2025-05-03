@@ -3,6 +3,7 @@
     "lint": "eslint . --fix",
     "format": "prettier --write .",
     "postinstall": "pnpm dlx prisma generate",
+    "typecheck": "tsc --noEmit",
     "build": "tsc -p tsconfig.prod.json && cp package.json build/package.json",
     "start": "node bin/server.js",
     "dev": "NODE_ENV=development tsx watch bin/server.ts",
