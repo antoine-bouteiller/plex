@@ -5,62 +5,62 @@ services:
     command: --cleanup --remove-volumes
     volumes:
       - //var/run/docker.sock:/var/run/docker.sock
-  loki:
-    container_name: loki
-    image: grafana/loki:latest
-    user: root
-    volumes:
-      - ../configs/loki.yaml:/etc/loki/loki.yaml
-      - ${APP_PATH}/loki:/data
-    command: -config.file=/etc/loki/loki.yaml
-    extends:
-      file: ./compose.common.yaml
-      service: common
-  alloy:
-    container_name: alloy
-    image: grafana/alloy:latest
-    privileged: true
-    cap_add:
-      - SYS_TIME
-    extends:
-      file: compose.common.yaml
-      service: common
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /dev/disk/:/dev/disk:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /run/udev/data:/run/udev/data:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ../configs/config.alloy:/etc/alloy/config.alloy
-    command: run --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
-    pid: host
-    links:
-      - prometheus
-      - loki
-  prometheus:
-    container_name: prometheus
-    image: prom/prometheus:latest
-    extends:
-      file: compose.common.yaml
-      service: common
-    volumes:
-      - ../configs/prometheus.yaml:/prometheus/prometheus.yml
-    command:
-      - --web.enable-remote-write-receiver
-  grafana:
-    container_name: grafana
-    image: grafana/grafana
-    extends:
-      file: compose.common.yaml
-      service: common
-    volumes:
-      - ../grafana/:/etc/grafana/provisioning/
-      - ${APP_PATH}/grafana/:/etc/grafana/
-      - ../configs/grafana.ini:/etc/grafana/grafana.ini
-    environment:
-      - GF_SERVER_ROOT_URL=https://grafana.${DOMAIN}
-    links:
-      - prometheus
-      - loki
+  # loki:
+  #   container_name: loki
+  #   image: grafana/loki:latest
+  #   user: root
+  #   volumes:
+  #     - ../configs/loki.yaml:/etc/loki/loki.yaml
+  #     - ${APP_PATH}/loki:/data
+  #   command: -config.file=/etc/loki/loki.yaml
+  #   extends:
+  #     file: ./compose.common.yaml
+  #     service: common
+  # alloy:
+  #   container_name: alloy
+  #   image: grafana/alloy:latest
+  #   privileged: true
+  #   cap_add:
+  #     - SYS_TIME
+  #   extends:
+  #     file: compose.common.yaml
+  #     service: common
+  #   volumes:
+  #     - /:/rootfs:ro
+  #     - /var/run:/var/run:ro
+  #     - /sys:/sys:ro
+  #     - /dev/disk/:/dev/disk:ro
+  #     - /var/lib/docker/:/var/lib/docker:ro
+  #     - /run/udev/data:/run/udev/data:ro
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #     - ../configs/config.alloy:/etc/alloy/config.alloy
+  #   command: run --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
+  #   pid: host
+  #   links:
+  #     - prometheus
+  #     - loki
+  # prometheus:
+  #   container_name: prometheus
+  #   image: prom/prometheus:latest
+  #   extends:
+  #     file: compose.common.yaml
+  #     service: common
+  #   volumes:
+  #     - ../configs/prometheus.yaml:/prometheus/prometheus.yml
+  #   command:
+  #     - --web.enable-remote-write-receiver
+  # grafana:
+  #   container_name: grafana
+  #   image: grafana/grafana
+  #   extends:
+  #     file: compose.common.yaml
+  #     service: common
+  #   volumes:
+  #     - ../grafana/:/etc/grafana/provisioning/
+  #     - ${APP_PATH}/grafana/:/etc/grafana/
+  #     - ../configs/grafana.ini:/etc/grafana/grafana.ini
+  #   environment:
+  #     - GF_SERVER_ROOT_URL=https://grafana.${DOMAIN}
+  #   links:
+  #     - prometheus
+  #     - loki

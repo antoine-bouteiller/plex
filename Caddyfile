@@ -84,14 +84,8 @@ bazarr.{$DOMAIN} {
 	reverse_proxy bazarr:6767
 }
 
-grafana.{$DOMAIN} {
-	import auth
+# grafana.{$DOMAIN} {
+# 	import auth
 
-	reverse_proxy grafana:3000
-}
-
-alloy.{$DOMAIN} {
-	import auth
-
-	reverse_proxy alloy:12345
-}
+# 	reverse_proxy grafana:3000
+# }

@@ -184,6 +184,8 @@ export class TranscodeService {
       `-c:s:${subtitleStreamToKeep} srt`,
     ])
 
+    this.shouldExecute = true
+
     logger.info(`[${this.mediaTitle}] Subtitle extracted`)
   }
 
@@ -213,9 +215,8 @@ export class TranscodeService {
       const newFileName = `${this.fileName}.mp4`
       await executeFfmpeg(this.file, newFileName, this.command)
       logger.info(`[${this.mediaTitle}] Transcoded with command: ${this.command.join(' ')}`)
+      await this.cleanUp()
     }
-
-    await this.cleanUp()
 
     return this.shouldExecute
   }

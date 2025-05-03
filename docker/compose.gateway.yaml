@@ -43,4 +43,4 @@ services:
       - overseerr
       - qbittorrent
       - plex
-      - grafana
+      # - grafana

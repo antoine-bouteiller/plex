@@ -76,7 +76,6 @@ test.group('Transcode', (group) => {
 
       transcodeService = new TranscodeService(tempTestFilePath, 'test', 'eng')
       const executed = await transcodeService.transcodeFile()
-      await transcodeService.cleanUp()
 
       assert.equal(executed, shouldExecute)
 
