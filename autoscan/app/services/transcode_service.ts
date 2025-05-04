@@ -81,6 +81,8 @@ export class TranscodeService {
       if (!codec || !wantedAudioEncodings.includes(codec)) {
         this.command.push(`-c:a:${audioStreamToKeep} aac`)
 
+        this.shouldExecute = true
+
         logger.warn(
           `[${this.mediaTitle}] ${languageCriteria[0].language} audio stream 0:a:${audioStreamToKeep} is ${codec}, converting to aac.`
         )
@@ -88,6 +90,7 @@ export class TranscodeService {
 
       if (stream.tags?.language === undefined || stream.tags.language.toLowerCase() === 'und') {
         this.command.push(`-metadata:s:a:${audioStreamToKeep} language=${this.originalLanguage}`)
+        this.shouldExecute = true
       }
     }
 

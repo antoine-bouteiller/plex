@@ -27,7 +27,7 @@ export async function getLanguage(tmdbId: number, mediaType: MediaType) {
 export async function handleUpdateLanguage(
   mediaTitle: string,
   streams: PlexMediaStream[],
-  originalLanguage: string,
+  originalLanguage: iso2,
   partsId: number
 ) {
   const audioStream = streams.find(
