@@ -115,6 +115,7 @@ export class TranscodeService {
       if (newFileName !== oldFileName) {
         rmSync(`${paths.join('/')}/${newFileName}`)
       }
+      logger.error(`[${this.mediaTitle}] No audio or video stream found`)
     } else {
       if (newFileName !== oldFileName) {
         rmSync(this.file)

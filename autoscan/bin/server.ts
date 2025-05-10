@@ -1,15 +1,15 @@
 import { logger } from '#config/logger'
 import cron from '#start/cron'
-import { loadConfig } from '#start/env'
 import webserver from '#start/routes'
+import { telegram } from '#start/telegram'
 import { exec } from 'node:child_process'
 import { promisify } from 'node:util'
 
 const execPromise = promisify(exec)
 
-loadConfig()
-
 cron.start()
+
+await telegram.launch()
 
 try {
   try {

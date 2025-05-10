@@ -5,15 +5,14 @@ import { join } from 'node:path'
 import { parse } from 'yaml'
 import { z } from 'zod'
 
-declare global {
-  // eslint-disable-next-line no-var
-  var config: Config
-}
-
-const configSchema = z.object({
+const envSchema = z.object({
   plex: z.object({
     token: z.string(),
     url: z.string(),
+  }),
+  telegram: z.object({
+    chatId: z.number(),
+    token: z.string(),
   }),
   tmdb: z.object({
     token: z.string(),
@@ -21,28 +20,27 @@ const configSchema = z.object({
   }),
 })
 
-type Config = z.infer<typeof configSchema>
+type Env = z.infer<typeof envSchema>
 
 const getConfigPath = () => {
   switch (process.env.NODE_ENV) {
     case 'development':
-      return join(import.meta.dirname, '../autoscan.yaml')
+      return join(import.meta.dirname, '../../configs/autoscan.yaml')
     default:
       return '/autoscan/resources/autoscan.yaml'
   }
 }
 
-const loadConfig = () => {
-  const path = getConfigPath()
+let env: Env
 
-  try {
-    const fileContent = readFileSync(path, 'utf8')
-    const parsedConfig = parse(fileContent)
-    global.config = configSchema.parse({ ...parsedConfig })
-  } catch (error) {
-    void handleError(error)
-    process.exit(1)
-  }
+try {
+  const path = getConfigPath()
+  const fileContent = readFileSync(path, 'utf8')
+  const parsedConfig = parse(fileContent)
+  env = envSchema.parse({ ...parsedConfig })
+} catch (error) {
+  void handleError(error)
+  process.exit(1)
 }
 
-export { loadConfig }
+export default env

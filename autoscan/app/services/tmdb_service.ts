@@ -3,6 +3,7 @@ import type { TmdbResponse } from '#types/tmdb'
 
 import prisma from '#config/prisma'
 import executeWithErrorHandler from '#exceptions/handler'
+import env from '#start/env'
 import { countryISOMapping, type iso2 } from '#types/iso_codes'
 import axios from 'axios'
 
@@ -19,9 +20,9 @@ export async function getLanguageByIdAndType(tmdbId: number, type: MediaType): P
 
 async function getMovieLanguageById(tmdbId: number): Promise<iso2> {
   const response = await executeWithErrorHandler(() =>
-    axios.get<TmdbResponse>(`${config.tmdb.url}/movie/${tmdbId}`, {
+    axios.get<TmdbResponse>(`${env.tmdb.url}/movie/${tmdbId}`, {
       headers: {
-        Authorization: `Bearer ${config.tmdb.token}`,
+        Authorization: `Bearer ${env.tmdb.token}`,
       },
     })
   )
@@ -42,9 +43,9 @@ async function getMovieLanguageById(tmdbId: number): Promise<iso2> {
 
 async function getSeriesLanguageById(tmdbId: number): Promise<iso2> {
   const response = await executeWithErrorHandler(() =>
-    axios.get<TmdbResponse>(`${config.tmdb.url}/tv/${tmdbId}`, {
+    axios.get<TmdbResponse>(`${env.tmdb.url}/tv/${tmdbId}`, {
       headers: {
-        Authorization: `Bearer ${config.tmdb.token}`,
+        Authorization: `Bearer ${env.tmdb.token}`,
       },
     })
   )

@@ -2,6 +2,7 @@ import type { PlexMedia, PlexReponse } from '#types/plex'
 
 import executeWithErrorHandler from '#exceptions/handler'
 import { getLanguage } from '#services/language_service'
+import env from '#start/env'
 import axios from 'axios'
 
 export async function getMediaDetails(plexMedia: PlexMedia) {
@@ -11,7 +12,7 @@ export async function getMediaDetails(plexMedia: PlexMedia) {
 
   const file = plexMedia.Media[0].Part[0].file
 
-  const details = await sendPlexGetRequest(`${config.plex.url}${plexMedia.key}`)
+  const details = await sendPlexGetRequest(`${env.plex.url}${plexMedia.key}`)
 
   const tmdbId = Number(/{tmdb-(.*?)}/g.exec(file)?.[1])
 
@@ -37,21 +38,21 @@ export async function getMediaDetails(plexMedia: PlexMedia) {
 export async function getSectionMedia(id: number, sectionType: 'movie' | 'show') {
   const type = sectionType === 'show' ? 4 : 1
   const response = await sendPlexGetRequest(
-    `${config.plex.url}/library/sections/${id}/all?type=${type}`
+    `${env.plex.url}/library/sections/${id}/all?type=${type}`
   )
   return response.Metadata
 }
 
 export async function getSections() {
-  const response = await sendPlexGetRequest(`${config.plex.url}/library/sections`)
+  const response = await sendPlexGetRequest(`${env.plex.url}/library/sections`)
   return response.Directory
 }
 
 export async function refreshSection(id: number, filePath: string) {
   await executeWithErrorHandler(() =>
-    axios.get(`${config.plex.url}/library/sections/${id}/refresh`, {
+    axios.get(`${env.plex.url}/library/sections/${id}/refresh`, {
       headers: {
-        'X-Plex-Token': config.plex.token,
+        'X-Plex-Token': env.plex.token,
       },
       params: {
         path: filePath,
@@ -68,13 +69,13 @@ export async function updateStream(
 ) {
   await executeWithErrorHandler(() =>
     axios.put(
-      `${config.plex.url}/library/parts/${partsId}?${type}StreamID=${
+      `${env.plex.url}/library/parts/${partsId}?${type}StreamID=${
         originalLanguage === 'fra' ? 0 : subtitleStreamId
       }`,
       undefined,
       {
         headers: {
-          'X-Plex-Token': config.plex.token,
+          'X-Plex-Token': env.plex.token,
         },
         params: { allParts: 1 },
       }
@@ -85,7 +86,7 @@ export async function updateStream(
 async function sendPlexGetRequest(url: string) {
   const response = await axios.get<PlexReponse>(url, {
     headers: {
-      'X-Plex-Token': config.plex.token,
+      'X-Plex-Token': env.plex.token,
     },
   })
   return response.data.MediaContainer
