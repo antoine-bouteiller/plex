@@ -7,7 +7,7 @@ import { getSections, refreshSection } from '#services/plex_service'
 import { TranscodeService } from '#services/transcode_service'
 import { join } from 'node:path'
 
-export const radarrController = async (request: Request, response: Response) => {
+export const radarrWebhook = async (request: Request, response: Response) => {
   const body: RadarrRequest = await request.json()
 
   const eventType = body.eventType

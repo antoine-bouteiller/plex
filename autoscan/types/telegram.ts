@@ -1,14 +1,19 @@
-import type { Context } from 'telegraf'
-import type { SceneContextScene, SceneSession } from 'telegraf/scenes'
+import type { MediaType } from '#types/plex'
+import type { Context, Scenes } from 'telegraf'
 
-export interface Session extends SceneSession {
+export interface Session extends Scenes.SceneSession<SceneSession> {
   tmdbId: string
-  mediaType: string
+  mediaType: MediaType
   title: string
 }
 
 export interface TelegramContext extends Context {
-  scene: SceneContextScene<TelegramContext>
+  scene: Scenes.SceneContextScene<TelegramContext, SceneSession>
 
   session: Session
+}
+
+interface SceneSession extends Scenes.SceneSessionData {
+  page: number
+  total: number
 }

@@ -11,11 +11,10 @@ datasource db {
 }
 
 model Media {
-  tmdbId           Int      @id @map("tmdb_id")
-  type             String   @map("type")
-  title            String   @map("title")
-  originalLanguage String   @map("original_language")
-  date             DateTime @default(now())
+  tmdbId           Int    @map("tmdb_id")
+  type             String @map("type")
+  title            String @map("title")
+  originalLanguage String @map("original_language")
 
   @@unique([tmdbId, type])
   @@map("media")

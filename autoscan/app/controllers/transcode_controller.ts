@@ -9,7 +9,7 @@ import {
 import { TranscodeService } from '#services/transcode_service'
 import { resolve } from 'node:path'
 
-export async function transcodeController() {
+export async function transcodeAll() {
   const sections = await getSections()
 
   for (const section of sections) {

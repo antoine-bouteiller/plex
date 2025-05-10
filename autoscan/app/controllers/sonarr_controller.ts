@@ -7,7 +7,7 @@ import { getSections, refreshSection } from '#services/plex_service'
 import { TranscodeService } from '#services/transcode_service'
 import { join } from 'node:path'
 
-export const sonarrController = async (request: Request, response: Response) => {
+export const sonarrWebhook = async (request: Request, response: Response) => {
   const body: SonarrRequest = await request.json()
 
   const eventType = body.eventType

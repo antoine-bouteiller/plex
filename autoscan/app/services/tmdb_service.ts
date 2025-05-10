@@ -1,8 +1,8 @@
 import type { MediaType } from '#types/plex'
 import type { TmdbResponse } from '#types/tmdb'
 
-import prisma from '#config/prisma'
 import executeWithErrorHandler from '#exceptions/handler'
+import { createdOrUpdatedMedia } from '#services/media_service'
 import env from '#start/env'
 import { countryISOMapping, type iso2 } from '#types/iso_codes'
 import axios from 'axios'
@@ -30,14 +30,9 @@ async function getMovieLanguageById(tmdbId: number): Promise<iso2> {
   if (!response?.data) return 'eng'
 
   const language = countryISOMapping[response.data.original_language]
-  await prisma.media.create({
-    data: {
-      tmdbId,
-      originalLanguage: language,
-      title: response.data.title,
-      type: 'movie',
-    },
-  })
+
+  await createdOrUpdatedMedia(tmdbId, 'movie', response.data.title, language)
+
   return language
 }
 
@@ -53,13 +48,8 @@ async function getSeriesLanguageById(tmdbId: number): Promise<iso2> {
   if (!response?.data) return 'eng'
 
   const language = countryISOMapping[response.data.original_language]
-  await prisma.media.create({
-    data: {
-      tmdbId,
-      originalLanguage: language,
-      title: response.data.name,
-      type: 'episode',
-    },
-  })
+
+  await createdOrUpdatedMedia(tmdbId, 'show', response.data.name, language)
+
   return language
 }

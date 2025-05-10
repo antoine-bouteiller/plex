@@ -9,7 +9,7 @@ const execPromise = promisify(exec)
 
 cron.start()
 
-await telegram.launch()
+void telegram.launch()
 
 try {
   try {
@@ -35,3 +35,10 @@ webserver
   .catch(() => {
     logger.error('Failed to start webserver on port 3030')
   })
+
+process.once('SIGINT', () => {
+  telegram.stop('SIGINT')
+})
+process.once('SIGTERM', () => {
+  telegram.stop('SIGTERM')
+})

@@ -3,7 +3,7 @@ import executeWithErrorHandler from '#exceptions/handler'
 import { handleUpdateLanguage } from '#services/language_service'
 import { getMediaDetails, getSectionMedia, getSections } from '#services/plex_service'
 
-export async function languageController() {
+export async function updatePlexSelectedLanguages() {
   const sections = await getSections()
 
   for (const section of sections) {
