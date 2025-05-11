@@ -1,11 +1,18 @@
 import type { MediaType } from '#types/plex'
 import type { TmdbResponse } from '#types/tmdb'
 
-import executeWithErrorHandler from '#exceptions/handler'
 import { createdOrUpdatedMedia } from '#services/media_service'
 import env from '#start/env'
 import { countryISOMapping, type iso2 } from '#types/iso_codes'
-import axios from 'axios'
+import ky from 'ky'
+
+const tmdbClient = ky.create({
+  headers: {
+    Authorization: `Bearer ${env.tmdb.token}`,
+  },
+  prefixUrl: env.tmdb.url,
+  throwHttpErrors: false,
+})
 
 export async function getLanguageByIdAndType(tmdbId: number, type: MediaType): Promise<iso2> {
   switch (type) {
@@ -19,37 +26,37 @@ export async function getLanguageByIdAndType(tmdbId: number, type: MediaType): P
 }
 
 async function getMovieLanguageById(tmdbId: number): Promise<iso2> {
-  const response = await executeWithErrorHandler(() =>
-    axios.get<TmdbResponse>(`${env.tmdb.url}/movie/${tmdbId}`, {
-      headers: {
-        Authorization: `Bearer ${env.tmdb.token}`,
-      },
-    })
-  )
+  const response = await tmdbClient<TmdbResponse>(`${env.tmdb.url}/movie/${tmdbId}`, {
+    headers: {
+      Authorization: `Bearer ${env.tmdb.token}`,
+    },
+  })
 
-  if (!response?.data) return 'eng'
+  if (!response.ok) return 'eng'
 
-  const language = countryISOMapping[response.data.original_language]
+  const data = await response.json()
 
-  await createdOrUpdatedMedia(tmdbId, 'movie', response.data.title, language)
+  const language = countryISOMapping[data.original_language]
+
+  await createdOrUpdatedMedia(tmdbId, 'movie', data.title, language)
 
   return language
 }
 
 async function getSeriesLanguageById(tmdbId: number): Promise<iso2> {
-  const response = await executeWithErrorHandler(() =>
-    axios.get<TmdbResponse>(`${env.tmdb.url}/tv/${tmdbId}`, {
-      headers: {
-        Authorization: `Bearer ${env.tmdb.token}`,
-      },
-    })
-  )
+  const response = await tmdbClient<TmdbResponse>(`${env.tmdb.url}/tv/${tmdbId}`, {
+    headers: {
+      Authorization: `Bearer ${env.tmdb.token}`,
+    },
+  })
 
-  if (!response?.data) return 'eng'
+  if (!response.ok) return 'eng'
 
-  const language = countryISOMapping[response.data.original_language]
+  const data = await response.json()
 
-  await createdOrUpdatedMedia(tmdbId, 'show', response.data.name, language)
+  const language = countryISOMapping[data.original_language]
+
+  await createdOrUpdatedMedia(tmdbId, 'show', data.name, language)
 
   return language
 }

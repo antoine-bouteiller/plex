@@ -218,24 +218,33 @@ export class TranscodeService {
   }
 
   async transcodeFile() {
-    await this.init()
+    try {
+      await this.init()
 
-    this.cleanVideo()
-    this.cleanAudio()
-    await this.extractSubtitles()
+      this.cleanVideo()
+      this.cleanAudio()
+      await this.extractSubtitles()
 
-    if (this.extension !== 'mp4') {
-      this.shouldExecute = true
+      if (this.extension !== 'mp4') {
+        this.shouldExecute = true
+      }
+
+      if (this.shouldExecute) {
+        const newFileName = `${this.fileName}.mp4`
+        await executeFfmpeg(this.file, newFileName, this.command)
+        logger.info(`[${this.mediaTitle}] Transcoded with command: ${this.command.join(' ')}`)
+        await this.cleanUp()
+      }
+
+      return this.shouldExecute
+    } catch (error) {
+      if (error instanceof Error) {
+        logger.error(`Unknown error: ${error.message}`)
+      } else {
+        logger.error(`Unknown error: ${error}`)
+      }
+      return false
     }
-
-    if (this.shouldExecute) {
-      const newFileName = `${this.fileName}.mp4`
-      await executeFfmpeg(this.file, newFileName, this.command)
-      logger.info(`[${this.mediaTitle}] Transcoded with command: ${this.command.join(' ')}`)
-      await this.cleanUp()
-    }
-
-    return this.shouldExecute
   }
 }
 
