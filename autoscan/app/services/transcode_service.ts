@@ -3,7 +3,8 @@ import type { StreamData } from '#types/transcode'
 
 import ffmpeg from '#config/ffmpeg'
 import { logger } from '#config/logger'
-import { copyFileSync, existsSync, mkdirSync, rmSync } from 'node:fs'
+import { copyFileSync, existsSync, mkdirSync, readdirSync, rmSync } from 'node:fs'
+import { join } from 'node:path'
 
 type Criteria =
   | {
@@ -103,28 +104,40 @@ export class TranscodeService {
 
   async cleanUp() {
     const paths = this.file.split('/')
-    const oldFileName = paths.pop()
-    const newFileName = `${this.fileName}.mp4`
 
-    const streams = await getFileStreams(`${paths.join('/')}/${newFileName}`)
+    paths.pop()
+
+    const transcodePath = `${paths.join('/')}/transcode`
+
+    if (!existsSync(transcodePath)) {
+      return
+    }
+
+    const files = readdirSync(transcodePath)
+
+    const videoFile = files.find((file) => file.endsWith('.mp4'))
+
+    if (!videoFile) {
+      logger.error(`[${this.mediaTitle}] No mp4 video file found`)
+      rmSync(transcodePath, { recursive: true })
+      return
+    }
+
+    const streams = await getFileStreams(join(transcodePath, videoFile))
 
     const videoStreams = streams.filter((stream) => stream.codec_type === 'video')
     const audioStreams = streams.filter((stream) => stream.codec_type === 'audio')
 
     if (videoStreams.length === 0 || audioStreams.length === 0) {
-      if (newFileName !== oldFileName) {
-        rmSync(`${paths.join('/')}/${newFileName}`)
-      }
-      logger.error(`[${this.mediaTitle}] No audio or video stream found`)
+      logger.error(`[${this.mediaTitle}] No audio or video stream found on transcoded file`)
     } else {
-      if (newFileName !== oldFileName) {
-        rmSync(this.file)
+      rmSync(this.file)
+      for (const file of files) {
+        copyFileSync(join(transcodePath, file), `${paths.join('/')}/${file}`)
       }
     }
 
-    if (existsSync(`${paths.join('/')}/transcode`)) {
-      rmSync(`${paths.join('/')}/transcode`, { recursive: true })
-    }
+    rmSync(transcodePath, { recursive: true })
   }
 
   cleanVideo() {
@@ -259,8 +272,6 @@ async function executeFfmpeg(input: string, output: string, command: string[]) {
       .on('end', resolve)
       .saveToFile(`${path.join('/')}/transcode/${output}`)
   )
-
-  copyFileSync(`${path.join('/')}/transcode/${output}`, `${path.join('/')}/${output}`)
 }
 
 function isStreamWanted(criteria: Criteria) {

@@ -16,7 +16,7 @@ interface TestCase {
 const dataset: TestCase[] = [
   {
     exists: true,
-    file: 'test_subtitle_tag.mkv',
+    file: 'test_subtitle_undefined.mkv',
     language: 'eng',
     title: 'should tag subtitle stream with language if language is undefined - eng',
   },
@@ -28,7 +28,7 @@ const dataset: TestCase[] = [
   },
   {
     exists: true,
-    file: 'test_subtitle_forced_no_eng.mkv',
+    file: 'test_subtitle_forced_undefined.mkv',
     language: 'eng',
     title: 'should keep undefined over forced eng subtitle',
   },
@@ -59,10 +59,12 @@ test.group('Extract subtitles', (group) => {
 
       await transcodeService.extractSubtitles()
 
+      const output = join('transcode', file.replace('.mkv', `.${language}.srt`))
+
       if (exists) {
-        await assert.fileExists(file.replace('.mkv', `.${language}.srt`))
+        await assert.fileExists(output)
       } else {
-        await assert.fileNotExists(file.replace('.mkv', `.${language}.srt`))
+        await assert.fileNotExists(output)
       }
     })
 })

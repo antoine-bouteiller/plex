@@ -8,6 +8,7 @@ import { testTempDir, videosPath } from 'tests/config.js'
 
 interface FileDataset {
   filename: string
+  keepFile?: boolean
   outputStreams: {
     codecName: string
     codecType: string
@@ -20,7 +21,7 @@ interface FileDataset {
 
 const dataset: FileDataset[] = [
   {
-    filename: 'test_dts.mkv',
+    filename: 'test_audio_dts.mkv',
     outputStreams: [
       { codecName: 'h264', codecType: 'video', index: 0 },
       { codecName: 'aac', codecType: 'audio', index: 1, language: 'eng' },
@@ -38,7 +39,7 @@ const dataset: FileDataset[] = [
     title: 'should convert format to mp4',
   },
   {
-    filename: 'test_aac_dts.mkv',
+    filename: 'test_audio_aac_dts.mkv',
     outputStreams: [
       { codecName: 'h264', codecType: 'video', index: 0 },
       { codecName: 'aac', codecType: 'audio', index: 1, language: 'eng' },
@@ -55,6 +56,16 @@ const dataset: FileDataset[] = [
     shouldExecute: false,
     title: 'should not transcode already correct file',
   },
+  {
+    filename: 'test_audio_spa.mkv',
+    keepFile: true,
+    outputStreams: [
+      { codecName: 'h264', codecType: 'video', index: 0 },
+      { codecName: 'aac', codecType: 'audio', index: 1, language: 'spa' },
+    ],
+    shouldExecute: true,
+    title: 'should not keep transcoded file if no audio stream in output',
+  },
 ]
 
 test.group('Transcode', (group) => {
@@ -70,7 +81,7 @@ test.group('Transcode', (group) => {
 
   test('{title}')
     .with(dataset)
-    .run(async ({ assert }, { filename, outputStreams, shouldExecute }) => {
+    .run(async ({ assert }, { filename, keepFile, outputStreams, shouldExecute }) => {
       tempTestFilePath = join(testTempDir, filename)
       copyFileSync(join(videosPath, filename), tempTestFilePath)
 
@@ -79,7 +90,7 @@ test.group('Transcode', (group) => {
 
       assert.equal(executed, shouldExecute)
 
-      if (!executed) {
+      if (!executed || keepFile) {
         await assert.fileExists(filename)
         return
       }
