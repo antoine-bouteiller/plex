@@ -16,7 +16,7 @@ RUN set -eux; \
     mv /tmp/ffmpeg-*/ffmpeg /tmp/ffmpeg-*/ffprobe /usr/local/bin/; \
     chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe; \
     rm -rf /tmp/ffmpeg*; \
-    apt-get purge -y --auto-remove curl xz-utils; \
+    apt-get purge -y --auto-remove curl xz-utils ca-certificates; \
     rm -rf /var/lib/apt/lists/*
 
 FROM base AS prod-deps
@@ -29,5 +29,5 @@ FROM base
 COPY --from=prod-deps /autoscan/node_modules /autoscan/node_modules
 COPY --from=build /autoscan/build /autoscan
 
-EXPOSE 6060
+EXPOSE 3030
 CMD [ "pnpm", "start" ]

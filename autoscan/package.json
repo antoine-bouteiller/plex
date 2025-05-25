@@ -18,7 +18,7 @@
     "#validators/*": "./app/validators/*.js",
     "#start/*": "./start/*.js",
     "#config/*": "./config/*.js",
-    "#prisma": "./.prisma/client/index.js",
+    "#prisma": "./prisma/client/index.js",
     "#utils/*": "./utils/*.js"
   },
   "prisma": {
@@ -60,7 +60,7 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.32.1"
   },
-  "packageManager": "pnpm@10.10.0",
+  "packageManager": "pnpm@10.11.0",
   "volta": {
     "node": "22.9.0"
   },

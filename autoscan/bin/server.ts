@@ -1,14 +1,22 @@
 import { logger } from '#config/logger'
+import { handleError } from '#exceptions/handler'
 import cron from '#start/cron'
 import app from '#start/routes'
 import telegram from '#start/telegram'
 
 cron.start()
 
-void telegram.start()
+if (process.env.NODE_ENV !== 'development') {
+  void telegram.start()
+}
+
+app.setErrorHandler((error, _, reply) => {
+  handleError(error)
+  reply.status(500).send({ message: 'Internal Server Error', statusCode: 500 })
+})
 
 app
-  .listen({ port: 3030 })
+  .listen({ host: '0.0.0.0', port: 3030 })
   .then(() => {
     logger.info('Webserver started on port 3030')
   })
