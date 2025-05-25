@@ -3,3 +3,4 @@ node_modules
 autolanguageconfig/.env
 build
 resources
+.prisma

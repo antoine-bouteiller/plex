@@ -1,14 +1,14 @@
 import { radarrWebhook } from '#controllers/radarr_controller'
 import { sonarrWebhook } from '#controllers/sonarr_controller'
 import { transcodeAll } from '#controllers/transcode_controller'
-import HyperExpress from 'hyper-express'
+import Fastify from 'fastify'
 
-const webserver = new HyperExpress.Server()
+const fastify = Fastify()
 
-webserver.post('/sonarr', sonarrWebhook)
+fastify.post('/sonarr', sonarrWebhook)
 
-webserver.post('/radarr', radarrWebhook)
+fastify.post('/radarr', radarrWebhook)
 
-webserver.post('/transcode/all', transcodeAll)
+fastify.post('/transcode/all', transcodeAll)
 
-export default webserver
+export default fastify

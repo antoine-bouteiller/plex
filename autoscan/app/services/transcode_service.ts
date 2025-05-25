@@ -1,9 +1,9 @@
 import type { iso2 } from '#types/iso_codes'
-import type { StreamData } from '#types/transcode'
+import type { FFprobeStream } from '#validators/ffprobe_validator'
 
-import ffmpeg from '#config/ffmpeg'
 import { logger } from '#config/logger'
-import { copyFileSync, existsSync, mkdirSync, readdirSync, rmSync } from 'node:fs'
+import { executeFfmpeg, ffprobe } from '#services/ffmpeg_service'
+import { copyFileSync, existsSync, readdirSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 
 type Criteria =
@@ -23,9 +23,9 @@ const wantedSubtitleEncodings = ['subrip', 'ass']
 export class TranscodeService {
   command: string[] = ['-c copy']
 
-  declare subtitleStreams: StreamData[]
-  declare videoStreams: StreamData[]
-  private audioStreams: StreamData[] = []
+  declare subtitleStreams: FFprobeStream[]
+  declare videoStreams: FFprobeStream[]
+  private audioStreams: FFprobeStream[] = []
 
   private extension: string | undefined
   private fileName: string | undefined
@@ -239,52 +239,21 @@ export class TranscodeService {
       return this.shouldExecute
     } catch (error) {
       if (error instanceof Error) {
-        logger.error(`Unknown error: ${error.message}`)
+        logger.error(`An error occurred while transcoding ${this.file}: ${error.message}`)
       } else {
-        logger.error(`Unknown error: ${error}`)
+        logger.error(`An error occurred while transcoding ${this.file}: ${error}`)
       }
       return false
     }
   }
 }
 
-export function getFileStreams(file: string): Promise<StreamData[]> {
-  return new Promise((resolve, reject) => {
-    ffmpeg(file).ffprobe((err, data) => {
-      if (err) {
-        if (typeof err === 'string') {
-          reject(new Error(err))
-        } else if (err instanceof Error) {
-          reject(new Error(err.message))
-        } else {
-          reject(new Error('Unknown error'))
-        }
-      } else {
-        resolve(data.streams as StreamData[])
-      }
-    })
-  })
-}
-
-async function executeFfmpeg(input: string, output: string, command: string[]) {
-  const path = input.split('/')
-  path.pop()
-
-  mkdirSync(`${path.join('/')}/transcode`, { recursive: true })
-
-  await new Promise((resolve, reject) =>
-    ffmpeg(input, { logger })
-      .outputOptions(command)
-      .on('error', (err) => {
-        reject(err)
-      })
-      .on('end', resolve)
-      .saveToFile(`${path.join('/')}/transcode/${output}`)
-  )
+export function getFileStreams(file: string) {
+  return ffprobe(file)
 }
 
 function isStreamWanted(criteria: Criteria) {
-  return (stream: StreamData) => {
+  return (stream: FFprobeStream) => {
     if (criteria.language === 'und') {
       return stream.tags?.language === undefined || stream.tags.language.toLowerCase() === 'und'
     }

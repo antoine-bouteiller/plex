@@ -1,19 +1,9 @@
-import type { MediaType } from '#types/plex'
-import type { Context, Scenes } from 'telegraf'
+import type { Conversation, ConversationFlavor } from '@grammyjs/conversations'
+import type { HydrateFlavor } from '@grammyjs/hydrate'
+import type { Context } from 'grammy'
 
-export interface Session extends Scenes.SceneSession<SceneSession> {
-  tmdbId: string
-  mediaType: MediaType
-  title: string
-}
+export type ConfigureLanguageContext = HydrateFlavor<Context>
 
-export interface TelegramContext extends Context {
-  scene: Scenes.SceneContextScene<TelegramContext, SceneSession>
+export type ConfigureLanguageConversation = Conversation<TelegramContext, ConfigureLanguageContext>
 
-  session: Session
-}
-
-interface SceneSession extends Scenes.SceneSessionData {
-  page: number
-  total: number
-}
+export type TelegramContext = ConversationFlavor<Context>

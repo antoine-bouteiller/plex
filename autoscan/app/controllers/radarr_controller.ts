@@ -1,14 +1,14 @@
-import type { RadarrRequest } from '#types/radarr'
-import type { Request, Response } from 'hyper-express'
+import type { FastifyReply, FastifyRequest } from 'fastify'
 
 import { handleError } from '#exceptions/handler'
 import { getLanguage } from '#services/language_service'
 import { getSections, refreshSection } from '#services/plex_service'
 import { TranscodeService } from '#services/transcode_service'
+import { radarrValidator } from '#validators/radarr_validator'
 import { join } from 'node:path'
 
-export const radarrWebhook = async (request: Request, response: Response) => {
-  const body: RadarrRequest = await request.json()
+export const radarrWebhook = async (request: FastifyRequest, response: FastifyReply) => {
+  const body = await radarrValidator.validate(request.body)
 
   const eventType = body.eventType
 
@@ -32,7 +32,7 @@ export const radarrWebhook = async (request: Request, response: Response) => {
       await refreshSection(section.key, body.movie.folderPath)
     }
   } catch (err) {
-    await handleError(err)
+    handleError(err)
   }
 
   response.send('ok')

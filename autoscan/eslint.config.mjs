@@ -64,7 +64,7 @@ export default tseslint.config(
     },
   },
   {
-    ignores: ['**/*.config.ts', '**/*.{cjs,mjs,js}', '**/prisma/client/**', '**/.next/**'],
+    ignores: ['**/*.config.ts', '**/*.{cjs,mjs,js}', '**/.prisma/**'],
   },
   prettierConfig
 )
