@@ -10,7 +10,7 @@ services:
       ofelia.job-run.plextraktsync.schedule: "@every 6h"
       ofelia.job-run.plextraktsync.image: ghcr.io/taxel/plextraktsync
       ofelia.job-run.plextraktsync.command: "sync"
-      ofelia.job-run.plextraktsync.volumes: "${APP_PATH}/plextraktsync:/app/config"
+      ofelia.job-run.plextraktsync.volume: "${APP_PATH}/plextraktsync:/app/config"
       ofelia.job-run.plextraktsync.remove: "true"
   autoscan:
     container_name: autoscan
