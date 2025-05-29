@@ -11,6 +11,15 @@ const envSchema = vine.compile(
 
     TMDB_API_TOKEN: vine.string(),
     TMDB_API_URL: vine.string(),
+
+    API_TIMEOUT: vine.number().optional(),
+
+    RADARR_API_KEY: vine.string(),
+    RADARR_API_URL: vine.string(),
+
+    SONARR_API_KEY: vine.string(),
+    SONARR_API_URL: vine.string(),
+    STRIKE_COUNT: vine.number().optional(),
   })
 )
 
