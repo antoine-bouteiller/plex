@@ -123,7 +123,7 @@ export class TranscodeService {
       return
     }
 
-    const streams = await getFileStreams(join(transcodePath, videoFile))
+    const streams = await ffprobe(join(transcodePath, videoFile))
 
     const videoStreams = streams.filter((stream) => stream.codec_type === 'video')
     const audioStreams = streams.filter((stream) => stream.codec_type === 'audio')
@@ -207,7 +207,7 @@ export class TranscodeService {
   }
 
   async init() {
-    const streams = await getFileStreams(this.file)
+    const streams = await ffprobe(this.file)
 
     this.videoStreams = streams.filter((stream) => stream.codec_type === 'video')
     this.audioStreams = streams.filter((stream) => stream.codec_type === 'audio')
@@ -239,17 +239,13 @@ export class TranscodeService {
       return this.shouldExecute
     } catch (error) {
       if (error instanceof Error) {
-        logger.error(`An error occurred while transcoding ${this.file}: ${error.message}`)
+        logger.error(`An error occurred while transcoding ${this.mediaTitle}: ${error.message}`)
       } else {
-        logger.error(`An error occurred while transcoding ${this.file}: ${error}`)
+        logger.error(`An error occurred while transcoding ${this.mediaTitle}: ${error}`)
       }
       return false
     }
   }
-}
-
-export function getFileStreams(file: string) {
-  return ffprobe(file)
 }
 
 function isStreamWanted(criteria: Criteria) {

@@ -8,12 +8,12 @@ export async function executeFfmpeg(input: string, output: string, command: stri
 
   mkdirSync(`${path.join('/')}/transcode`, { recursive: true })
 
-  return ffmpeg(`-i ${input}`, ...command, `${path.join('/')}/transcode/${output}`)
+  return ffmpeg(`-i "${input}"`, ...command, `"${path.join('/')}/transcode/${output}"`)
 }
 
 export async function ffprobe(input: string) {
   const output = await execPromise(
-    `ffprobe -v quiet -show_entries stream=index,codec_name,codec_type,channels,sample_rate:stream_tags=language -print_format json ${input}`
+    `ffprobe -loglevel error -show_entries stream=index,codec_name,codec_type,channels,sample_rate:stream_tags=language -print_format json "${input}"`
   )
 
   const parsedOutput = await ffprobeOutputValidator.validate(JSON.parse(output))

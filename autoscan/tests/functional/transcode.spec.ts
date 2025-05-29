@@ -1,6 +1,7 @@
 import type { iso2 } from '#types/iso_codes'
 
-import { getFileStreams, TranscodeService } from '#services/transcode_service'
+import { ffprobe } from '#services/ffmpeg_service'
+import { TranscodeService } from '#services/transcode_service'
 import { test } from '@japa/runner'
 import { copyFileSync, mkdirSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
@@ -103,7 +104,7 @@ test.group('Transcode', (group) => {
         await assert.fileNotExists(filename)
       }
 
-      const streams = await getFileStreams(join(testTempDir, outputFileName))
+      const streams = await ffprobe(join(testTempDir, outputFileName))
 
       for (const stream of outputStreams) {
         assert.equal(streams[stream.index].codec_type, stream.codecType)
