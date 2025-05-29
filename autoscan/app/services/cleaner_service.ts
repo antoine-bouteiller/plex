@@ -1,8 +1,11 @@
 import type { QueueResponse } from '#types/cleaner'
 
 import { logger } from '#config/logger'
+import { tryCatch } from '#exceptions/handler'
 import env from '#start/env'
 import ky from 'ky'
+
+const STRIKE_COUNT = 5
 
 const sonarrClient = ky.create({
   headers: {
@@ -24,40 +27,12 @@ const radarrClient = ky.create({
 const strikeCounts: Record<number, number> = {}
 
 async function cleanupAll(): Promise<void> {
-  await removeStalledDownloads(sonarrClient, 'Sonarr')
-  await removeStalledDownloads(radarrClient, 'Radarr')
-}
-
-async function countRecords(client: typeof ky): Promise<number> {
-  const queue = await client.get<QueueResponse>('queue').json()
-  return queue.totalRecords
-}
-
-async function makeApiDelete(client: typeof ky, endpoint: string, params?: Record<string, string>) {
-  try {
-    const response = await client.delete(endpoint, { searchParams: params })
-    if (!response.ok) {
-      logger.error(
-        `Error making API delete request to ${endpoint}: ${response.status} ${response.statusText}`
-      )
-    }
-  } catch (error) {
-    logger.error(`Error making API delete request to ${endpoint}:`, error)
-  }
+  await tryCatch(async () => removeStalledDownloads(sonarrClient, 'Sonarr'))
+  await tryCatch(async () => removeStalledDownloads(radarrClient, 'Radarr'))
 }
 
 async function removeStalledDownloads(client: typeof ky, serviceName: string): Promise<void> {
-  logger.info(`Checking ${serviceName} queue...`)
-
-  const recordCount = await countRecords(client)
-  const queue = await client
-    .get<QueueResponse>('queue', {
-      searchParams: {
-        page: '1',
-        pageSize: recordCount.toString(),
-      },
-    })
-    .json()
+  const queue = await client.get<QueueResponse>('queue').json()
 
   logger.info(`Processing ${serviceName} queue...`)
 
@@ -69,28 +44,30 @@ async function removeStalledDownloads(client: typeof ky, serviceName: string): P
 
     logger.info(`Checking the status of ${item.title}`)
 
+    const itemId = item.id
+    const noEligibleFiles = item.statusMessages
+      ?.flatMap((message) => message.messages)
+      .some((message) => message.includes('No files found are eligible for import'))
+
     if (
       item.status === 'warning' &&
       item.errorMessage === 'The download is stalled with no connections'
     ) {
-      const itemId = item.id
-
       if (!(itemId in strikeCounts)) {
         strikeCounts[itemId] = 0
       }
 
       strikeCounts[itemId] += 1
       logger.info(`Item ${item.title} has ${strikeCounts[itemId]} strikes`)
+    }
 
-      const strikeCount = env.STRIKE_COUNT ?? 3
-      if (strikeCounts[itemId] >= strikeCount) {
-        logger.info(`Removing stalled ${serviceName} download: ${item.title}`)
-        await makeApiDelete(client, `queue/${itemId}`, {
+    if (noEligibleFiles || strikeCounts[itemId] >= STRIKE_COUNT) {
+      await client.delete(`queue/${itemId}`, {
+        searchParams: {
           blocklist: 'true',
           removeFromClient: 'true',
-        })
-        strikeCounts[itemId] = 0
-      }
+        },
+      })
     }
   }
 }

@@ -1,4 +1,5 @@
 import { logger } from '#config/logger'
+import { tryCatch } from '#exceptions/handler'
 import { handleUpdateLanguage } from '#services/language_service'
 import { getMediaDetails, getSectionMedia, getSections } from '#services/plex_service'
 
@@ -20,7 +21,9 @@ export async function updatePlexSelectedLanguages() {
         return
       }
 
-      await handleUpdateLanguage(mediaTitle, streams, originalLanguage, partsId)
+      await tryCatch(async () =>
+        handleUpdateLanguage(mediaTitle, streams, originalLanguage, partsId)
+      )
     }
   }
 }

@@ -19,7 +19,6 @@ const envSchema = vine.compile(
 
     SONARR_API_KEY: vine.string(),
     SONARR_API_URL: vine.string(),
-    STRIKE_COUNT: vine.number().optional(),
   })
 )
 

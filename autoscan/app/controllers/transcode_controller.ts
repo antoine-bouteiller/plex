@@ -1,4 +1,5 @@
 import { logger } from '#config/logger'
+import { tryCatch } from '#exceptions/handler'
 import {
   getMediaDetails,
   getSectionMedia,
@@ -19,7 +20,7 @@ export async function transcodeAll() {
 
       const transcodeService = new TranscodeService(file, mediaTitle, originalLanguage)
 
-      const executedTranscode = await transcodeService.transcodeFile()
+      const executedTranscode = await tryCatch(async () => transcodeService.transcodeFile())
 
       if (executedTranscode) {
         await refreshSection(section.key, resolve(file, '..'))

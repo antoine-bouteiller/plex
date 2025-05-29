@@ -11,3 +11,11 @@ export function handleError(error: unknown) {
     logger.error(String(error))
   }
 }
+
+export async function tryCatch<T>(fn: () => Promise<T>) {
+  try {
+    return await fn()
+  } catch (error) {
+    handleError(error)
+  }
+}
