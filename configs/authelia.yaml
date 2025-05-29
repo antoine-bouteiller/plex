@@ -161,7 +161,7 @@ access_control:
       policy: "bypass"
       networks:
         - "internal"
-        - "90.22.233.238/32"
+        - "176.134.43.246/32"
     - domain: '*.{{ mustEnv "DOMAIN" }}'
       policy: "one_factor"
 ##
@@ -193,16 +193,16 @@ session:
 ##
 ## This mechanism prevents attackers from brute forcing the first factor. It bans the user if too many attempts are made
 ## in a short period of time.
-# regulation:
-## The number of failed login attempts before user is banned. Set it to 0 to disable regulation.
-# max_retries: 3
+regulation:
+  # The number of failed login attempts before user is banned. Set it to 0 to disable regulation.
+  max_retries: 3
 
-## The time range during which the user can attempt login before being banned in the duration common syntax. The user
-## is banned if the authentication failed 'max_retries' times in a 'find_time' seconds window.
-# find_time: '2 minutes'
+  ## The time range during which the user can attempt login before being banned in the duration common syntax. The user
+  ## is banned if the authentication failed 'max_retries' times in a 'find_time' seconds window.
+  find_time: "2 minutes"
 
-## The length of time before a banned user can login again in the duration common syntax.
-# ban_time: '5 minutes'
+  ## The length of time before a banned user can login again in the duration common syntax.
+  ban_time: "5 minutes"
 
 ##
 ## Storage Provider Configuration

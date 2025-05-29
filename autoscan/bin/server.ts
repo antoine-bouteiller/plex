@@ -1,8 +1,11 @@
 import { logger } from '#config/logger'
 import { handleError } from '#exceptions/handler'
+import { cleanupAll } from '#services/cleaner_service'
 import cron from '#start/cron'
 import app from '#start/routes'
 import telegram from '#start/telegram'
+
+await cleanupAll()
 
 cron.start()
 

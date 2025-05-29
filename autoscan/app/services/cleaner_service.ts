@@ -29,11 +29,8 @@ async function cleanupAll(): Promise<void> {
 }
 
 async function countRecords(client: typeof ky): Promise<number> {
-  const queue = await makeApiRequest(client, 'queue')
-  if (queue && typeof queue.totalRecords === 'number') {
-    return queue.totalRecords
-  }
-  return 0
+  const queue = await client.get<QueueResponse>('queue').json()
+  return queue.totalRecords
 }
 
 async function makeApiDelete(client: typeof ky, endpoint: string, params?: Record<string, string>) {
@@ -49,39 +46,18 @@ async function makeApiDelete(client: typeof ky, endpoint: string, params?: Recor
   }
 }
 
-async function makeApiRequest(
-  client: typeof ky,
-  endpoint: string,
-  params?: Record<string, string>
-) {
-  try {
-    const response = await client.get<QueueResponse>(endpoint, { searchParams: params })
-    if (!response.ok) {
-      logger.error(
-        `Error making API request to ${endpoint}: ${response.status} ${response.statusText}`
-      )
-      return null
-    }
-    return await response.json()
-  } catch (error) {
-    logger.error(`Error making API request to ${endpoint}:`, error)
-    return null
-  }
-}
-
 async function removeStalledDownloads(client: typeof ky, serviceName: string): Promise<void> {
   logger.info(`Checking ${serviceName} queue...`)
 
   const recordCount = await countRecords(client)
-  const queue = await makeApiRequest(client, 'queue', {
-    page: '1',
-    pageSize: recordCount.toString(),
-  })
-
-  if (!queue?.records) {
-    logger.warn(`${serviceName} queue is null or missing "records" key`)
-    return
-  }
+  const queue = await client
+    .get<QueueResponse>('queue', {
+      searchParams: {
+        page: '1',
+        pageSize: recordCount.toString(),
+      },
+    })
+    .json()
 
   logger.info(`Processing ${serviceName} queue...`)
 
