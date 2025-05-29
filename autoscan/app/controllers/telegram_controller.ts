@@ -13,7 +13,7 @@ export async function selectMediaType(
   conversation: ConfigureLanguageConversation,
   ctx: ConfigureLanguageContext
 ) {
-  if (ctx.message?.chat.id !== env.telegram.chatId) {
+  if (ctx.message?.chat.id !== env.TELEGRAM_CHAT_ID) {
     return ctx.reply('Unauthorized')
   }
   const message = await ctx.reply('What kind of media do you want to configure ?', {

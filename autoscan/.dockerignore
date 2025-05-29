@@ -3,3 +3,4 @@ node_modules
 .gitignore
 eslint.config.mjs
 dist
+.env

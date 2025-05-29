@@ -7,7 +7,7 @@ import { conversations, createConversation } from '@grammyjs/conversations'
 import { hydrate } from '@grammyjs/hydrate'
 import { Bot } from 'grammy'
 
-const bot = new Bot<TelegramContext>(env.telegram.token)
+const bot = new Bot<TelegramContext>(env.TELEGRAM_TOKEN)
 
 bot.use(conversations())
 

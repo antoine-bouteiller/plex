@@ -8,9 +8,9 @@ import ky from 'ky'
 
 const tmdbClient = ky.create({
   headers: {
-    Authorization: `Bearer ${env.tmdb.token}`,
+    Authorization: `Bearer ${env.TMDB_API_TOKEN}`,
   },
-  prefixUrl: env.tmdb.url,
+  prefixUrl: env.TMDB_API_URL,
   throwHttpErrors: false,
 })
 
@@ -26,11 +26,7 @@ export async function getLanguageByIdAndType(tmdbId: number, type: MediaType): P
 }
 
 async function getMovieLanguageById(tmdbId: number): Promise<iso2> {
-  const response = await tmdbClient<TmdbResponse>(`${env.tmdb.url}/movie/${tmdbId}`, {
-    headers: {
-      Authorization: `Bearer ${env.tmdb.token}`,
-    },
-  })
+  const response = await tmdbClient<TmdbResponse>(`movie/${tmdbId}`)
 
   if (!response.ok) return 'eng'
 
@@ -44,11 +40,7 @@ async function getMovieLanguageById(tmdbId: number): Promise<iso2> {
 }
 
 async function getSeriesLanguageById(tmdbId: number): Promise<iso2> {
-  const response = await tmdbClient<TmdbResponse>(`${env.tmdb.url}/tv/${tmdbId}`, {
-    headers: {
-      Authorization: `Bearer ${env.tmdb.token}`,
-    },
-  })
+  const response = await tmdbClient<TmdbResponse>(`tv/${tmdbId}`)
 
   if (!response.ok) return 'eng'
 

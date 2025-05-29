@@ -7,9 +7,9 @@ import ky from 'ky'
 const plexClient = ky.create({
   headers: {
     'Accept': 'application/json',
-    'X-Plex-Token': env.plex.token,
+    'X-Plex-Token': env.PLEX_TOKEN,
   },
-  prefixUrl: env.plex.url,
+  prefixUrl: env.PLEX_URL,
   throwHttpErrors: false,
 })
 
