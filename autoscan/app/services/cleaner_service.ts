@@ -34,15 +34,11 @@ async function cleanupAll(): Promise<void> {
 async function removeStalledDownloads(client: typeof ky, serviceName: string): Promise<void> {
   const queue = await client.get<QueueResponse>('queue').json()
 
-  logger.info(`Processing ${serviceName} queue...`)
-
   for (const item of queue.records) {
     if (!item.title || !item.status) {
       logger.warn(`Skipping item in ${serviceName} queue due to missing or invalid keys:`, item)
       continue
     }
-
-    logger.info(`Checking the status of ${item.title}`)
 
     const itemId = item.id
     const noEligibleFiles = item.statusMessages
