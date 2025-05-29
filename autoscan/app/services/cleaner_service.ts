@@ -58,6 +58,7 @@ async function removeStalledDownloads(client: typeof ky, serviceName: string): P
     }
 
     if (noEligibleFiles || strikeCounts[itemId] >= STRIKE_COUNT) {
+      logger.info(`Removing ${serviceName} download: ${item.title}`)
       await client.delete(`queue/${itemId}`, {
         searchParams: {
           blocklist: 'true',
