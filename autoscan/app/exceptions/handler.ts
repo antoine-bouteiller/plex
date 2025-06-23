@@ -1,7 +1,14 @@
 import { logger } from '#config/logger'
+import { errors } from '@vinejs/vine'
 
 export function handleError(error: unknown) {
-  if (error instanceof Error) {
+  if (error instanceof errors.E_VALIDATION_ERROR) {
+    if (Array.isArray(error.messages)) {
+      logger.error(error.messages.join(', '))
+    } else {
+      logger.error(error.messages)
+    }
+  } else if (error instanceof Error) {
     let message = error.message
     if (error.cause && typeof error.cause === 'object' && 'message' in error.cause) {
       message += `: ${error.cause.message}`
