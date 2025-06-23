@@ -43,7 +43,11 @@ async function removeStalledDownloads(client: typeof ky, serviceName: string): P
     const itemId = item.id
     const noEligibleFiles = item.statusMessages
       ?.flatMap((message) => message.messages)
-      .some((message) => message.includes('No files found are eligible for import'))
+      .some(
+        (message) =>
+          message.includes('No files found are eligible for import') ||
+          message.includes('Caution: Found potentially dangerous file with extension:')
+      )
 
     if (
       item.status === 'warning' &&
