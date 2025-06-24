@@ -5,16 +5,6 @@
   "compilerOptions": {
     "outDir": "./build",
     "rootDir": ".",
-    "baseUrl": ".",
-    "paths": {
-      "#controllers/*": ["app/controllers/*"],
-      "#exceptions/*": ["app/exceptions/*"],
-      "#types/*": ["types/*"],
-      "#services/*": ["app/services/*"],
-      "#middleware/*": ["app/middleware/*"],
-      "#validators/*": ["app/validators/*"],
-      "#start/*": ["start/*"],
-      "#config/*": ["config/*"]
-    }
+    "baseUrl": "."
   }
 }
