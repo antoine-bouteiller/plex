@@ -17,7 +17,7 @@ export async function ffprobe(input: string) {
     `ffprobe -loglevel error -show_entries stream=index,codec_name,codec_type,channels,sample_rate:stream_tags=language -print_format json "${input}"`
   )
 
-  const parsedOutput = await ffprobeOutputValidator.validate(JSON.parse(output))
+  const parsedOutput = ffprobeOutputValidator.parse(JSON.parse(output))
 
   return parsedOutput.streams
 }

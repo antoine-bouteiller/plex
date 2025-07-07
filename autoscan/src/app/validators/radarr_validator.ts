@@ -1,15 +1,13 @@
-import vine from '@vinejs/vine'
+import { z } from 'zod/v4'
 
-export const radarrValidator = vine.compile(
-  vine.object({
-    eventType: vine.enum(['DeleteFile', 'Download', 'Test']),
-    movie: vine.object({
-      tmdbId: vine.number(),
-      folderPath: vine.string(),
-      title: vine.string(),
-    }),
-    movieFile: vine.object({
-      relativePath: vine.string(),
-    }),
-  })
-)
+export const radarrValidator = z.object({
+  eventType: z.enum(['DeleteFile', 'Download', 'Test']),
+  movie: z.object({
+    tmdbId: z.number(),
+    folderPath: z.string(),
+    title: z.string(),
+  }),
+  movieFile: z.object({
+    relativePath: z.string(),
+  }),
+})

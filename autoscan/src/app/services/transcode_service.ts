@@ -78,7 +78,7 @@ export class TranscodeService {
       this.command.push(`-map 0:a:${audioStreamToKeep}`)
       countAudioStreamToKeep++
 
-      const codec = stream.codec_name?.toLowerCase()
+      const codec = stream?.codec_name?.toLowerCase()
 
       if (!codec || !wantedAudioEncodings.includes(codec)) {
         this.command.push(`-c:a:${audioStreamToKeep} aac`)
@@ -86,11 +86,11 @@ export class TranscodeService {
         this.shouldExecute = true
 
         logger.warn(
-          `[${this.mediaTitle}] ${languageCriteria[0].language} audio stream 0:a:${audioStreamToKeep} is ${codec}, converting to aac.`
+          `[${this.mediaTitle}] ${languageCriteria[0]?.language} audio stream 0:a:${audioStreamToKeep} is ${codec}, converting to aac.`
         )
       }
 
-      if (stream.tags?.language === undefined || stream.tags.language.toLowerCase() === 'und') {
+      if (stream?.tags?.language === undefined || stream.tags.language.toLowerCase() === 'und') {
         this.command.push(`-metadata:s:a:${audioStreamToKeep} language=${this.originalLanguage}`)
         this.shouldExecute = true
       }
@@ -195,7 +195,7 @@ export class TranscodeService {
 
     const stream = this.subtitleStreams[subtitleStreamToKeep]
 
-    const language = stream.tags?.language?.toLowerCase() ?? 'eng'
+    const language = stream?.tags?.language?.toLowerCase() ?? 'eng'
 
     await executeFfmpeg(this.file, `${this.fileName}.${language}.srt`, [
       `-map 0:s:${subtitleStreamToKeep}`,

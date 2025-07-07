@@ -1,20 +1,18 @@
-import vine from '@vinejs/vine'
+import { z } from 'zod/v4'
 
-export const sonarrValidator = vine.compile(
-  vine.object({
-    episodeFile: vine.object({
-      relativePath: vine.string(),
-    }),
-    episodes: vine.array(
-      vine.object({
-        title: vine.string(),
-      })
-    ),
-    eventType: vine.enum(['Download', 'EpisodeFileDelete', 'SeriesDelete', 'Test']),
-    series: vine.object({
-      tmdbId: vine.number(),
-      path: vine.string(),
-      title: vine.string(),
-    }),
-  })
-)
+export const sonarrValidator = z.object({
+  episodeFile: z.object({
+    relativePath: z.string(),
+  }),
+  episodes: z.array(
+    z.object({
+      title: z.string(),
+    })
+  ),
+  eventType: z.enum(['Download', 'EpisodeFileDelete', 'SeriesDelete', 'Test']),
+  series: z.object({
+    tmdbId: z.number(),
+    path: z.string(),
+    title: z.string(),
+  }),
+})

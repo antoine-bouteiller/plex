@@ -19,7 +19,11 @@ export async function getMediaDetails(plexMedia: PlexMedia) {
     .filter(Boolean)
     .join(' - ')
 
-  const file = plexMedia.Media[0].Part[0].file
+  const file = plexMedia.Media[0]?.Part[0]?.file
+
+  if (!file) {
+    throw new Error(`[${mediaTitle}] No file found"`)
+  }
 
   const details = await plexClient<PlexReponse>(`library/metadata/${plexMedia.ratingKey}`).json()
 
@@ -34,13 +38,19 @@ export async function getMediaDetails(plexMedia: PlexMedia) {
     plexMedia.type === 'episode' ? 'show' : plexMedia.type
   )
 
+  const part = details.MediaContainer.Metadata[0]?.Media[0]?.Part[0]
+
+  if (!part) {
+    throw new Error(`[${mediaTitle}] No part found"`)
+  }
+
   return {
-    partsId: details.MediaContainer.Metadata[0].Media[0].Part[0].id,
+    partsId: part.id,
     tmdbId,
     file,
     mediaTitle,
     originalLanguage,
-    streams: details.MediaContainer.Metadata[0].Media[0].Part[0].Stream,
+    streams: part.Stream,
   }
 }
 

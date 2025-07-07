@@ -9,7 +9,7 @@ import { TranscodeService } from '@/app/services/transcode_service'
 import { sonarrValidator } from '@/app/validators/sonarr_validator'
 
 export const sonarrWebhook = async (request: FastifyRequest, response: FastifyReply) => {
-  const body = await sonarrValidator.validate(request.body)
+  const body = sonarrValidator.parse(request.body)
 
   const eventType = body.eventType
 

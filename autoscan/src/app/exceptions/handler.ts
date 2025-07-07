@@ -1,14 +1,10 @@
-import { errors } from '@vinejs/vine'
+import { ZodError } from 'zod/v4'
 
 import { logger } from '@/config/logger'
 
 export function handleError(error: unknown) {
-  if (error instanceof errors.E_VALIDATION_ERROR) {
-    if (Array.isArray(error.messages)) {
-      logger.error(error.messages.join(', '))
-    } else {
-      logger.error(error.messages)
-    }
+  if (error instanceof ZodError) {
+    logger.error(error.message)
   } else if (error instanceof Error) {
     let message = error.message
     if (error.cause && typeof error.cause === 'object' && 'message' in error.cause) {

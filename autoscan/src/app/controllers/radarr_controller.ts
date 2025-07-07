@@ -9,7 +9,7 @@ import { TranscodeService } from '@/app/services/transcode_service'
 import { radarrValidator } from '@/app/validators/radarr_validator'
 
 export const radarrWebhook = async (request: FastifyRequest, response: FastifyReply) => {
-  const body = await radarrValidator.validate(request.body)
+  const body = radarrValidator.parse(request.body)
 
   const eventType = body.eventType
 
