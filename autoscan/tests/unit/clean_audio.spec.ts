@@ -1,9 +1,12 @@
-import type { iso2 } from '#types/iso_codes'
-
-import { TranscodeService } from '#services/transcode_service'
-import { test } from '@japa/runner'
+import { copyFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { videosPath } from 'tests/config.js'
+import { describe, expect } from 'vitest'
+
+import type { iso2 } from '@/types/iso_codes'
+
+import { TranscodeService } from '@/app/services/transcode_service'
+
+import { test, videosPath } from '../config.js'
 
 interface TestCase {
   expected: {
@@ -62,22 +65,21 @@ const dataset: TestCase[] = [
   },
 ]
 
-test.group('Clean audio', () => {
-  test('{title}')
-    .with(dataset)
-    .run(async ({ assert }, { expected, file, language }) => {
-      const filePath = join(videosPath, file)
-      const transcodeService = new TranscodeService(filePath, 'test', language)
-      await transcodeService.init()
+describe('Clean audio', () => {
+  test.for(dataset)('$title', async ({ expected, file, language }, { testDir }) => {
+    copyFileSync(join(videosPath, file), join(testDir, file))
 
-      transcodeService.cleanAudio()
+    const transcodeService = new TranscodeService(join(testDir, file), 'test', language)
+    await transcodeService.init()
 
-      const command = transcodeService.command
+    transcodeService.cleanAudio()
 
-      assert.equal(command.length, expected.length)
+    const command = transcodeService.command
 
-      expected.commandAt?.forEach(({ index, value }) => {
-        assert.equal(command[index], value)
-      })
+    expect(command.length).toBe(expected.length)
+
+    expected.commandAt?.forEach(({ index, value }) => {
+      expect(command[index]).toBe(value)
     })
+  })
 })

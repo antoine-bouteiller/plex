@@ -1,10 +1,12 @@
-import type { iso2 } from '#types/iso_codes'
-
-import { TranscodeService } from '#services/transcode_service'
-import { test } from '@japa/runner'
-import { copyFileSync, mkdirSync, rmSync } from 'node:fs'
+import { copyFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
-import { testTempDir, videosPath } from 'tests/config.js'
+import { describe, expect } from 'vitest'
+
+import type { iso2 } from '@/types/iso_codes'
+
+import { TranscodeService } from '@/app/services/transcode_service'
+
+import { test, videosPath } from '../config.js'
 
 interface TestCase {
   exists: boolean
@@ -40,31 +42,21 @@ const dataset: TestCase[] = [
   },
 ]
 
-test.group('Extract subtitles', (group) => {
-  group.setup(async () => {
-    mkdirSync(join(testTempDir, './transcode_cache'), { recursive: true })
+describe('Extract subtitles', () => {
+  test.for(dataset)('$title', async ({ exists, file, language }, { testDir }) => {
+    copyFileSync(join(videosPath, file), join(testDir, file))
 
-    return () => {
-      rmSync(testTempDir, { force: true, recursive: true })
+    const transcodeService = new TranscodeService(join(testDir, file), 'test', language)
+    await transcodeService.init()
+
+    await transcodeService.extractSubtitles()
+
+    const output = join(testDir, 'transcode', file.replace('.mkv', `.${language}.srt`))
+
+    if (exists) {
+      expect(existsSync(output)).toBe(true)
+    } else {
+      expect(existsSync(output)).toBe(false)
     }
   })
-
-  test('{title}')
-    .with(dataset)
-    .run(async ({ assert }, { exists, file, language }) => {
-      const tempTestFilePath = join(testTempDir, file)
-      copyFileSync(join(videosPath, file), tempTestFilePath)
-      const transcodeService = new TranscodeService(tempTestFilePath, 'test', language)
-      await transcodeService.init()
-
-      await transcodeService.extractSubtitles()
-
-      const output = join('transcode', file.replace('.mkv', `.${language}.srt`))
-
-      if (exists) {
-        await assert.fileExists(output)
-      } else {
-        await assert.fileNotExists(output)
-      }
-    })
 })

@@ -1,11 +1,13 @@
-import type { iso2 } from '#types/iso_codes'
-
-import { ffprobe } from '#services/ffmpeg_service'
-import { TranscodeService } from '#services/transcode_service'
-import { test } from '@japa/runner'
-import { copyFileSync, mkdirSync, rmSync } from 'node:fs'
+import { copyFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
-import { testTempDir, videosPath } from 'tests/config.js'
+import { describe, expect } from 'vitest'
+
+import type { iso2 } from '@/types/iso_codes'
+
+import { ffprobe } from '@/app/services/ffmpeg_service'
+import { TranscodeService } from '@/app/services/transcode_service'
+
+import { test, videosPath } from '../config.js'
 
 interface FileDataset {
   filename: string
@@ -69,49 +71,39 @@ const dataset: FileDataset[] = [
   },
 ]
 
-test.group('Transcode', (group) => {
-  let tempTestFilePath: string
-  let transcodeService: TranscodeService
+describe('Transcode', () => {
+  test.for(dataset)(
+    '$title',
+    async ({ filename, keepFile, outputStreams, shouldExecute }, { testDir }) => {
+      copyFileSync(join(videosPath, filename), join(testDir, filename))
 
-  group.setup(async () => {
-    mkdirSync(join(testTempDir, './transcode_cache'), { recursive: true })
-    return () => {
-      rmSync(testTempDir, { force: true, recursive: true })
-    }
-  })
-
-  test('{title}')
-    .with(dataset)
-    .run(async ({ assert }, { filename, keepFile, outputStreams, shouldExecute }) => {
-      tempTestFilePath = join(testTempDir, filename)
-      copyFileSync(join(videosPath, filename), tempTestFilePath)
-
-      transcodeService = new TranscodeService(tempTestFilePath, 'test', 'eng')
+      const transcodeService = new TranscodeService(join(testDir, filename), 'test', 'eng')
       const executed = await transcodeService.transcodeFile()
 
-      assert.equal(executed, shouldExecute)
+      expect(executed).toBe(shouldExecute)
 
       if (!executed || keepFile) {
-        await assert.fileExists(filename)
+        expect(existsSync(join(testDir, filename))).toBe(true)
         return
       }
 
       const outputFileName = filename.replace('.mkv', '.mp4')
-      await assert.fileExists(outputFileName)
-      await assert.fileExists(outputFileName.replace('.mp4', '.eng.srt'))
+      expect(existsSync(join(testDir, outputFileName))).toBe(true)
+      expect(existsSync(join(testDir, outputFileName.replace('.mp4', '.eng.srt')))).toBe(true)
 
       if (outputFileName !== filename) {
-        await assert.fileNotExists(filename)
+        expect(existsSync(join(testDir, filename))).toBe(false)
       }
 
-      const streams = await ffprobe(join(testTempDir, outputFileName))
+      const streams = await ffprobe(join(testDir, outputFileName))
 
       for (const stream of outputStreams) {
-        assert.equal(streams[stream.index].codec_type, stream.codecType)
-        assert.equal(streams[stream.index].codec_name, stream.codecName)
+        expect(streams[stream.index]?.codec_type).toBe(stream.codecType)
+        expect(streams[stream.index]?.codec_name).toBe(stream.codecName)
         if (stream.language) {
-          assert.equal(streams[stream.index].tags?.language, stream.language)
+          expect(streams[stream.index]?.tags?.language).toBe(stream.language)
         }
       }
-    })
+    }
+  )
 })

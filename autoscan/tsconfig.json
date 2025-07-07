@@ -1,10 +1,14 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "@tsconfig/node22/tsconfig.json",
+  "extends": "@tsconfig/bun/tsconfig.json",
   "include": ["./"],
   "compilerOptions": {
     "outDir": "./build",
     "rootDir": ".",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/prisma": ["drizzle/client/client.ts"]
+    }
   }
 }
