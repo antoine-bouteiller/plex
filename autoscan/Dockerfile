@@ -8,7 +8,7 @@ ARG FFMPEG_STATIC_URL=https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-a
 
 RUN set -eux; \
     apt-get update; \
-    apt-get install -y --no-install-recommends curl xz-utils ca-certificates python3 make build-essential; \
+    apt-get install -y --no-install-recommends curl xz-utils ca-certificates; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
 
