@@ -11,7 +11,7 @@ export const sonarrValidator = z.object({
   ),
   eventType: z.enum(['Download', 'EpisodeFileDelete', 'SeriesDelete', 'Test']),
   series: z.object({
-    tmdbId: z.number(),
+    tmdbId: z.coerce.number(),
     path: z.string(),
     title: z.string(),
   }),

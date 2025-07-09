@@ -6,8 +6,8 @@ export const ffprobeOutputValidator = z.object({
       channels: z.number().optional(),
       codec_name: z.string().optional(),
       codec_type: z.string().optional(),
-      index: z.number().optional(),
-      sample_rate: z.number().optional(),
+      index: z.coerce.number().optional(),
+      sample_rate: z.coerce.number().optional(),
       tags: z
         .object({
           language: z.string().optional(),
