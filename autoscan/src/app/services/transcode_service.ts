@@ -96,6 +96,12 @@ export class TranscodeService {
       }
     }
 
+    if (this.audioStreams.length === 0) {
+      throw new Error(
+        `[${this.mediaTitle}] No audio streams found for language ${this.originalLanguage}`
+      )
+    }
+
     if (countAudioStreamToKeep !== this.audioStreams.length) {
       this.shouldExecute = true
     }
@@ -162,6 +168,10 @@ export class TranscodeService {
         countVideoStreamToKeep++
       }
     })
+
+    if (this.videoStreams.length === 0) {
+      throw new Error(`[${this.mediaTitle}] No video streams found`)
+    }
 
     if (countVideoStreamToKeep !== this.videoStreams.length) {
       this.shouldExecute = true
@@ -231,8 +241,9 @@ export class TranscodeService {
 
     if (this.shouldExecute) {
       const newFileName = `${this.fileName}.mp4`
+      logger.info(`[${this.mediaTitle}] Transcoding with command: ${this.command.join(' ')}`)
       await executeFfmpeg(this.file, newFileName, this.command)
-      logger.info(`[${this.mediaTitle}] Transcoded with command: ${this.command.join(' ')}`)
+      logger.info(`[${this.mediaTitle}] Transcoded`)
       await this.cleanUp()
     }
 

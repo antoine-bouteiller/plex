@@ -26,12 +26,19 @@ export async function selectMediaType(
 
   const media = await conversation.external(() => getMediaByTypeWithPagination(mediaType, 0, 100))
 
-  function createMenu(conversation: ConfigureLanguageConversation, media: Media[], page: number) {
+  function createMenu(
+    conversation: ConfigureLanguageConversation,
+    media: Media[],
+    page: number,
+    parent?: string
+  ) {
     const currentMenu = media.slice(0, 10)
 
     const nextMenu = media.slice(10)
 
-    const menu = conversation.menu(`menu-${page}`)
+    const menuId = `menu-${page}`
+
+    const menu = conversation.menu(menuId, { parent })
 
     menu.dynamic(async () => {
       return currentMenu.reduce(
@@ -68,7 +75,7 @@ export async function selectMediaType(
     }
 
     if (nextMenu.length > 0) {
-      menu.submenu('Next', createMenu(conversation, nextMenu, page + 1))
+      menu.submenu('Next', createMenu(conversation, nextMenu, page + 1, menuId))
     }
 
     return menu
