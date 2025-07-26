@@ -13,13 +13,13 @@ export const sonarrWebhook = async (request: FastifyRequest, response: FastifyRe
 
   const eventType = body.eventType
 
-  if (eventType === 'Test') {
+  if ('Test' === eventType) {
     response.send('ok')
     return
   }
 
   try {
-    if (eventType === 'Download') {
+    if ('Download' === eventType) {
       const file = join(body.series.path, body.episodeFile.relativePath)
 
       const originalLanguage = await getLanguage(body.series.tmdbId, 'show')
@@ -35,11 +35,13 @@ export const sonarrWebhook = async (request: FastifyRequest, response: FastifyRe
 
     const sections = await getSections()
 
-    for (const section of sections.filter((section) => section.type === 'show')) {
-      await refreshSection(section.key, body.series.path)
-    }
-  } catch (err) {
-    handleError(err)
+    await Promise.all(
+      sections
+        .filter((section) => 'show' === section.type)
+        .map((section) => refreshSection(section.key, body.series.path))
+    )
+  } catch (error) {
+    handleError(error)
   }
 
   response.send('ok')

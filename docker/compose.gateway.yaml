@@ -1,7 +1,7 @@
 services:
   authelia:
-    container_name: "authelia"
-    image: "docker.io/authelia/authelia:latest"
+    container_name: 'authelia'
+    image: 'docker.io/authelia/authelia:latest'
     extends:
       file: ./compose.common.yaml
       service: common
@@ -12,7 +12,7 @@ services:
       - AUTHELIA_SESSION_SECRET=${AUTHELIA_SESSION_SECRET}
       - DOMAIN=${DOMAIN}
     ports:
-      - "9091:9091"
+      - '9091:9091'
     volumes:
       - ../configs/authelia.yaml:/config/configuration.yml
       - ${APP_PATH}/authelia:/config
@@ -24,13 +24,13 @@ services:
     environment:
       - DOMAIN=${DOMAIN}
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
     extends:
       file: ./compose.common.yaml
       service: common
     volumes:
-      - ../Caddyfile:/etc/caddy/Caddyfile
+      - ../configs/Caddyfile:/etc/caddy/Caddyfile
       - ${APP_PATH}/caddy/srv:/srv
       - ${APP_PATH}/caddy/data:/data
       - ${APP_PATH}/caddy/config:/config

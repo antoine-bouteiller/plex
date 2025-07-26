@@ -1,95 +1,95 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bastienwirtz/homer/main/.schema/config-schema.json
 
-title: "Dashboard"
-subtitle: "Antoine Bouteiller"
+title: 'Dashboard'
+subtitle: 'Antoine Bouteiller'
 
 header: true
 footer: false
 
-columns: "auto"
+columns: 'auto'
 connectivityCheck: true
 
 proxy:
   useCredentials: true
 
 stylesheet:
-  - "assets/themes/catpuccin-mocha.css"
-  - "assets/themes/catpuccin-latte.css"
+  - 'assets/themes/catpuccin-mocha.css'
+  - 'assets/themes/catpuccin-latte.css'
 
 logo: assets/images/dark_circle.png
 links:
-  - name: "Trash guide SQP"
-    icon: "fas fa-trash"
-    url: "https://trash-guides.info/SQP/"
-    target: "_blank"
-  - name: "Github"
-    icon: "fab fa-github"
-    url: "https://github.com/AntoBouteiller"
-    target: "_blank"
-  - name: "The Poster DB"
-    icon: "fas fa-database"
-    url: "https://theposterdb.com/"
-    target: "_blank"
-  - name: "Piracy Megathread"
-    icon: "fab fa-reddit"
-    url: "https://www.reddit.com/r/Piracy/wiki/megathread/"
-    target: "_blank"
-  - name: "DuckDns"
+  - name: 'Trash guide SQP'
+    icon: 'fas fa-trash'
+    url: 'https://trash-guides.info/SQP/'
+    target: '_blank'
+  - name: 'Github'
+    icon: 'fab fa-github'
+    url: 'https://github.com/AntoBouteiller'
+    target: '_blank'
+  - name: 'The Poster DB'
+    icon: 'fas fa-database'
+    url: 'https://theposterdb.com/'
+    target: '_blank'
+  - name: 'Piracy Megathread'
+    icon: 'fab fa-reddit'
+    url: 'https://www.reddit.com/r/Piracy/wiki/megathread/'
+    target: '_blank'
+  - name: 'DuckDns'
     icon: assets/logos/duckdns.png
     url: https://www.duckdns.org
-    target: "_blank"
+    target: '_blank'
 
 services:
-  - name: "Serveur"
-    icon: "fas fa-server"
+  - name: 'Serveur'
+    icon: 'fas fa-server'
     items:
-      - name: "Sonarr"
-        type: "Sonarr"
+      - name: 'Sonarr'
+        type: 'Sonarr'
         apikey: c95034dea8e54e349b025bd34bd8f853
         logo: assets/logos/sonarr.svg
         url: https://sonarr.antoinebouteiller.duckdns.org
-        target: "_blank"
-      - name: "Radarr"
-        type: "Radarr"
+        target: '_blank'
+      - name: 'Radarr'
+        type: 'Radarr'
         apikey: 2b89e613730e4685b838498435a7486d
         logo: assets/logos/radarr.svg
         url: https://radarr.antoinebouteiller.duckdns.org
-        target: "_blank"
-      - name: "Prowlarr"
-        type: "Prowlarr"
+        target: '_blank'
+      - name: 'Prowlarr'
+        type: 'Prowlarr'
         apikey: 60f8b32a7c6d471d9837701d20e3ac42
         logo: assets/logos/prowlarr.svg
         url: https://prowlarr.antoinebouteiller.duckdns.org
-        target: "_blank"
-      - name: "qBittorrent"
-        type: "qBittorrent"
+        target: '_blank'
+      - name: 'qBittorrent'
+        type: 'qBittorrent'
         logo: assets/logos/qbittorrent.svg
         url: https://qbittorrent.antoinebouteiller.duckdns.org
-        target: "_blank"
-      - name: "Bazarr"
+        target: '_blank'
+      - name: 'Bazarr'
         logo: assets/logos/bazarr.svg
         url: https://bazarr.antoinebouteiller.duckdns.org
-        target: "_blank"
-  - name: "Applications"
-    icon: "fas fa-microchip"
+        target: '_blank'
+  - name: 'Applications'
+    icon: 'fas fa-microchip'
     items:
-      - name: "Plex"
+      - name: 'Plex'
         logo: assets/logos/plex.svg
         url: https://plex.antoinebouteiller.duckdns.org
-        target: "_blank"
-      - name: "Overseerr"
+        target: '_blank'
+      - name: 'Overseerr'
         logo: assets/logos/overseerr.svg
         url: https://antoinebouteiller.duckdns.org
-        target: "_blank"
-  - name: "Monitoring"
-    icon: "fas fa-microchip"
+        target: '_blank'
+  - name: 'Monitoring'
+    icon: 'fas fa-microchip'
     items:
-      - name: "Fan Controller"
+      - name: 'Fan Controller'
         logo: assets/logos/coolercontrol.svg
         url: https://fancontroller.antoinebouteiller.duckdns.org
-        target: "_blank"
-      - name: "Grafana"
+        target: '_blank'
+      - name: 'Grafana'
         logo: assets/logos/grafana.svg
         url: https://grafana.antoinebouteiller.duckdns.org
-        target: "_blank"
+        target: '_blank'

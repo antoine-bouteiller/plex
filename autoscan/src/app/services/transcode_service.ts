@@ -49,14 +49,14 @@ export class TranscodeService {
       ],
     ]
 
-    if (this.originalLanguage !== 'eng' && this.originalLanguage !== 'fre') {
+    if ('eng' !== this.originalLanguage && 'fre' !== this.originalLanguage) {
       criterias.push([
         { language: 'eng', wantedEncodings: wantedAudioEncodings },
         { language: 'eng' },
       ])
     }
 
-    if (this.originalLanguage !== 'fre') {
+    if ('fre' !== this.originalLanguage) {
       criterias.push([
         { language: 'fre', wantedEncodings: wantedAudioEncodings },
         { language: 'fre' },
@@ -69,10 +69,14 @@ export class TranscodeService {
       let audioStreamToKeep = -1
       for (const condition of languageCriteria) {
         audioStreamToKeep = this.audioStreams.findIndex(isStreamWanted(condition))
-        if (audioStreamToKeep !== -1) break
+        if (-1 !== audioStreamToKeep) {
+          break
+        }
       }
 
-      if (audioStreamToKeep === -1) continue
+      if (-1 === audioStreamToKeep) {
+        continue
+      }
 
       const stream = this.audioStreams[audioStreamToKeep]
       this.command.push(`-map 0:a:${audioStreamToKeep}`)
@@ -90,13 +94,13 @@ export class TranscodeService {
         )
       }
 
-      if (stream?.tags?.language === undefined || stream.tags.language.toLowerCase() === 'und') {
+      if (stream?.tags?.language === undefined || 'und' === stream.tags.language.toLowerCase()) {
         this.command.push(`-metadata:s:a:${audioStreamToKeep} language=${this.originalLanguage}`)
         this.shouldExecute = true
       }
     }
 
-    if (this.audioStreams.length === 0) {
+    if (0 === this.audioStreams.length) {
       throw new Error(
         `[${this.mediaTitle}] No audio streams found for language ${this.originalLanguage}`
       )
@@ -132,10 +136,10 @@ export class TranscodeService {
 
     const streams = await ffprobe(join(transcodePath, videoFile))
 
-    const videoStreams = streams.filter((stream) => stream.codec_type === 'video')
-    const audioStreams = streams.filter((stream) => stream.codec_type === 'audio')
+    const videoStreams = streams.filter((stream) => 'video' === stream.codec_type)
+    const audioStreams = streams.filter((stream) => 'audio' === stream.codec_type)
 
-    if (videoStreams.length === 0 || audioStreams.length === 0) {
+    if (0 === videoStreams.length || 0 === audioStreams.length) {
       logger.error(`[${this.mediaTitle}] No audio or video stream found on transcoded file`)
     } else {
       rmSync(this.file)
@@ -148,7 +152,7 @@ export class TranscodeService {
   }
 
   cleanVideo() {
-    if (this.videoStreams.length === 0) {
+    if (0 === this.videoStreams.length) {
       return
     }
 
@@ -156,9 +160,9 @@ export class TranscodeService {
 
     this.videoStreams.forEach((stream, index) => {
       if (
-        stream.codec_name?.toLowerCase() === 'mjpeg' ||
-        stream.codec_name?.toLowerCase() === 'png' ||
-        stream.codec_name?.toLowerCase() === 'gif'
+        'mjpeg' === stream.codec_name?.toLowerCase() ||
+        'png' === stream.codec_name?.toLowerCase() ||
+        'gif' === stream.codec_name?.toLowerCase()
       ) {
         logger.warn(
           `[${this.mediaTitle}] Video stream 0:v:${index} is ${stream.codec_name.toLowerCase()} removing.`
@@ -169,7 +173,7 @@ export class TranscodeService {
       }
     })
 
-    if (this.videoStreams.length === 0) {
+    if (0 === this.videoStreams.length) {
       throw new Error(`[${this.mediaTitle}] No video streams found`)
     }
 
@@ -185,21 +189,23 @@ export class TranscodeService {
       { language: 'und', wantedEncodings: wantedSubtitleEncodings },
     ]
 
-    if (this.originalLanguage === 'fre' || this.subtitleStreams.length === 0) {
+    if ('fre' === this.originalLanguage || 0 === this.subtitleStreams.length) {
       return
     }
 
-    if (this.subtitleStreams.length > 0) {
+    if (0 < this.subtitleStreams.length) {
       this.shouldExecute = true
     }
 
     let subtitleStreamToKeep = -1
     for (const condition of criterias) {
       subtitleStreamToKeep = this.subtitleStreams.findIndex(isStreamWanted(condition))
-      if (subtitleStreamToKeep !== -1) break
+      if (-1 !== subtitleStreamToKeep) {
+        break
+      }
     }
 
-    if (subtitleStreamToKeep === -1) {
+    if (-1 === subtitleStreamToKeep) {
       return
     }
 
@@ -220,9 +226,9 @@ export class TranscodeService {
   async init() {
     const streams = await ffprobe(this.file)
 
-    this.videoStreams = streams.filter((stream) => stream.codec_type === 'video')
-    this.audioStreams = streams.filter((stream) => stream.codec_type === 'audio')
-    this.subtitleStreams = streams.filter((stream) => stream.codec_type === 'subtitle')
+    this.videoStreams = streams.filter((stream) => 'video' === stream.codec_type)
+    this.audioStreams = streams.filter((stream) => 'audio' === stream.codec_type)
+    this.subtitleStreams = streams.filter((stream) => 'subtitle' === stream.codec_type)
 
     this.fileName = this.file.slice(0, this.file.lastIndexOf('.')).split('/').pop()
     this.extension = this.file.split('.').pop()
@@ -235,7 +241,7 @@ export class TranscodeService {
     this.cleanAudio()
     await this.extractSubtitles()
 
-    if (this.extension !== 'mp4') {
+    if ('mp4' !== this.extension) {
       this.shouldExecute = true
     }
 
@@ -253,8 +259,8 @@ export class TranscodeService {
 
 function isStreamWanted(criteria: Criteria) {
   return (stream: FFprobeStream) => {
-    if (criteria.language === 'und') {
-      return stream.tags?.language === undefined || stream.tags.language.toLowerCase() === 'und'
+    if ('und' === criteria.language) {
+      return stream.tags?.language === undefined || 'und' === stream.tags.language.toLowerCase()
     }
     return (
       stream.tags?.language?.toLowerCase() === criteria.language &&

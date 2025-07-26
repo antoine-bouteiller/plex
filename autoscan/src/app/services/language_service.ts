@@ -27,7 +27,7 @@ export async function handleUpdateLanguage(
 ) {
   const audioStream = streams.find(
     (stream: PlexMediaStream) =>
-      stream.streamType === 2 && stream.languageCode === originalLanguage.replace('fre', 'fra')
+      2 === stream.streamType && stream.languageCode === originalLanguage.replace('fre', 'fra')
   )
   if (!audioStream) {
     logger.warn(`[${mediaTitle}] No ${originalLanguage} audio stream found`)

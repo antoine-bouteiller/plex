@@ -1,6 +1,8 @@
 {
+  "name": "autoscan",
+  "private": true,
   "scripts": {
-    "lint": "eslint . --fix",
+    "lint": "oxlint --fix",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "dev": "NODE_ENV=development bun --watch src/index.ts",
@@ -24,18 +26,12 @@
     "zod": "^3.25.74"
   },
   "devDependencies": {
-    "@eslint/js": "^9.30.1",
     "@tsconfig/bun": "^1.0.8",
     "@tsconfig/node22": "^22.0.2",
     "@types/bun": "^1.2.18",
     "@types/node": "^24.0.10",
     "drizzle-kit": "^0.31.4",
-    "eslint": "^9.30.1",
-    "eslint-config-prettier": "^10.1.5",
-    "eslint-plugin-perfectionist": "^4.15.0",
-    "eslint-plugin-simple-import-sort": "^12.1.1",
-    "eslint-plugin-unicorn": "^59.0.1",
-    "prettier": "^3.6.2",
+    "oxlint": "^1.8.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.35.1",
     "vitest": "^3.2.4"

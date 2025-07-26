@@ -70,11 +70,11 @@ export async function selectMediaType(
       )
     })
 
-    if (page > 0) {
+    if (0 < page) {
       menu.back('Previous')
     }
 
-    if (nextMenu.length > 0) {
+    if (0 < nextMenu.length) {
       menu.submenu('Next', createMenu(conversation, nextMenu, page + 1, menuId))
     }
 

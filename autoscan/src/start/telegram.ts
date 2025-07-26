@@ -12,9 +12,9 @@ const bot = new Bot<TelegramContext>(env.TELEGRAM_TOKEN)
 
 bot.use(conversations())
 
-bot.catch((err) => {
-  logger.error(err.message)
-  return err.ctx.reply('An error occurred')
+bot.catch((error) => {
+  logger.error(error.message)
+  return error.ctx.reply('An error occurred')
 })
 
 bot.use(createConversation(selectMediaType, { plugins: [hydrate()] }))

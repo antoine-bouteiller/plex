@@ -13,13 +13,13 @@ export const radarrWebhook = async (request: FastifyRequest, response: FastifyRe
 
   const eventType = body.eventType
 
-  if (eventType === 'Test') {
+  if ('Test' === eventType) {
     response.send('ok')
     return
   }
 
   try {
-    if (eventType === 'Download') {
+    if ('Download' === eventType) {
       const file = join(body.movie.folderPath, body.movieFile.relativePath)
       const originalLanguage = await getLanguage(body.movie.tmdbId, 'movie')
 
@@ -29,11 +29,13 @@ export const radarrWebhook = async (request: FastifyRequest, response: FastifyRe
     }
     const sections = await getSections()
 
-    for (const section of sections.filter((section) => section.type === 'movie')) {
-      await refreshSection(section.key, body.movie.folderPath)
-    }
-  } catch (err) {
-    handleError(err)
+    await Promise.all(
+      sections
+        .filter((section) => 'movie' === section.type)
+        .map((section) => refreshSection(section.key, body.movie.folderPath))
+    )
+  } catch (error) {
+    handleError(error)
   }
 
   response.send('ok')

@@ -1,0 +1,24 @@
+{
+  "private": true,
+  "scripts": {
+    "lint": "oxlint --fix",
+    "format": "prettier --write ."
+  },
+  "workspaces": [
+    "autoscan"
+  ],
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@evilmartians/lefthook": "^1.12.2",
+    "@prettier/plugin-oxc": "^0.0.4",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "oxlint": "^1.8.0",
+    "prettier": "^3.6.2"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  }
+}

@@ -7,7 +7,7 @@ export function handleError(error: unknown) {
     logger.error(error.message)
   } else if (error instanceof Error) {
     let message = error.message
-    if (error.cause && typeof error.cause === 'object' && 'message' in error.cause) {
+    if (error.cause && 'object' === typeof error.cause && 'message' in error.cause) {
       message += `: ${error.cause.message}`
     }
     logger.error(message)

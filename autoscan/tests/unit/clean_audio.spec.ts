@@ -1,12 +1,9 @@
+import { test, videosPath } from '../config.js'
+import { TranscodeService } from '@/app/services/transcode_service'
+import { describe, expect } from 'vitest'
+import type { iso2 } from '@/types/iso_codes'
 import { copyFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { describe, expect } from 'vitest'
-
-import type { iso2 } from '@/types/iso_codes'
-
-import { TranscodeService } from '@/app/services/transcode_service'
-
-import { test, videosPath } from '../config.js'
 
 interface TestCase {
   expected: {

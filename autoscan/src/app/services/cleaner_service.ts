@@ -35,6 +35,8 @@ async function cleanupAll(): Promise<void> {
 async function removeStalledDownloads(client: typeof ky, serviceName: string): Promise<void> {
   const queue = await client.get<QueueResponse>('queue').json()
 
+  const promises = []
+
   for (const item of queue.records) {
     if (!item.title || !item.status) {
       logger.warn(`Skipping item in ${serviceName} queue due to missing or invalid keys:`, item)
@@ -51,8 +53,8 @@ async function removeStalledDownloads(client: typeof ky, serviceName: string): P
       )
 
     if (
-      item.status === 'warning' &&
-      item.errorMessage === 'The download is stalled with no connections'
+      'warning' === item.status &&
+      'The download is stalled with no connections' === item.errorMessage
     ) {
       strikeCounts[itemId] = (strikeCounts[itemId] ?? 0) + 1
       logger.info(`Item ${item.title} has ${strikeCounts[itemId]} strikes`)
@@ -60,14 +62,18 @@ async function removeStalledDownloads(client: typeof ky, serviceName: string): P
 
     if (noEligibleFiles || (strikeCounts[itemId] ?? 0) >= STRIKE_COUNT) {
       logger.info(`Removing ${serviceName} download: ${item.title}`)
-      await client.delete(`queue/${itemId}`, {
-        searchParams: {
-          blocklist: 'true',
-          removeFromClient: 'true',
-        },
-      })
+      promises.push(
+        client.delete(`queue/${itemId}`, {
+          searchParams: {
+            blocklist: 'true',
+            removeFromClient: 'true',
+          },
+        })
+      )
     }
   }
+
+  await Promise.all(promises)
 }
 
 export { cleanupAll }

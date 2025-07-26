@@ -21,7 +21,7 @@
 # certificates_directory: "/config/certificates/"
 
 ## The theme to display: light, dark, grey, auto.
-theme: "dark"
+theme: 'dark'
 
 ## Set the default 2FA method for new users and for when a user has a preferred method configured that has been
 ## disabled. This setting must be a method that is enabled.
@@ -38,7 +38,7 @@ server:
     ## Configure the authz endpoints.
     authz:
       forward-auth:
-        implementation: "ForwardAuth"
+        implementation: 'ForwardAuth'
 
 ##
 ## Log Configuration
@@ -63,9 +63,9 @@ identity_validation:
   ## Reset Password flow. Adjusts how the reset password flow operates.
   reset_password:
     ## Maximum allowed time before the JWT is generated and when the user uses it in the duration common syntax.
-    jwt_lifespan: "5 minutes"
+    jwt_lifespan: '5 minutes'
     ## The algorithm used for the Reset Password JWT.
-    jwt_algorithm: "HS256"
+    jwt_algorithm: 'HS256'
 
 ##
 ## Authentication Backend Provider Configuration
@@ -87,9 +87,9 @@ authentication_backend:
   ## Important: Kubernetes (or HA) users must read https://www.authelia.com/t/statelessness
   ##
   file:
-    path: "/config/users.yml"
+    path: '/config/users.yml'
     password:
-      algorithm: "argon2"
+      algorithm: 'argon2'
 
 ##
 ## Password Policy Configuration.
@@ -148,22 +148,22 @@ password_policy:
 access_control:
   ## Default policy can either be 'bypass', 'one_factor', 'two_factor' or 'deny'. It is the policy applied to any
   ## resource if there is no policy to be applied to the user.
-  default_policy: "deny"
+  default_policy: 'deny'
 
   networks:
-    - name: "internal"
+    - name: 'internal'
       networks:
-        - "10.0.0.0/8"
-        - "172.16.0.0/12"
-        - "192.168.0.0/18"
+        - '10.0.0.0/8'
+        - '172.16.0.0/12'
+        - '192.168.0.0/18'
   rules:
     - domain: '*.{{ mustEnv "DOMAIN" }}'
-      policy: "bypass"
+      policy: 'bypass'
       networks:
-        - "internal"
-        - "176.134.43.246/32"
+        - 'internal'
+        - '176.134.43.246/32'
     - domain: '*.{{ mustEnv "DOMAIN" }}'
-      policy: "one_factor"
+      policy: 'one_factor'
 ##
 ## Session Provider Configuration
 ##
@@ -174,7 +174,7 @@ session:
   ## Undefined values will default to the values below.
   cookies:
     ## The name of the session cookie.
-    - name: "authelia_session"
+    - name: 'authelia_session'
 
       ## The domain to protect.
       ## Note: the Authelia portal must also be in that domain.
@@ -199,10 +199,10 @@ regulation:
 
   ## The time range during which the user can attempt login before being banned in the duration common syntax. The user
   ## is banned if the authentication failed 'max_retries' times in a 'find_time' seconds window.
-  find_time: "2 minutes"
+  find_time: '2 minutes'
 
   ## The length of time before a banned user can login again in the duration common syntax.
-  ban_time: "5 minutes"
+  ban_time: '5 minutes'
 
 ##
 ## Storage Provider Configuration
@@ -219,7 +219,7 @@ storage:
   ##
   local:
     ## Path to the SQLite3 Database.
-    path: "/config/db.sqlite3"
+    path: '/config/db.sqlite3'
 
   ##
   ## PostgreSQL (Storage Provider)
@@ -297,4 +297,4 @@ notifier:
   ## Important: Kubernetes (or HA) users must read https://www.authelia.com/t/statelessness
   ##
   filesystem:
-    filename: "/config/notification.txt"
+    filename: '/config/notification.txt'

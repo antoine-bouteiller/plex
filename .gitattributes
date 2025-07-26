@@ -3,4 +3,3 @@ autoscan.yaml filter=crypt diff=crypt merge=crypt
 homer.yaml filter=crypt diff=crypt merge=crypt
 secrets.yaml filter=crypt diff=crypt merge=crypt
 .env filter=crypt diff=crypt merge=crypt
-*.pem filter=crypt diff=crypt merge=crypt

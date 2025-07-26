@@ -29,7 +29,9 @@ export async function getLanguageByIdAndType(tmdbId: number, type: MediaType): P
 async function getMovieLanguageById(tmdbId: number): Promise<iso2> {
   const response = await tmdbClient<TmdbResponse>(`movie/${tmdbId}`)
 
-  if (!response.ok) return 'eng'
+  if (!response.ok) {
+    return 'eng'
+  }
 
   const data = await response.json()
 
@@ -43,7 +45,9 @@ async function getMovieLanguageById(tmdbId: number): Promise<iso2> {
 async function getSeriesLanguageById(tmdbId: number): Promise<iso2> {
   const response = await tmdbClient<TmdbResponse>(`tv/${tmdbId}`)
 
-  if (!response.ok) return 'eng'
+  if (!response.ok) {
+    return 'eng'
+  }
 
   const data = await response.json()
 

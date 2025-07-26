@@ -35,7 +35,7 @@ export async function getMediaDetails(plexMedia: PlexMedia) {
 
   const originalLanguage = await getLanguage(
     tmdbId,
-    plexMedia.type === 'episode' ? 'show' : plexMedia.type
+    'episode' === plexMedia.type ? 'show' : plexMedia.type
   )
 
   const part = details.MediaContainer.Metadata[0]?.Media[0]?.Part[0]
@@ -55,7 +55,7 @@ export async function getMediaDetails(plexMedia: PlexMedia) {
 }
 
 export async function getSectionMedia(id: number, sectionType: 'movie' | 'show') {
-  const type = sectionType === 'show' ? 4 : 1
+  const type = 'show' === sectionType ? 4 : 1
   const response = await plexClient<PlexReponse>(`library/sections/${id}/all?type=${type}`).json()
 
   return response.MediaContainer.Metadata
@@ -81,7 +81,7 @@ export async function updateStream(
   type: 'audio' | 'subtitle'
 ) {
   await plexClient.put(
-    `library/parts/${partsId}?${type}StreamID=${originalLanguage === 'fra' ? 0 : subtitleStreamId}`,
+    `library/parts/${partsId}?${type}StreamID=${'fra' === originalLanguage ? 0 : subtitleStreamId}`,
     {
       searchParams: { allParts: 1 },
     }
