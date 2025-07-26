@@ -13,14 +13,14 @@ services:
       - ${DATA_PATH}:/mnt/data
       - ${MOVIES_PATH}:/mnt/movies
       - /tmp/plex:/transcode
-  overseerr:
-    image: lscr.io/linuxserver/overseerr:latest
-    container_name: overseerr
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
     extends:
       file: compose.common.yaml
       service: common
     volumes:
-      - ${APP_PATH}/overseerr/:/config
+      - ${APP_PATH}/jellyseerr/:/app/config
     links:
       - sonarr
       - radarr

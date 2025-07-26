@@ -28,7 +28,7 @@
 }
 
 {$DOMAIN} {
-	reverse_proxy overseerr:5055
+	reverse_proxy jellyseerr:5055
 }
 
 sonarr.{$DOMAIN} {

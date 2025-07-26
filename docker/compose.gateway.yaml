@@ -40,7 +40,7 @@ services:
       - radarr
       - homer
       - prowlarr
-      - overseerr
+      - jellyseerr
       - qbittorrent
       - plex
       # - grafana
