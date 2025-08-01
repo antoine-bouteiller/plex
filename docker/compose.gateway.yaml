@@ -44,3 +44,11 @@ services:
       - qbittorrent
       - plex
       # - grafana
+  ddclient:
+    image: lscr.io/linuxserver/ddclient:latest
+    container_name: ddclient
+    extends:
+      file: ./compose.common.yaml
+      service: common
+    volumes:
+      - ${APP_PATH}/ddclient.conf:/config/ddclient.conf
