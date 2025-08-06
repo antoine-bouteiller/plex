@@ -48,48 +48,48 @@ services:
         type: 'Sonarr'
         apikey: c95034dea8e54e349b025bd34bd8f853
         logo: assets/logos/sonarr.svg
-        url: https://sonarr.antoinebouteiller.duckdns.org
+        url: https://sonarr.antoinebouteiller.fr
         target: '_blank'
       - name: 'Radarr'
         type: 'Radarr'
         apikey: 2b89e613730e4685b838498435a7486d
         logo: assets/logos/radarr.svg
-        url: https://radarr.antoinebouteiller.duckdns.org
+        url: https://radarr.antoinebouteiller.fr
         target: '_blank'
       - name: 'Prowlarr'
         type: 'Prowlarr'
         apikey: 60f8b32a7c6d471d9837701d20e3ac42
         logo: assets/logos/prowlarr.svg
-        url: https://prowlarr.antoinebouteiller.duckdns.org
+        url: https://prowlarr.antoinebouteiller.fr
         target: '_blank'
       - name: 'qBittorrent'
         type: 'qBittorrent'
         logo: assets/logos/qbittorrent.svg
-        url: https://qbittorrent.antoinebouteiller.duckdns.org
+        url: https://qbittorrent.antoinebouteiller.fr
         target: '_blank'
       - name: 'Bazarr'
         logo: assets/logos/bazarr.svg
-        url: https://bazarr.antoinebouteiller.duckdns.org
+        url: https://bazarr.antoinebouteiller.fr
         target: '_blank'
   - name: 'Applications'
     icon: 'fas fa-microchip'
     items:
       - name: 'Plex'
         logo: assets/logos/plex.svg
-        url: https://plex.antoinebouteiller.duckdns.org
+        url: https://plex.antoinebouteiller.fr
         target: '_blank'
-      - name: 'Overseerr'
+      - name: 'Jellyseerr'
         logo: assets/logos/overseerr.svg
-        url: https://antoinebouteiller.duckdns.org
+        url: https://antoinebouteiller.fr
         target: '_blank'
   - name: 'Monitoring'
     icon: 'fas fa-microchip'
     items:
       - name: 'Fan Controller'
         logo: assets/logos/coolercontrol.svg
-        url: https://fancontroller.antoinebouteiller.duckdns.org
+        url: https://fancontroller.antoinebouteiller.fr
         target: '_blank'
       - name: 'Grafana'
         logo: assets/logos/grafana.svg
-        url: https://grafana.antoinebouteiller.duckdns.org
+        url: https://grafana.antoinebouteiller.fr
         target: '_blank'
