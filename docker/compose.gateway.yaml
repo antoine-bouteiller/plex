@@ -51,4 +51,4 @@ services:
       file: ./compose.common.yaml
       service: common
     volumes:
-      - ${APP_PATH}/ddclient.conf:/config/ddclient.conf
+      - ../configs/ddclient.conf:/config/ddclient.conf
