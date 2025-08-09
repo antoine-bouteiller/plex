@@ -1,6 +1,6 @@
 import { join } from 'path'
 import 'dotenv/config'
-import { z } from 'zod/v4'
+import { z } from 'zod'
 
 const envSchema = z.object({
   PLEX_TOKEN: z.string(),
@@ -19,11 +19,13 @@ const envSchema = z.object({
 
   SONARR_API_KEY: z.string(),
   SONARR_API_URL: z.string(),
+
+  CLOUDFLARE_TOKEN: z.string(),
 })
 
 const env = envSchema.parse(process.env)
 
 export default {
   ...env,
-  DATABASE_URL: join(import.meta.dirname, '../../resources/autoscan.db'),
+  DATABASE_URL: join(__dirname, '../../resources/autoscan.db'),
 }

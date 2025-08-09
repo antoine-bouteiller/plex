@@ -1,4 +1,4 @@
-import { z } from 'zod/v4'
+import { z } from 'zod'
 
 export const radarrValidator = z.object({
   eventType: z.enum(['DeleteFile', 'Download', 'Test']),
