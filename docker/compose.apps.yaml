@@ -32,6 +32,9 @@ services:
       service: common
     environment:
       HOMEPAGE_ALLOWED_HOSTS: dashboard.${DOMAIN}
+
+      HOMEPAGE_VAR_DOMAIN: ${DOMAIN}
+
       HOMEPAGE_VAR_SONARR_API_URL: ${SONARR_API_URL}
       HOMEPAGE_VAR_SONARR_API_KEY: ${SONARR_API_KEY}
 
@@ -46,11 +49,15 @@ services:
 
       HOMEPAGE_VAR_PLEX_URL: ${PLEX_URL}
       HOMEPAGE_VAR_PLEX_TOKEN: ${PLEX_TOKEN}
+
+      HOMEPAGE_VAR_QBITTORRENT_API_URL: ${QBITORRENT_API_URL}
     volumes:
       - ../configs/homepage/services.yaml:/app/config/services.yaml
       - ../configs/homepage/settings.yaml:/app/config/settings.yaml
+      - ../configs/homepage/bookmarks.yaml:/app/config/bookmarks.yaml
+      - ../configs/homepage/docker.yaml:/app/config/docker.yaml
       - ${APP_PATH}/homepage:/app/config
-      - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
+      - //var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
     links:
       - sonarr
       - radarr

@@ -3,6 +3,7 @@
         icon: sonarr.svg
         href: 'https://sonarr.{{HOMEPAGE_VAR_DOMAIN}}'
         container: sonarr
+        server: docker
         widget:
           type: sonarr
           url: '{{HOMEPAGE_VAR_SONARR_API_URL}}'
@@ -11,6 +12,7 @@
         icon: radarr.svg
         href: 'https://radarr.{{HOMEPAGE_VAR_DOMAIN}}'
         container: radarr
+        server: docker
         widget:
           type: radarr
           url: '{{HOMEPAGE_VAR_RADARR_API_URL}}'
@@ -19,6 +21,7 @@
         icon: prowlarr.svg
         href: 'https://prowlarr.{{HOMEPAGE_VAR_DOMAIN}}'
         container: prowlarr
+        server: docker
         widget:
           type: prowlarr
           url: '{{HOMEPAGE_VAR_PROWLARR_API_URL}}'
@@ -27,6 +30,7 @@
         icon: bazarr.svg
         href: 'https://bazarr.{{HOMEPAGE_VAR_DOMAIN}}'
         container: bazarr
+        server: docker
         widget:
           type: bazarr
           url: '{{HOMEPAGE_VAR_BAZARR_API_URL}}'
@@ -35,6 +39,7 @@
         icon: qbittorrent.svg
         href: 'https://qbittorrent.{{HOMEPAGE_VAR_DOMAIN}}'
         container: qbittorrent
+        server: docker
         widget:
           type: qbittorrent
           url: '{{HOMEPAGE_VAR_QBITTORRENT_API_URL}}'
@@ -42,6 +47,7 @@
         icon: plex.svg
         href: 'https://app.plex.tv'
         container: plex
+        server: docker
         widget:
           type: plex
           url: '{{HOMEPAGE_VAR_PLEX_URL}}'
