@@ -1,6 +1,48 @@
-title: Antoine'Dashboard
-theme: dark
-layout:
-  Media:
-    style: row
-    columns: 3
+- Media:
+    - Sonnar:
+        icon: sonarr.svg
+        href: 'https://sonarr.{{HOMEPAGE_VAR_DOMAIN}}'
+        container: sonarr
+        widget:
+          type: sonarr
+          url: '{{HOMEPAGE_VAR_SONARR_API_URL}}'
+          key: '{{HOMEPAGE_VAR_SONARR_API_KEY}}'
+    - Radarr:
+        icon: radarr.svg
+        href: 'https://radarr.{{HOMEPAGE_VAR_DOMAIN}}'
+        container: radarr
+        widget:
+          type: radarr
+          url: '{{HOMEPAGE_VAR_RADARR_API_URL}}'
+          key: '{{HOMEPAGE_VAR_RADARR_API_KEY}}'
+    - Prowlarr:
+        icon: prowlarr.svg
+        href: 'https://prowlarr.{{HOMEPAGE_VAR_DOMAIN}}'
+        container: prowlarr
+        widget:
+          type: prowlarr
+          url: '{{HOMEPAGE_VAR_PROWLARR_API_URL}}'
+          key: '{{HOMEPAGE_VAR_PROWLARR_API_KEY}}'
+    - Bazarr:
+        icon: bazarr.svg
+        href: 'https://bazarr.{{HOMEPAGE_VAR_DOMAIN}}'
+        container: bazarr
+        widget:
+          type: bazarr
+          url: '{{HOMEPAGE_VAR_BAZARR_API_URL}}'
+          key: '{{HOMEPAGE_VAR_BAZARR_API_KEY}}'
+    - Qbittorrent:
+        icon: qbittorrent.svg
+        href: 'https://qbittorrent.{{HOMEPAGE_VAR_DOMAIN}}'
+        container: qbittorrent
+        widget:
+          type: qbittorrent
+          url: '{{HOMEPAGE_VAR_QBITTORRENT_API_URL}}'
+    - Plex:
+        icon: plex.svg
+        href: 'https://app.plex.tv'
+        container: plex
+        widget:
+          type: plex
+          url: '{{HOMEPAGE_VAR_PLEX_API_URL}}'
+          key: '{{HOMEPAGE_VAR_PLEX_API_KEY}}'
