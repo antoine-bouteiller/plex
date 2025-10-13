@@ -4,3 +4,4 @@ autolanguageconfig/.env
 build
 resources
 .prisma
+.env
