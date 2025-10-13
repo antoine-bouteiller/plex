@@ -56,7 +56,7 @@ services:
       - ../configs/homepage/settings.yaml:/app/config/settings.yaml
       - ../configs/homepage/bookmarks.yaml:/app/config/bookmarks.yaml
       - ../configs/homepage/docker.yaml:/app/config/docker.yaml
-      - ../configs/homepage/widget.yaml:/app/config/widget.yaml
+      - ../configs/homepage/widgets.yaml:/app/config/widgets.yaml
       - ${APP_PATH}/homepage:/app/config
       - //var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
       - /mnt/data:/mnt/data:ro
