@@ -6,5 +6,5 @@
 - resources:
     label: Storage
     disk:
-      - /mnt
       - /
+      - /mnt/data
