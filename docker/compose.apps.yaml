@@ -24,11 +24,15 @@ services:
     links:
       - sonarr
       - radarr
-  homer:
-    image: b4bz/homer
-    container_name: homer
-    volumes:
-      - ../homer:/www/assets
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
     extends:
       file: compose.common.yaml
       service: common
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: dashboard.${DOMAIN}
+    volumes:
+      - ../configs/homepage:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
+    restart: unless-stopped

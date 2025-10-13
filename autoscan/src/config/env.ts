@@ -21,6 +21,8 @@ const envSchema = z.object({
   SONARR_API_URL: z.string(),
 
   CLOUDFLARE_TOKEN: z.string(),
+
+  DOMAIN: z.string(),
 })
 
 const env = envSchema.parse(process.env)

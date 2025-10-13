@@ -1,153 +1,53 @@
 # yaml-language-server: $schema=https://www.authelia.com/schemas/v4.39/json-schema/configuration.json
 ---
-###############################################################################
-##                           Authelia Configuration                          ##
-###############################################################################
-
-##
-## Notes:
-##
-##    - the default location of this file is assumed to be configuration.yml unless otherwise noted
-##    - when using docker the container expects this by default to be at /config/configuration.yml
-##    - the default location where this file is loaded from can be overridden with the X_AUTHELIA_CONFIG environment var
-##    - the comments in this configuration file are helpful but users should consult the official documentation on the
-##      website at https://www.authelia.com/ or https://www.authelia.com/configuration/prologue/introduction/
-##    - this configuration file template is not automatically updated
-##
-
-## Certificates directory specifies where Authelia will load trusted certificates (public portion) from in addition to
-## the system certificates store.
-## They should be in base64 format, and have one of the following extensions: *.cer, *.crt, *.pem.
-# certificates_directory: "/config/certificates/"
-
-## The theme to display: light, dark, grey, auto.
 theme: 'dark'
 
-## Set the default 2FA method for new users and for when a user has a preferred method configured that has been
-## disabled. This setting must be a method that is enabled.
-## Options are totp, webauthn, mobile_push.
-# default_2fa_method: ''
-
-##
-## Server Configuration
-##
 server:
-  ## Server Endpoints configuration.
-  ## This section is considered advanced and it SHOULD NOT be configured unless you've read the relevant documentation.
   endpoints:
-    ## Configure the authz endpoints.
     authz:
       forward-auth:
         implementation: 'ForwardAuth'
 
-##
-## Log Configuration
-##
-# log:
-## Level of verbosity for logs: info, debug, trace.
-# level: 'debug'
-
-## Format the logs are written as: json, text.
-# format: 'json'
-
-## File path where the logs will be written. If not set logs are written to stdout.
-# file_path: '/config/authelia.log'
-
-## Whether to also log to stdout when a log_file_path is defined.
-# keep_stdout: false
-
-## Identity Validation Configuration
-##
-## This configuration tunes the identity validation flows.
 identity_validation:
-  ## Reset Password flow. Adjusts how the reset password flow operates.
   reset_password:
-    ## Maximum allowed time before the JWT is generated and when the user uses it in the duration common syntax.
     jwt_lifespan: '5 minutes'
-    ## The algorithm used for the Reset Password JWT.
     jwt_algorithm: 'HS256'
 
-##
-## Authentication Backend Provider Configuration
-##
-## Used for verifying user passwords and retrieve information such as email address and groups users belong to.
-##
-## The available providers are: `file`, `ldap`. You must use only one of these providers.
 authentication_backend:
-  ##
-  ## File (Authentication Provider)
-  ##
-  ## With this backend, the users database is stored in a file which is updated when users reset their passwords.
-  ## Therefore, this backend is meant to be used in a dev environment and not in production since it prevents Authelia
-  ## to be scaled to more than one instance. The options under 'password' have sane defaults, and as it has security
-  ## implications it is highly recommended you leave the default values. Before considering changing these settings
-  ## please read the docs page below:
-  ## https://www.authelia.com/r/passwords#tuning
-  ##
-  ## Important: Kubernetes (or HA) users must read https://www.authelia.com/t/statelessness
-  ##
   file:
     path: '/config/users.yml'
     password:
       algorithm: 'argon2'
 
-##
-## Password Policy Configuration.
-##
 password_policy:
-  ## zxcvbn is a well known and used password strength algorithm. It does not have tunable settings.
   zxcvbn:
     enabled: true
-    ## Configures the minimum score allowed.
     min_score: 3
 
-##
-## Privacy Policy Configuration
-##
-## Parameters used for displaying the privacy policy link and drawer.
-# privacy_policy:
+identity_providers:
+  oidc:
+    clients:
+      - client_id: 'cloudflare'
+        client_name: 'Recipes Manager'
+        client_secret: '$pbkdf2-sha512$310000$c8p78n7pUMln0jzvd4aK4Q$JNRBzwAo0ek5qKn50cFzzvE9RXV88h1wJn5KGiHrD0YKtZaR/nCb2CJPOsKaPK0hjf.9yHxzQGZziziccp6Yng' # The digest of 'insecure_secret'.
+        public: false
+        require_pkce: true
+        pkce_challenge_method: 'S256'
+        redirect_uris:
+          - 'https://recipes.{{ mustEnv "DOMAIN" }}/api/auth/callback'
+        scopes:
+          - 'openid'
+          - 'profile'
+          - 'email'
+        response_types:
+          - 'code'
+        grant_types:
+          - 'authorization_code'
+        access_token_signed_response_alg: 'none'
+        userinfo_signed_response_alg: 'none'
+        token_endpoint_auth_method: 'client_secret_basic'
 
-## Enables the display of the privacy policy using the policy_url.
-# enabled: false
-
-## Enables the display of the privacy policy drawer which requires users accept the privacy policy
-## on a per-browser basis.
-# require_user_acceptance: false
-
-## The URL of the privacy policy document. Must be an absolute URL and must have the 'https://' scheme.
-## If the privacy policy enabled option is true, this MUST be provided.
-# policy_url: ''
-
-##
-## Access Control Configuration
-##
-## Access control is a list of rules defining the authorizations applied for one resource to users or group of users.
-##
-## If 'access_control' is not defined, ACL rules are disabled and the 'deny' rule is applied, i.e., access is denied
-## to everyone. Otherwise restrictions follow the rules defined.
-##
-## Note: One can use the wildcard * to match any subdomain.
-## It must stand at the beginning of the pattern. (example: *.example.com)
-##
-## Note: You must put patterns containing wildcards between simple quotes for the YAML to be syntactically correct.
-##
-## Definition: A 'rule' is an object with the following keys: 'domain', 'subject', 'policy' and 'resources'.
-##
-## - 'domain' defines which domain or set of domains the rule applies to.
-##
-## - 'subject' defines the subject to apply authorizations to. This parameter is optional and matching any user if not
-##    provided. If provided, the parameter represents either a user or a group. It should be of the form
-##    'user:<username>' or 'group:<groupname>'.
-##
-## - 'policy' is the policy to apply to resources. It must be either 'bypass', 'one_factor', 'two_factor' or 'deny'.
-##
-## - 'resources' is a list of regular expressions that matches a set of resources to apply the policy to. This parameter
-##   is optional and matches any resource if not provided.
-##
-## Note: the order of the rules is important. The first policy matching (domain, resource, subject) applies.
 access_control:
-  ## Default policy can either be 'bypass', 'one_factor', 'two_factor' or 'deny'. It is the policy applied to any
-  ## resource if there is no policy to be applied to the user.
   default_policy: 'deny'
 
   networks:
@@ -161,140 +61,27 @@ access_control:
       policy: 'bypass'
       networks:
         - 'internal'
-        - '176.134.43.246/32'
     - domain: '*.{{ mustEnv "DOMAIN" }}'
       policy: 'one_factor'
-##
-## Session Provider Configuration
-##
-## The session cookies identify the user once logged in.
-## The available providers are: `memory`, `redis`. Memory is the provider unless redis is defined.
+
 session:
-  ## Cookies configures the list of allowed cookie domains for sessions to be created on.
-  ## Undefined values will default to the values below.
   cookies:
-    ## The name of the session cookie.
     - name: 'authelia_session'
-
-      ## The domain to protect.
-      ## Note: the Authelia portal must also be in that domain.
       domain: '{{ mustEnv "DOMAIN" }}'
-
-      ## Required. The fully qualified URI of the portal to redirect users to on proxies that support redirections.
-      ## Rules:
-      ##   - MUST use the secure scheme 'https://'
-      ##   - The above 'domain' option MUST either:
-      ##      - Match the host portion of this URI.
-      ##      - Match the suffix of the host portion when prefixed with '.'.
       authelia_url: 'https://auth.{{ mustEnv "DOMAIN" }}'
 
-##
-## Regulation Configuration
-##
-## This mechanism prevents attackers from brute forcing the first factor. It bans the user if too many attempts are made
-## in a short period of time.
 regulation:
-  # The number of failed login attempts before user is banned. Set it to 0 to disable regulation.
   max_retries: 3
-
-  ## The time range during which the user can attempt login before being banned in the duration common syntax. The user
-  ## is banned if the authentication failed 'max_retries' times in a 'find_time' seconds window.
   find_time: '2 minutes'
 
-  ## The length of time before a banned user can login again in the duration common syntax.
   ban_time: '5 minutes'
 
-##
-## Storage Provider Configuration
-##
-## The available providers are: `local`, `mysql`, `postgres`. You must use one and only one of these providers.
 storage:
-  ##
-  ## Local (Storage Provider)
-  ##
-  ## This stores the data in a SQLite3 Database.
-  ## This is only recommended for lightweight non-stateful installations.
-  ##
-  ## Important: Kubernetes (or HA) users must read https://www.authelia.com/t/statelessness
-  ##
   local:
-    ## Path to the SQLite3 Database.
     path: '/config/db.sqlite3'
 
-  ##
-  ## PostgreSQL (Storage Provider)
-  ##
-  # postgres:
-  ## The address of the PostgreSQL server to connect to in the address common syntax.
-  ## Format: [<scheme>://]<hostname>[:<port>].
-  ## Square brackets indicate optional portions of the format. Scheme must be 'tcp', 'tcp4', 'tcp6', or 'unix`.
-  ## The default scheme is 'unix' if the address is an absolute path otherwise it's 'tcp'. The default port is '5432'.
-  # address: 'tcp://127.0.0.1:5432'
-
-  ## The database name to use.
-  # database: 'authelia'
-
-  ## The schema name to use.
-  # schema: 'public'
-
-  ## The username used for SQL authentication.
-  # username: 'authelia'
-
-  ## The password used for SQL authentication.
-  ## Can also be set using a secret: https://www.authelia.com/c/secrets
-  # password: 'mypassword'
-
-  ## The connection timeout in the duration common syntax.
-  # timeout: '5 seconds'
-
-  ## PostgreSQL TLS settings. Configuring this requires TLS.
-  # tls:
-  ## The server subject name to check the servers certificate against during the validation process.
-  ## This option is not required if the certificate has a SAN which matches the address options hostname.
-  # server_name: 'postgres.example.com'
-
-  ## Skip verifying the server certificate entirely. In preference to setting this we strongly recommend you add the
-  ## certificate or the certificate of the authority signing the certificate to the certificates directory which is
-  ## defined by the `certificates_directory` option at the top of the configuration.
-  ## It's important to note the public key should be added to the directory, not the private key.
-  ## This option is strongly discouraged but may be useful in some self-signed situations where validation is not
-  ## important to the administrator.
-  # skip_verify: false
-
-  ## Minimum TLS version for the connection.
-  # minimum_version: 'TLS1.2'
-
-  ## Maximum TLS version for the connection.
-  # maximum_version: 'TLS1.3'
-
-  ## The certificate chain used with the private_key if the server requests TLS Client Authentication
-  ## i.e. Mutual TLS.
-  # certificate_chain: |
-  # -----BEGIN CERTIFICATE-----
-  # ...
-  # -----END CERTIFICATE-----
-  # -----BEGIN CERTIFICATE-----
-  # ...
-  # -----END CERTIFICATE-----
-
-  ## The private key used with the certificate_chain if the server requests TLS Client Authentication
-  ## i.e. Mutual TLS.
-  # private_key: |
-  # -----BEGIN RSA PRIVATE KEY-----
-  # ...
-  # -----END RSA PRIVATE KEY-----
-##
-## Notification Provider
-##
-## Notifications are sent to users when they require a password reset, a WebAuthn registration or a TOTP registration.
-## The available providers are: filesystem, smtp. You must use only one of these providers.
 notifier:
-  ## You can disable the notifier startup check by setting this to true.
   disable_startup_check: false
-  ##
-  ## File System (Notification Provider)
-  ##
-  ## Important: Kubernetes (or HA) users must read https://www.authelia.com/t/statelessness
-  ##
+
   filesystem:
     filename: '/config/notification.txt'

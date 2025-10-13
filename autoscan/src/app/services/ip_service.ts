@@ -9,14 +9,14 @@ interface IpifyResponse {
 
 let zoneId: string
 
-const DOMAINES_TO_UPDATE = ['antoinebouteiller.fr', '*.antoinebouteiller.fr']
-const ZONE_NAME = 'antoinebouteiller.fr'
+const DOMAINES_TO_UPDATE = [env.DOMAIN, `*.${env.DOMAIN}`]
+const ZONE_NAME = env.DOMAIN
 
 const cloudflare = new Cloudflare({
   apiToken: env.CLOUDFLARE_TOKEN,
 })
 
-export async function getPublicIP() {
+async function getPublicIP() {
   const data = await ky<IpifyResponse>('https://api.ipify.org?format=json').json()
 
   return data.ip
@@ -39,7 +39,7 @@ async function getZoneId(): Promise<string> {
   return zone.id
 }
 
-export async function updateDnsRecord(recordName: string) {
+async function updateDnsRecord(recordName: string) {
   const zoneId = await getZoneId()
 
   const listResp = await cloudflare.dns.records.list({

@@ -1,0 +1,6 @@
+title: Antoine'Dashboard
+theme: dark
+layout:
+  Media:
+    style: row
+    columns: 3

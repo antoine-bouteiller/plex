@@ -38,17 +38,9 @@ services:
       - authelia
       - sonarr
       - radarr
-      - homer
+      - homepage
       - prowlarr
       - jellyseerr
       - qbittorrent
       - plex
       # - grafana
-  ddclient:
-    image: lscr.io/linuxserver/ddclient:latest
-    container_name: ddclient
-    extends:
-      file: ./compose.common.yaml
-      service: common
-    volumes:
-      - ../configs/ddclient.conf:/config/ddclient.conf
