@@ -44,5 +44,5 @@
         container: plex
         widget:
           type: plex
-          url: '{{HOMEPAGE_VAR_PLEX_API_URL}}'
-          key: '{{HOMEPAGE_VAR_PLEX_API_KEY}}'
+          url: '{{HOMEPAGE_VAR_PLEX_URL}}'
+          key: '{{HOMEPAGE_VAR_PLEX_TOKEN}}'

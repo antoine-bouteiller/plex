@@ -32,6 +32,20 @@ services:
       service: common
     environment:
       HOMEPAGE_ALLOWED_HOSTS: dashboard.${DOMAIN}
+      HOMEPAGE_VAR_SONARR_API_URL: ${SONARR_API_URL}
+      HOMEPAGE_VAR_SONARR_API_KEY: ${SONARR_API_KEY}
+
+      HOMEPAGE_VAR_RADARR_API_URL: ${RADARR_API_URL}
+      HOMEPAGE_VAR_RADARR_API_KEY: ${RADARR_API_KEY}
+
+      HOMEPAGE_VAR_BAZARR_API_URL: ${BAZARR_API_URL}
+      HOMEPAGE_VAR_BAZARR_API_KEY: ${BAZARR_API_KEY}
+
+      HOMEPAGE_VAR_PROWLARR_API_URL: ${PROWLARR_API_URL}
+      HOMEPAGE_VAR_PROWLARR_API_KEY: ${PROWLARR_API_KEY}
+
+      HOMEPAGE_VAR_PLEX_URL: ${PLEX_URL}
+      HOMEPAGE_VAR_PLEX_TOKEN: ${PLEX_TOKEN}
     volumes:
       - ../configs/homepage/services.yaml:/app/config/services.yaml
       - ../configs/homepage/settings.yaml:/app/config/settings.yaml
