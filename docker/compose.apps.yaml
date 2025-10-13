@@ -37,4 +37,9 @@ services:
       - ../configs/homepage/settings.yaml:/app/config/settings.yaml
       - ${APP_PATH}/homepage:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
-    restart: unless-stopped
+    links:
+      - sonarr
+      - radarr
+      - bazarr
+      - prowlarr
+      - jellyseerr
