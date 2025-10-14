@@ -9,9 +9,6 @@
     "test": "vitest"
   },
   "type": "module",
-  "prisma": {
-    "seed": "tsx prisma/seeder.ts"
-  },
   "dependencies": {
     "@grammyjs/conversations": "^2.1.0",
     "@grammyjs/hydrate": "^1.6.0",
@@ -31,8 +28,5 @@
     "@types/bun": "^1.3.0",
     "drizzle-kit": "^0.31.5",
     "vitest": "^3.2.4"
-  },
-  "volta": {
-    "node": "22.9.0"
   }
 }
