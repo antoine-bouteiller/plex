@@ -5,10 +5,8 @@
   "compilerOptions": {
     "outDir": "./build",
     "rootDir": ".",
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@/prisma": ["drizzle/client/client.ts"]
+      "@/*": ["./src/*"]
     }
   }
 }

@@ -39,7 +39,9 @@ async function removeStalledDownloads(client: typeof ky, serviceName: string): P
 
   for (const item of queue.records) {
     if (!item.title || !item.status) {
-      logger.warn(`Skipping item in ${serviceName} queue due to missing or invalid keys:`, item)
+      logger.warn(
+        `Skipping item in ${serviceName} queue due to missing or invalid keys: ${JSON.stringify(item)}`
+      )
       continue
     }
 

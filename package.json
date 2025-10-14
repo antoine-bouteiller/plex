@@ -1,19 +1,21 @@
 {
   "private": true,
   "scripts": {
-    "lint": "oxlint --fix",
+    "lint": "oxlint --type-aware --fix",
     "format": "prettier --write ."
   },
   "workspaces": [
     "autoscan"
   ],
   "devDependencies": {
-    "@commitlint/cli": "^19.8.1",
-    "@commitlint/config-conventional": "^19.8.1",
-    "@evilmartians/lefthook": "^1.12.2",
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
+    "@evilmartians/lefthook": "^1.13.6",
     "@prettier/plugin-oxc": "^0.0.4",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
-    "oxlint": "^1.8.0",
+    "@typescript/native-preview": "^7.0.0-dev.20251013.1",
+    "oxlint": "^1.23.0",
+    "oxlint-tsgolint": "^0.2.0",
     "prettier": "^3.6.2"
   },
   "commitlint": {

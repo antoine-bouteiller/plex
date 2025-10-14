@@ -9,7 +9,7 @@ export const execPromise = async (command: string) => {
     return stdout
   } catch (error) {
     if (error instanceof Error && 'stderr' in error) {
-      throw new Error(String(error.stderr))
+      throw new Error(String(error.stderr), { cause: error })
     }
     throw error
   }
