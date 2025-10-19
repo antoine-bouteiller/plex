@@ -24,7 +24,7 @@ export function createdOrUpdatedMedia(
     })
 }
 
-export function getMediaByIdAndType(tmdbId: number, type: MediaType) {
+export async function getMediaByIdAndType(tmdbId: number, type: MediaType) {
   return db
     .select()
     .from(mediaTable)

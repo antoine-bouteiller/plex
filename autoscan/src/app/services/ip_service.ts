@@ -72,6 +72,6 @@ async function updateDnsRecord(recordName: string) {
 
 export function dynDns() {
   for (const domain of DOMAINES_TO_UPDATE) {
-    tryCatch(() => updateDnsRecord(domain))
+    tryCatch(updateDnsRecord, domain)
   }
 }

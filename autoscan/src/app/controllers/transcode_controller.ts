@@ -13,25 +13,29 @@ import { logger } from '@/config/logger'
 export async function transcodeAll() {
   const sections = await getSections()
 
-  await Promise.all(
-    sections.map(async (section) => {
-      const medias = await getSectionMedia(section.key, section.type)
+  for (const section of sections) {
+    const medias = await tryCatch(getSectionMedia, section.key, section.type)
 
-      await Promise.all(
-        medias.map(async (media) => {
-          const { file, mediaTitle, originalLanguage } = await getMediaDetails(media)
+    if (!medias) continue
 
-          const transcodeService = new TranscodeService(file, mediaTitle, originalLanguage)
+    for (const media of medias) {
+      const details = await tryCatch(getMediaDetails, media)
 
-          const executedTranscode = await tryCatch(async () => transcodeService.transcodeFile())
+      if (!details) continue
 
-          if (executedTranscode) {
-            await refreshSection(section.key, resolve(file, '..'))
-          }
-        })
+      const transcodeService = new TranscodeService(
+        details.file,
+        details.mediaTitle,
+        details.originalLanguage
       )
-    })
-  )
+
+      const executedTranscode = await tryCatch(transcodeService.transcodeFile)
+
+      if (executedTranscode) {
+        await refreshSection(section.key, resolve(details.file, '..'))
+      }
+    }
+  }
 
   logger.info('Transcoding finished')
 }

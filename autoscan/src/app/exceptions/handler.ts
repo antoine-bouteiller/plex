@@ -16,9 +16,12 @@ export function handleError(error: unknown) {
   }
 }
 
-export async function tryCatch<T>(fn: () => Promise<T>) {
+export async function tryCatch<T, Args extends unknown[]>(
+  fn: (...args: Args) => Promise<T>,
+  ...args: Args
+) {
   try {
-    return await fn()
+    return await fn(...args)
   } catch (error) {
     handleError(error)
   }

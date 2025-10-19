@@ -15,6 +15,7 @@
     "no-console": "error",
     "no-unused-vars": "error",
     "no-unused-expressions": "error",
+    "no-await-in-loop": "off",
 
     "unicorn/filename-case": [
       "error",

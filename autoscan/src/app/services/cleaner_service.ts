@@ -28,8 +28,8 @@ const radarrClient = ky.create({
 const strikeCounts: Record<number, number> = {}
 
 async function cleanupAll(): Promise<void> {
-  await tryCatch(async () => removeStalledDownloads(sonarrClient, 'Sonarr'))
-  await tryCatch(async () => removeStalledDownloads(radarrClient, 'Radarr'))
+  await tryCatch(removeStalledDownloads, sonarrClient, 'Sonarr')
+  await tryCatch(removeStalledDownloads, radarrClient, 'Radarr')
 }
 
 async function removeStalledDownloads(client: typeof ky, serviceName: string): Promise<void> {

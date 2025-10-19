@@ -213,6 +213,8 @@ export class TranscodeService {
 
     const language = stream?.tags?.language?.toLowerCase() ?? 'eng'
 
+    logger.info(`[${this.mediaTitle}] Extracting subtitles`)
+
     await executeFfmpeg(this.file, `${this.fileName}.${language}.srt`, [
       `-map 0:s:${subtitleStreamToKeep}`,
       `-c:s:${subtitleStreamToKeep} srt`,
