@@ -7,15 +7,14 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
-      ofelia.job-run.plextraktsync.schedule: '@every 6h'
+      ofelia.job-run.plextraktsync.schedule: "@every 6h"
       ofelia.job-run.plextraktsync.image: ghcr.io/taxel/plextraktsync
-      ofelia.job-run.plextraktsync.command: 'sync'
-      ofelia.job-run.plextraktsync.volume: '${APP_PATH}/plextraktsync:/app/config'
-      ofelia.job-run.plextraktsync.remove: 'true'
+      ofelia.job-run.plextraktsync.command: "sync"
+      ofelia.job-run.plextraktsync.volume: "${APP_PATH}/plextraktsync:/app/config"
+      ofelia.job-run.plextraktsync.remove: "true"
   autoscan:
+    image: antobouteiller/autoscan:latest
     container_name: autoscan
-    build:
-      context: ../autoscan/
     extends:
       file: ./compose.common.yaml
       service: common
@@ -35,9 +34,7 @@ services:
     volumes:
       - ${APP_PATH}/autoscan:/autoscan/resources
       - ${DATA_PATH}:/mnt/data
-      - ${MOVIES_PATH}:/mnt/movies
-    labels:
-      - 'com.centurylinklabs.watchtower.enable=false'
+      - ${MOVIES_PATH}:/mnt/movies      - "com.centurylinklabs.watchtower.enable=false"
   recyclarr:
     image: ghcr.io/recyclarr/recyclarr
     container_name: recyclarr
