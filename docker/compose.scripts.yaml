@@ -23,6 +23,7 @@ services:
     environment:
       - PLEX_TOKEN=${PLEX_TOKEN}
       - PLEX_URL=${PLEX_URL}
+      - DOMAIN=${DOMAIN}
       - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
       - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
       - TMDB_API_TOKEN=${TMDB_API_TOKEN}
@@ -34,7 +35,7 @@ services:
     volumes:
       - ${APP_PATH}/autoscan:/autoscan/resources
       - ${DATA_PATH}:/mnt/data
-      - ${MOVIES_PATH}:/mnt/movies      - "com.centurylinklabs.watchtower.enable=false"
+      - ${MOVIES_PATH}:/mnt/movies
   recyclarr:
     image: ghcr.io/recyclarr/recyclarr
     container_name: recyclarr
