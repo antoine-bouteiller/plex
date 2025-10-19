@@ -70,9 +70,9 @@ dashboard.{$DOMAIN} {
 # 	reverse_proxy host.docker.internal:11987
 # }
 
-# plex.{$DOMAIN} {
-# 	reverse_proxy host.docker.internal:32400
-# }
+plex.{$DOMAIN} {
+	reverse_proxy host.docker.internal:32400
+}
 
 auth.{$DOMAIN} {
 	reverse_proxy authelia:9091

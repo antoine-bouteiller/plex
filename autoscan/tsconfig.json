@@ -5,6 +5,9 @@
   "compilerOptions": {
     "outDir": "./build",
     "rootDir": ".",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noPropertyAccessFromIndexSignature": true,
     "paths": {
       "@/*": ["./src/*"]
     }
