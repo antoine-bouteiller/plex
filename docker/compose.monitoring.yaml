@@ -5,6 +5,7 @@ services:
     command: --cleanup --remove-volumes
     volumes:
       - //var/run/docker.sock:/var/run/docker.sock
+      - /home/antoine/.docker/config.json:/config.json
   # loki:
   #   container_name: loki
   #   image: grafana/loki:latest
