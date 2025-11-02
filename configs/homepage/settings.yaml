@@ -1,6 +1,11 @@
 title: Antoine'Dashboard
 theme: dark
 layout:
+  Utilities:
+    header: false
+    style: row
+    columns: 3
   Media:
+    header: false
     style: row
     columns: 3
