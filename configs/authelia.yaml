@@ -34,12 +34,6 @@ access_control:
         - "172.16.0.0/12"
         - "192.168.0.0/18"
   rules:
-    # Bypass for ACME challenges
-    - domain: '*.{{ mustEnv "DOMAIN" }}'
-      policy: "bypass"
-      resources:
-        - "^/.well-known/acme-challenge/.*$"
-
     - domain: '*.{{ mustEnv "DOMAIN" }}'
       policy: "bypass"
       networks:

@@ -18,11 +18,12 @@ services:
       - ${APP_PATH}/authelia:/config
   caddy:
     container_name: caddy
-    image: caddy:latest
+    image: ghcr.io/caddybuilds/caddy-cloudflare:latest
     cap_add:
       - NET_ADMIN
     environment:
       - DOMAIN=${DOMAIN}
+      - CLOUDFLARE_TOKEN=${CLOUDFLARE_TOKEN}
     ports:
       - "443:443"
     extends:
