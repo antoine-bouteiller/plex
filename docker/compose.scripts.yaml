@@ -37,6 +37,14 @@ services:
       - ${APP_PATH}/autoscan:/autoscan/resources
       - ${DATA_PATH}:/mnt/data
       - ${MOVIES_PATH}:/mnt/movies
+  dozzle:
+    container_name: dozzle
+    image: amir20/dozzle:latest
+    extends:
+      file: ./compose.common.yaml
+      service: common
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
   recyclarr:
     image: ghcr.io/recyclarr/recyclarr
     container_name: recyclarr
