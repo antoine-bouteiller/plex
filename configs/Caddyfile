@@ -1,8 +1,5 @@
 (auth) {
-	@notAcme {
-		not path /.well-known/acme-challenge/*
-	}
-	forward_auth @notAcme authelia:9091 {
+	forward_auth authelia:9091 {
 		uri /api/authz/forward-auth
 		copy_headers Remote-User Remote-Groups Remote-Email Remote-Name
 		header_down -Authorization
