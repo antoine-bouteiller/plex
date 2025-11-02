@@ -1,15 +1,11 @@
 services:
-  dockcheck:
-    image: mcuadros/ofelia:latest
-    container_name: dockcheck
-    restart: unless-stopped
-    command: daemon --docker
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    command: --cleanup --remove-volumes
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ../dockcheck.sh:/scripts/dockcheck.sh:ro
-    labels:
-      ofelia.job-local.dockcheck.schedule: "0 0 2 * * *"
-      ofelia.job-local.dockcheck.command: "sh /scripts/dockcheck.sh"
+      - //var/run/docker.sock:/var/run/docker.sock
+      - /home/antoine/.docker/config.json:/config.json
   # loki:
   #   container_name: loki
   #   image: grafana/loki:latest

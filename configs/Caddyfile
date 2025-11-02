@@ -1,26 +1,8 @@
-(cors) {
-	@cors_preflight{args.0} method OPTIONS
-	@cors{args.0} header Origin {args.0}
-
-	header @cors{args.0} {
-		Access-Control-Allow-Origin "{args.0}"
-		Access-Control-Expose-Headers *
-		Access-Control-Allow-Credentials "true"
-	}
-
-	handle @cors_preflight{args.0} {
-		header {
-			Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE"
-			Access-Control-Allow-Headers *
-			Access-Control-Max-Age "3600"
-		}
-		respond "" 204
-	}
-}
-
 (auth) {
-	import cors https://dashboard.{$DOMAIN}
-	forward_auth authelia:9091 {
+	@notAcme {
+		not path /.well-known/acme-challenge/*
+	}
+	forward_auth @notAcme authelia:9091 {
 		uri /api/authz/forward-auth
 		copy_headers Remote-User Remote-Groups Remote-Email Remote-Name
 		header_down -Authorization
