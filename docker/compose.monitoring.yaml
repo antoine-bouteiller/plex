@@ -6,6 +6,14 @@ services:
     volumes:
       - //var/run/docker.sock:/var/run/docker.sock
       - /home/antoine/.docker/config.json:/config.json
+  dozzle:
+    container_name: dozzle
+    image: amir20/dozzle:latest
+    extends:
+      file: ./compose.common.yaml
+      service: common
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
   # loki:
   #   container_name: loki
   #   image: grafana/loki:latest
