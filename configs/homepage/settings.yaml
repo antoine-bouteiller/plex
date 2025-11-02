@@ -4,4 +4,12 @@ useEqualHeights: true
 headerStyle: clean
 statusStyle: "dot"
 showStats: true
-header: false
+layout:
+  Utilities:
+    header: false
+    style: row
+    columns: 2
+  Apps:
+    header: false
+    style: row
+    columns: 2

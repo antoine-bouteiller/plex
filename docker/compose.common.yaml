@@ -8,7 +8,7 @@ services:
         max-file: 1
     environment:
       - PUID=${PUID}
-      - GUID=${GUID}
+      - PGID=${PGID}
       - TZ=${TZ}
     extra_hosts:
-      - 'host.docker.internal:host-gateway'
+      - "host.docker.internal:host-gateway"
