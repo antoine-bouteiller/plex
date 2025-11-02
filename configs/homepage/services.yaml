@@ -1,4 +1,19 @@
-- Media:
+- Apps:
+    - Plex:
+        icon: plex.svg
+        href: "https://plex.{{HOMEPAGE_VAR_DOMAIN}}"
+        container: plex
+        server: docker
+        widget:
+          type: plex
+          url: "{{HOMEPAGE_VAR_PLEX_URL}}"
+          key: "{{HOMEPAGE_VAR_PLEX_TOKEN}}"
+    - Jellyseerr:
+        icon: jellyseerr.svg
+        href: "https://{{HOMEPAGE_VAR_DOMAIN}}"
+        container: jellyseerr
+        server: docker
+
     - Sonnar:
         icon: sonarr.svg
         href: "https://sonarr.{{HOMEPAGE_VAR_DOMAIN}}"
@@ -8,7 +23,8 @@
           type: sonarr
           url: "{{HOMEPAGE_VAR_SONARR_API_URL}}"
           key: "{{HOMEPAGE_VAR_SONARR_API_KEY}}"
-          enableQueue: false
+          queued: false
+          series: false
     - Radarr:
         icon: radarr.svg
         href: "https://radarr.{{HOMEPAGE_VAR_DOMAIN}}"
@@ -18,7 +34,8 @@
           type: radarr
           url: "{{HOMEPAGE_VAR_RADARR_API_URL}}"
           key: "{{HOMEPAGE_VAR_RADARR_API_KEY}}"
-          enableQueue: false
+          queued: false
+          movies: false
     - Prowlarr:
         icon: prowlarr.svg
         href: "https://prowlarr.{{HOMEPAGE_VAR_DOMAIN}}"
@@ -28,6 +45,8 @@
           type: prowlarr
           url: "{{HOMEPAGE_VAR_PROWLARR_API_URL}}"
           key: "{{HOMEPAGE_VAR_PROWLARR_API_KEY}}"
+          numberOfQueries: false
+          numberOfGrabs: false
     - Bazarr:
         icon: bazarr.svg
         href: "https://bazarr.{{HOMEPAGE_VAR_DOMAIN}}"
@@ -37,6 +56,12 @@
           type: bazarr
           url: "{{HOMEPAGE_VAR_BAZARR_API_URL}}"
           key: "{{HOMEPAGE_VAR_BAZARR_API_KEY}}"
+
+    - Dozzle:
+        icon: dozzle.svg
+        href: "https://logs.{{HOMEPAGE_VAR_DOMAIN}}"
+        container: dozzle
+        server: docker
     - Qbittorrent:
         icon: qbittorrent.svg
         href: "https://qbittorrent.{{HOMEPAGE_VAR_DOMAIN}}"
@@ -45,12 +70,3 @@
         widget:
           type: qbittorrent
           url: "{{HOMEPAGE_VAR_QBITTORRENT_API_URL}}"
-    - Plex:
-        icon: plex.svg
-        href: "https://app.plex.tv"
-        container: plex
-        server: docker
-        widget:
-          type: plex
-          url: "{{HOMEPAGE_VAR_PLEX_URL}}"
-          key: "{{HOMEPAGE_VAR_PLEX_TOKEN}}"
