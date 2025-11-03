@@ -7,7 +7,7 @@ services:
       file: compose.common.yaml
       service: common
     environment:
-      - VERSION=docker
+      VERSION: docker
     volumes:
       - ${APP_PATH}/plex:/config/Library/Application Support/Plex Media Server
       - ${DATA_PATH}:/mnt/data

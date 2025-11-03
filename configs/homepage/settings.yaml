@@ -3,7 +3,6 @@ theme: dark
 useEqualHeights: true
 headerStyle: clean
 statusStyle: "dot"
-showStats: true
 layout:
   Utilities:
     header: false

@@ -23,8 +23,7 @@
           type: sonarr
           url: "{{HOMEPAGE_VAR_SONARR_API_URL}}"
           key: "{{HOMEPAGE_VAR_SONARR_API_KEY}}"
-          queued: false
-          series: false
+          fields: ["wanted"]
     - Radarr:
         icon: radarr.svg
         href: "https://radarr.{{HOMEPAGE_VAR_DOMAIN}}"
@@ -34,8 +33,7 @@
           type: radarr
           url: "{{HOMEPAGE_VAR_RADARR_API_URL}}"
           key: "{{HOMEPAGE_VAR_RADARR_API_KEY}}"
-          queued: false
-          movies: false
+          fields: ["wanted"]
     - Prowlarr:
         icon: prowlarr.svg
         href: "https://prowlarr.{{HOMEPAGE_VAR_DOMAIN}}"
@@ -45,8 +43,7 @@
           type: prowlarr
           url: "{{HOMEPAGE_VAR_PROWLARR_API_URL}}"
           key: "{{HOMEPAGE_VAR_PROWLARR_API_KEY}}"
-          numberOfQueries: false
-          numberOfGrabs: false
+          fields: ["numberOfFailGrabs", "numberOfFailQueries"]
     - Bazarr:
         icon: bazarr.svg
         href: "https://bazarr.{{HOMEPAGE_VAR_DOMAIN}}"
@@ -70,3 +67,4 @@
         widget:
           type: qbittorrent
           url: "{{HOMEPAGE_VAR_QBITTORRENT_API_URL}}"
+          fields: ["download", "upload"]
