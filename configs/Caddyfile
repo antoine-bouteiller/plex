@@ -54,7 +54,7 @@ dashboard.{$DOMAIN} {
 # }
 
 plex.{$DOMAIN} {
-	reverse_proxy host.docker.internal:32400
+	reverse_proxy plex:32400
 }
 
 auth.{$DOMAIN} {
