@@ -1,0 +1,94 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: "3"
+
+vars:
+  # SSH Configuration
+  SSH_HOST: 31.34.140.29
+  SSH_USER: antoine
+  SSH_PORT: 1109
+
+  # SSH command options
+  SSH_CMD: ssh -p {{.SSH_PORT}} {{.SSH_USER}}@{{.SSH_HOST}}
+
+  # Docker Auto-Update Configuration
+  DOCKER_PROJECT_DIR: /opt/plex
+  DOCKER_UPDATE_TIME: "01:00:00"
+
+  # Debian Auto-Updates Configuration
+  DEBIAN_REBOOT_TIME: "03:00"
+
+  # SSH Keys (one per line, will be passed to the script)
+  SSH_KEYS: |
+    ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICUZ+rb5WpsUv/4wVWlQ0aCRiNzZCIQngxXiNAJx6hJs antob@DESKTOP-ANTOINE
+    ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHhSmVRhMXbxDkDOaUk0udibjBos2nDg6byvZ//dzMwL antob@DESKTOP-3R8RBJU
+
+  # Scripts folder
+  SCRIPTS_FOLDER: scripts
+
+tasks:
+  default:
+    desc: Run all setup scripts on the remote server
+    silent: true
+    cmds:
+      - task: check-connection
+      - task: docker-auto-update
+      - task: debian-auto-updates
+      - task: ssh-keys
+      - echo "✓ All scripts completed"
+
+  check-connection:
+    desc: Verify SSH connection to remote server
+    internal: true
+    silent: true
+    cmds:
+      - |
+        {{.SSH_CMD}} "echo ok" >/dev/null 2>&1 || {
+          echo "Error: Cannot connect to {{.SSH_HOST}}"
+          exit 1
+        }
+
+  _run-script:
+    desc: Internal task to execute a script on the remote server
+    internal: true
+    silent: true
+    deps:
+      - check-connection
+    cmds:
+      - echo "Running {{.SCRIPT}}..."
+      - scp -P {{.SSH_PORT}} {{.SCRIPTS_FOLDER}}/{{.SCRIPT}}.sh {{.SSH_USER}}@{{.SSH_HOST}}:/tmp/ >/dev/null 2>&1
+      - |
+        if [ -n "{{.STDIN}}" ]; then
+          echo "{{.STDIN}}" | {{.SSH_CMD}} "chmod +x /tmp/{{.SCRIPT}}.sh && sudo /tmp/{{.SCRIPT}}.sh {{.ARGS}} && rm /tmp/{{.SCRIPT}}.sh"
+        else
+          {{.SSH_CMD}} "chmod +x /tmp/{{.SCRIPT}}.sh && sudo /tmp/{{.SCRIPT}}.sh {{.ARGS}} && rm /tmp/{{.SCRIPT}}.sh"
+        fi
+
+  docker-auto-update:
+    desc: Configure Docker Compose auto-update timer
+    cmds:
+      - task: _run-script
+        vars:
+          SCRIPT: docker-auto-update
+          ARGS: "{{.DOCKER_PROJECT_DIR}} {{.DOCKER_UPDATE_TIME}}"
+
+  debian-auto-updates:
+    desc: Configure Debian automatic updates
+    cmds:
+      - task: _run-script
+        vars:
+          SCRIPT: debian-auto-updates
+          ARGS: "{{.DEBIAN_REBOOT_TIME}}"
+
+  ssh-keys:
+    desc: Configure SSH authorized keys
+    cmds:
+      - task: _run-script
+        vars:
+          SCRIPT: ssh-keys
+          STDIN: "{{.SSH_KEYS}}"
+
+  ssh:
+    desc: SSH to remote server
+    silent: true
+    cmds:
+      - "{{.SSH_CMD}}"
