@@ -18,7 +18,4 @@
       }
     '';
   };
-
-  users.users.prowlarr.isSystemUser = true;
-  users.users.prowlarr.group = "media";
 }

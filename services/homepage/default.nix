@@ -1,9 +1,35 @@
 {config, ...}: {
+  sops.secrets = {
+    "homepage/sonarr_api_key" = {
+      key = "sonarr_api_key";
+      owner = "homepage-dashboard";
+      group = "homepage-dashboard";
+    };
+    "homepage/radarr_api_key" = {
+      key = "radarr_api_key";
+      owner = "homepage-dashboard";
+      group = "homepage-dashboard";
+    };
+    "homepage/bazarr_api_key" = {
+      key = "bazarr_api_key";
+      owner = "homepage-dashboard";
+      group = "homepage-dashboard";
+    };
+    "homepage/plex_token" = {
+      key = "plex_token";
+      owner = "homepage-dashboard";
+      group = "homepage-dashboard";
+    };
+  };
+  users.users.homepage-dashboard = {
+    isSystemUser = true;
+    group = "homepage-dashboard";
+  };
+  users.groups.homepage-dashboard = {};
+
   services.homepage-dashboard = {
     enable = true;
-
-    environmentFile = config.env.secretEnvFile;
-
+    allowedHosts = "dashboard.${config.env.domain}";
     settings = {
       title = "Antoine's Dashboard";
       theme = "dark";
@@ -56,7 +82,7 @@
               widget = {
                 type = "plex";
                 url = "http://localhost:32400";
-                key = "{{HOMEPAGE_VAR_PLEX_TOKEN}}";
+                key = "{{HOMEPAGE_FILE_PLEX_TOKEN}}";
               };
             };
           }
@@ -73,7 +99,7 @@
               widget = {
                 type = "sonarr";
                 url = "http://localhost:8989";
-                key = "{{HOMEPAGE_VAR_SONARR_API_KEY}}";
+                key = "{{HOMEPAGE_FILE_SONARR_API_KEY}}";
                 fields = ["wanted"];
               };
             };
@@ -85,7 +111,7 @@
               widget = {
                 type = "radarr";
                 url = "http://localhost:7878";
-                key = "{{HOMEPAGE_VAR_RADARR_API_KEY}}";
+                key = "{{HOMEPAGE_FILE_RADARR_API_KEY}}";
                 fields = ["wanted"];
               };
             };
@@ -97,7 +123,7 @@
               widget = {
                 type = "prowlarr";
                 url = "http://localhost:9696";
-                key = "{{HOMEPAGE_VAR_PROWLARR_API_KEY}}";
+                key = "{{HOMEPAGE_FILE_PROWLARR_API_KEY}}";
                 fields = ["numberOfFailGrabs" "numberOfFailQueries"];
               };
             };
@@ -109,7 +135,7 @@
               widget = {
                 type = "bazarr";
                 url = "http://localhost:5050";
-                key = "{{HOMEPAGE_VAR_BAZARR_API_KEY}}";
+                key = "{{HOMEPAGE_FILE_BAZARR_API_KEY}}";
               };
             };
           }
@@ -145,10 +171,22 @@
     ];
   };
 
+  systemd.services.homepage-dashboard.serviceConfig = {
+    User = "homepage-dashboard";
+    Group = "homepage-dashboard";
+  };
+
+  systemd.services.homepage-dashboard.environment = {
+    HOMEPAGE_FILE_PLEX_TOKEN = config.sops.secrets."homepage/plex_token".path;
+    HOMEPAGE_FILE_SONARR_API_KEY = config.sops.secrets."homepage/sonarr_api_key".path;
+    HOMEPAGE_FILE_RADARR_API_KEY = config.sops.secrets."homepage/radarr_api_key".path;
+    HOMEPAGE_FILE_BAZARR_API_KEY = config.sops.secrets."homepage/bazarr_api_key".path;
+  };
+
   services.caddy.virtualHosts."dashboard.${config.env.domain}" = {
     extraConfig = ''
       import auth_proxy
-      reverse_proxy localhost:3000
+      reverse_proxy localhost:8082
     '';
   };
 }

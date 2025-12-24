@@ -11,4 +11,8 @@
   };
 
   users.users.qbittorrent.extraGroups = ["media"];
+
+  systemd.services.qbittorrent.serviceConfig = {
+    Umask = 002;
+  };
 }

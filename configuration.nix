@@ -2,42 +2,26 @@
   imports = [
     ./hardware-configuration.nix
     ./services
-    ./env.nix
-    "${(import ./nix/sources.nix).sops-nix}/modules/sops"
+    ./config
   ];
+
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Disk mounting configuration
   # Replace UUIDs with your actual disk UUIDs (find with: blkid)
-  fileSystems."/mnt/data" = {
-    device = "/dev/disk/by-uuid/20af820e-357e-49fe-a62c-38b6039bffc5";
-    fsType = "ext4";
-    options = ["defaults" "nofail"];
+
+  networking = {
+    hostName = "plex-server";
+    nameservers = ["1.1.1.1" "9.9.9.9"];
+    networkmanager.enable = true;
   };
-
-  networking.hostName = "plex-server";
-
-  # Enable networking
-  networking.networkmanager.enable = true;
 
   # Set your time zone.
   time.timeZone = "Europe/Paris";
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_GB.UTF-8";
-
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "fr_FR.UTF-8";
-    LC_IDENTIFICATION = "fr_FR.UTF-8";
-    LC_MEASUREMENT = "fr_FR.UTF-8";
-    LC_MONETARY = "fr_FR.UTF-8";
-    LC_NAME = "fr_FR.UTF-8";
-    LC_NUMERIC = "fr_FR.UTF-8";
-    LC_PAPER = "fr_FR.UTF-8";
-    LC_TELEPHONE = "fr_FR.UTF-8";
-    LC_TIME = "fr_FR.UTF-8";
-  };
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -82,15 +66,6 @@
     ];
   };
 
-  # Docker
-  virtualisation.docker = {
-    enable = true;
-    autoPrune = {
-      enable = true;
-      dates = "weekly";
-    };
-  };
-
   # Automatic system updates
   system.autoUpgrade = {
     enable = true;
@@ -116,6 +91,6 @@
   ];
 
   nixpkgs.config.allowUnfree = true;
-
+  nix.settings.experimental-features = ["nix-command" "flakes"];
   system.stateVersion = "25.11";
 }

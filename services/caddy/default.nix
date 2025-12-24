@@ -2,7 +2,7 @@
   services.caddy = {
     enable = true;
 
-    globalConfig = ''
+    extraConfig = ''
       (auth_proxy) {
         forward_auth localhost:9091 {
           uri /api/authz/forward-auth

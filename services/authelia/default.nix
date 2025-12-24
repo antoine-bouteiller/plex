@@ -1,11 +1,26 @@
 {config, ...}: {
+  sops.secrets = {
+    "authelia/jwt_secret" = {
+      owner = "authelia-main";
+      group = "authelia-main";
+    };
+    "authelia/storage_encryption_key" = {
+      owner = "authelia-main";
+      group = "authelia-main";
+    };
+    "authelia/session_secret" = {
+      owner = "authelia-main";
+      group = "authelia-main";
+    };
+  };
+
   services.authelia.instances.main = {
     enable = true;
 
     secrets = {
-      storageEncryptionKeyFile = "${config.env.appPath}/authelia-main/secrets/storage_encryption_key";
-      sessionSecretFile = "${config.env.appPath}/authelia-main/secrets/session_secret";
-      jwtSecretFile = "${config.env.appPath}/authelia-main/secrets/jwt_secret";
+      storageEncryptionKeyFile = config.sops.secrets."authelia/storage_encryption_key".path;
+      sessionSecretFile = config.sops.secrets."authelia/session_secret".path;
+      jwtSecretFile = config.sops.secrets."authelia/jwt_secret".path;
     };
 
     settings = {

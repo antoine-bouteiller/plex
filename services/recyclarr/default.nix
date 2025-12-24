@@ -1,12 +1,27 @@
-{...}: {
+{config, ...}: {
+  sops.secrets = {
+    "recyclarr/sonarr_api_key" = {
+      owner = "recylarr";
+      group = "recylarr";
+      key = "sonarr_api_key";
+    };
+    "recyclarr/radarr_api_key" = {
+      owner = "recylarr";
+      group = "recylarr";
+      key = "radarr_api_key";
+    };
+  };
+
   services.recyclarr = {
     enable = true;
 
     settings = {
       sonarr = {
         sonarr = {
-          base_url = "!env_var SONARR_API_URL";
-          api_key = "!env_var SONARR_API_KEY";
+          base_url = "http://localhost:8989";
+          api_key = {
+            _secret = config.sops.secrets."recyclarr/sonarr_api_key".path;
+          };
 
           delete_old_custom_formats = true;
           replace_existing_custom_formats = true;
@@ -34,8 +49,10 @@
 
       radarr = {
         radarr = {
-          base_url = "!env_var RADARR_API_URL";
-          api_key = "!env_var RADARR_API_KEY";
+          base_url = "http://localhost:7878";
+          api_key = {
+            _secret = config.sops.secrets."recyclarr/radarr_api_key".path;
+          };
 
           delete_old_custom_formats = true;
           replace_existing_custom_formats = true;
