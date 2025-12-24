@@ -3,6 +3,7 @@
     ./hardware-configuration.nix
     ./services
     ./env.nix
+    "${(import ./nix/sources.nix).sops-nix}/modules/sops"
   ];
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
