@@ -21,6 +21,7 @@
   environment.systemPackages = with pkgs; [
     git
     curl
+    pkgs.lm_sensors
   ];
 
   system.stateVersion = "25.11";
