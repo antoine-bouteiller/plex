@@ -2,26 +2,6 @@
   networking = {
     hostName = "plex-server";
     nameservers = ["1.1.1.1" "9.9.9.9"];
-    networkmanager = {
-      enable = true;
-      ensureProfiles.profiles = {
-        "Wired connection 1" = {
-          connection = {
-            id = "Wired connection 1";
-            type = "ethernet";
-            interface-name = "eno1";
-          };
-          ipv4 = {
-            method = "auto";
-            ignore-auto-dns = true;
-          };
-          ipv6 = {
-            method = "auto";
-            ignore-auto-dns = true;
-          };
-        };
-      };
-    };
   };
 
   networking.firewall = {

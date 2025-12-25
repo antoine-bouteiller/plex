@@ -12,5 +12,6 @@
     ./recyclarr.nix
     ./homepage.nix
     ./flaresolverr.nix
+    ./coolercontrol.nix
   ];
 }
