@@ -11,5 +11,6 @@
     ./qbittorrent.nix
     ./recyclarr.nix
     ./homepage.nix
+    ./flaresolverr.nix
   ];
 }
