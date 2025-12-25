@@ -21,6 +21,7 @@
       group = "homepage-dashboard";
     };
   };
+
   users.users.homepage-dashboard = {
     isSystemUser = true;
     group = "homepage-dashboard";
@@ -29,7 +30,7 @@
 
   services.homepage-dashboard = {
     enable = true;
-    allowedHosts = "dashboard.${config.env.domain}";
+    allowedHosts = "dashboard.${config.server.domain}";
     settings = {
       title = "Antoine's Dashboard";
       theme = "dark";
@@ -78,7 +79,7 @@
           {
             Plex = {
               icon = "plex.svg";
-              href = "https://plex.${config.env.domain}";
+              href = "https://plex.${config.server.domain}";
               widget = {
                 type = "plex";
                 url = "http://localhost:32400";
@@ -89,13 +90,13 @@
           {
             Jellyseerr = {
               icon = "jellyseerr.svg";
-              href = "https://${config.env.domain}";
+              href = "https://${config.server.domain}";
             };
           }
           {
             Sonnar = {
               icon = "sonarr.svg";
-              href = "https://sonarr.${config.env.domain}";
+              href = "https://sonarr.${config.server.domain}";
               widget = {
                 type = "sonarr";
                 url = "http://localhost:8989";
@@ -107,7 +108,7 @@
           {
             Radarr = {
               icon = "radarr.svg";
-              href = "https://radarr.${config.env.domain}";
+              href = "https://radarr.${config.server.domain}";
               widget = {
                 type = "radarr";
                 url = "http://localhost:7878";
@@ -119,7 +120,7 @@
           {
             Prowlarr = {
               icon = "prowlarr.svg";
-              href = "https://prowlarr.${config.env.domain}";
+              href = "https://prowlarr.${config.server.domain}";
               widget = {
                 type = "prowlarr";
                 url = "http://localhost:9696";
@@ -131,7 +132,7 @@
           {
             Bazarr = {
               icon = "bazarr.svg";
-              href = "https://bazarr.${config.env.domain}";
+              href = "https://bazarr.${config.server.domain}";
               widget = {
                 type = "bazarr";
                 url = "http://localhost:5050";
@@ -142,7 +143,7 @@
           {
             qBittorrent = {
               icon = "qbittorrent.svg";
-              href = "https://qbittorrent.${config.env.domain}";
+              href = "https://qbittorrent.${config.server.domain}";
               widget = {
                 type = "qbittorrent";
                 url = "http://localhost:8080";
@@ -183,7 +184,7 @@
     HOMEPAGE_FILE_BAZARR_API_KEY = config.sops.secrets."homepage/bazarr_api_key".path;
   };
 
-  services.caddy.virtualHosts."dashboard.${config.env.domain}" = {
+  services.caddy.virtualHosts."dashboard.${config.server.domain}" = {
     extraConfig = ''
       import auth_proxy
       reverse_proxy localhost:8082

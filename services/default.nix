@@ -1,16 +1,15 @@
 {...}: {
   imports = [
-    ./authelia
-    ./caddy
-    ./plex
-    ./jellyseerr
-    ./qbittorrent
-    ./bazarr
-    ./sonarr
-    ./radarr
-    ./prowlarr
-    ./homepage
+    ./caddy.nix
+    ./authelia.nix
+    ./plex.nix
+    ./jellyseerr.nix
+    ./sonarr.nix
+    ./radarr.nix
+    ./prowlarr.nix
+    ./bazarr.nix
+    ./qbittorrent.nix
+    ./recyclarr.nix
+    ./homepage.nix
   ];
-
-  users.groups.media = {};
 }

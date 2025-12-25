@@ -3,7 +3,7 @@
     enable = true;
   };
 
-  services.caddy.virtualHosts."qbittorrent.${config.env.domain}" = {
+  services.caddy.virtualHosts."qbittorrent.${config.server.domain}" = {
     extraConfig = ''
       import auth_proxy
       reverse_proxy localhost:8080

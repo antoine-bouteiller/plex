@@ -1,7 +1,7 @@
 {config, ...}: {
   services.sonarr = {
     enable = true;
-    dataDir = "${config.env.appPath}/sonarr";
+    dataDir = "${config.server.paths.app}/sonarr";
 
     settings = {
       auth = {
@@ -10,7 +10,7 @@
     };
   };
 
-  services.caddy.virtualHosts."sonarr.${config.env.domain}" = {
+  services.caddy.virtualHosts."sonarr.${config.server.domain}" = {
     extraConfig = ''
       import auth_proxy
       reverse_proxy localhost:8989 {

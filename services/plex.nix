@@ -1,10 +1,10 @@
 {config, ...}: {
   services.plex = {
     enable = true;
-    dataDir = "${config.env.appPath}/plex";
+    dataDir = "${config.server.paths.app}/plex";
   };
 
-  services.caddy.virtualHosts."plex.${config.env.domain}" = {
+  services.caddy.virtualHosts."plex.${config.server.domain}" = {
     extraConfig = "reverse_proxy localhost:32400";
   };
 

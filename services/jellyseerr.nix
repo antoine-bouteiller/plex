@@ -1,10 +1,10 @@
 {config, ...}: {
   services.jellyseerr = {
     enable = true;
-    configDir = "${config.env.appPath}/jellyseerr";
+    configDir = "${config.server.paths.app}/jellyseerr";
   };
 
-  services.caddy.virtualHosts."${config.env.domain}" = {
+  services.caddy.virtualHosts."${config.server.domain}" = {
     extraConfig = "reverse_proxy localhost:5055";
   };
 }

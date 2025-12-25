@@ -34,7 +34,7 @@
       };
 
       authentication_backend.file = {
-        path = "${config.env.appPath}/authelia-main/users.yml";
+        path = "${config.server.paths.app}/authelia-main/users.yml";
         password.algorithm = "argon2";
       };
 
@@ -59,12 +59,12 @@
 
         rules = [
           {
-            domain = "*.${config.env.domain}";
+            domain = "*.${config.server.domain}";
             policy = "bypass";
             networks = ["internal"];
           }
           {
-            domain = "*.${config.env.domain}";
+            domain = "*.${config.server.domain}";
             policy = "one_factor";
           }
         ];
@@ -73,8 +73,8 @@
       session.cookies = [
         {
           name = "authelia_session";
-          domain = config.env.domain;
-          authelia_url = "https://auth.${config.env.domain}";
+          domain = config.server.domain;
+          authelia_url = "https://auth.${config.server.domain}";
         }
       ];
 
@@ -84,18 +84,18 @@
         ban_time = "5 minutes";
       };
 
-      storage.local.path = "${config.env.appPath}/authelia-main/db.sqlite3";
+      storage.local.path = "${config.server.paths.app}/authelia-main/db.sqlite3";
 
       notifier = {
         disable_startup_check = false;
         filesystem = {
-          filename = "${config.env.appPath}/authelia-main/notification.txt";
+          filename = "${config.server.paths.app}/authelia-main/notification.txt";
         };
       };
     };
   };
 
-  services.caddy.virtualHosts."auth.${config.env.domain}" = {
+  services.caddy.virtualHosts."auth.${config.server.domain}" = {
     extraConfig = "reverse_proxy localhost:9091";
   };
 }

@@ -1,7 +1,7 @@
 {config, ...}: {
-  services.radarr = {
+  services.prowlarr = {
     enable = true;
-    dataDir = "${config.env.appPath}/radarr";
+    dataDir = "${config.server.paths.app}/prowlarr";
 
     settings = {
       auth = {
@@ -10,14 +10,12 @@
     };
   };
 
-  services.caddy.virtualHosts."radarr.${config.env.domain}" = {
+  services.caddy.virtualHosts."prowlarr.${config.server.domain}" = {
     extraConfig = ''
       import auth_proxy
-      reverse_proxy localhost:7878 {
+      reverse_proxy localhost:9696 {
         header_down -Access-Control-Allow-Origin
       }
     '';
   };
-
-  users.users.radarr.extraGroups = ["media"];
 }

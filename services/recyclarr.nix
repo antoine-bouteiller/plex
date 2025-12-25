@@ -1,21 +1,26 @@
 {config, ...}: {
   sops.secrets = {
     "recyclarr/sonarr_api_key" = {
-      owner = "recylarr";
-      group = "recylarr";
+      owner = "recyclarr";
+      group = "recyclarr";
       key = "sonarr_api_key";
     };
     "recyclarr/radarr_api_key" = {
-      owner = "recylarr";
-      group = "recylarr";
+      owner = "recyclarr";
+      group = "recyclarr";
       key = "radarr_api_key";
     };
   };
 
+  users.users.recyclarr = {
+    isSystemUser = true;
+    group = "recyclarr";
+  };
+  users.groups.recyclarr = {};
   services.recyclarr = {
     enable = true;
 
-    settings = {
+    configuration = {
       sonarr = {
         sonarr = {
           base_url = "http://localhost:8989";
@@ -83,5 +88,10 @@
         };
       };
     };
+  };
+
+  systemd.services.recylarr.serviceConfig = {
+    User = "recylarr";
+    Group = "recylarr";
   };
 }

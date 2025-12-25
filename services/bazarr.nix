@@ -2,10 +2,10 @@
   services.bazarr = {
     enable = true;
     group = "media";
-    dataDir = "${config.env.appPath}/bazarr";
+    dataDir = "${config.server.paths.app}/bazarr";
   };
 
-  services.caddy.virtualHosts."bazarr.${config.env.domain}" = {
+  services.caddy.virtualHosts."bazarr.${config.server.domain}" = {
     extraConfig = ''
       import auth_proxy
       reverse_proxy localhost:6767
