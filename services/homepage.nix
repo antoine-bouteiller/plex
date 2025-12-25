@@ -10,6 +10,11 @@
       owner = "homepage-dashboard";
       group = "homepage-dashboard";
     };
+    "homepage/prowlarr_api_key" = {
+      key = "prowlarr_api_key";
+      owner = "homepage-dashboard";
+      group = "homepage-dashboard";
+    };
     "homepage/bazarr_api_key" = {
       key = "bazarr_api_key";
       owner = "homepage-dashboard";
@@ -139,7 +144,7 @@
               href = "https://bazarr.${config.server.domain}";
               widget = {
                 type = "bazarr";
-                url = "http://localhost:5050";
+                url = "http://localhost:6767";
                 key = "{{HOMEPAGE_FILE_BAZARR_API_KEY}}";
               };
             };
@@ -185,6 +190,7 @@
     HOMEPAGE_FILE_PLEX_TOKEN = config.sops.secrets."homepage/plex_token".path;
     HOMEPAGE_FILE_SONARR_API_KEY = config.sops.secrets."homepage/sonarr_api_key".path;
     HOMEPAGE_FILE_RADARR_API_KEY = config.sops.secrets."homepage/radarr_api_key".path;
+    HOMEPAGE_FILE_PROWLARR_API_KEY = config.sops.secrets."homepage/prowlarr_api_key".path;
     HOMEPAGE_FILE_BAZARR_API_KEY = config.sops.secrets."homepage/bazarr_api_key".path;
   };
 
