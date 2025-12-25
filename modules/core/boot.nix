@@ -10,4 +10,6 @@
       '';
     };
   };
+
+  security.polkit.enable = true;
 }
