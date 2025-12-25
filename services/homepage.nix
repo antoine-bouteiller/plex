@@ -36,18 +36,22 @@
       theme = "dark";
       useEqualHeights = true;
       headerStyle = "clean";
-      layout = {
-        Utilities = {
-          header = false;
-          style = "row";
-          columns = 2;
-        };
-        Apps = {
-          header = false;
-          style = "row";
-          columns = 2;
-        };
-      };
+      layout = [
+        {
+          Utilities = {
+            header = false;
+            style = "row";
+            columns = 2;
+          };
+        }
+        {
+          Apps = {
+            header = false;
+            style = "row";
+            columns = 2;
+          };
+        }
+      ];
     };
 
     bookmarks = [
