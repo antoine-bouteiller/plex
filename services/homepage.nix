@@ -1,4 +1,12 @@
-{config, ...}: {
+{config, ...}: let
+  port = config.server.ports.homepage;
+  plexPort = config.server.ports.plex;
+  sonarrPort = config.server.ports.sonarr;
+  radarrPort = config.server.ports.radarr;
+  prowlarrPort = config.server.ports.prowlarr;
+  bazarrPort = config.server.ports.bazarr;
+  qbittorrentPort = config.server.ports.qbittorrent;
+in {
   sops.secrets = {
     "homepage/sonarr_api_key" = {
       key = "sonarr_api_key";
@@ -91,7 +99,7 @@
               href = "https://plex.${config.server.domain}";
               widget = {
                 type = "plex";
-                url = "http://localhost:32400";
+                url = "http://localhost:${toString plexPort}";
                 key = "{{HOMEPAGE_FILE_PLEX_TOKEN}}";
               };
             };
@@ -108,7 +116,7 @@
               href = "https://sonarr.${config.server.domain}";
               widget = {
                 type = "sonarr";
-                url = "http://localhost:8989";
+                url = "http://localhost:${toString sonarrPort}";
                 key = "{{HOMEPAGE_FILE_SONARR_API_KEY}}";
                 fields = ["wanted"];
               };
@@ -120,7 +128,7 @@
               href = "https://radarr.${config.server.domain}";
               widget = {
                 type = "radarr";
-                url = "http://localhost:7878";
+                url = "http://localhost:${toString radarrPort}";
                 key = "{{HOMEPAGE_FILE_RADARR_API_KEY}}";
                 fields = ["wanted"];
               };
@@ -132,7 +140,7 @@
               href = "https://prowlarr.${config.server.domain}";
               widget = {
                 type = "prowlarr";
-                url = "http://localhost:9696";
+                url = "http://localhost:${toString prowlarrPort}";
                 key = "{{HOMEPAGE_FILE_PROWLARR_API_KEY}}";
                 fields = ["numberOfFailGrabs" "numberOfFailQueries"];
               };
@@ -144,7 +152,7 @@
               href = "https://bazarr.${config.server.domain}";
               widget = {
                 type = "bazarr";
-                url = "http://localhost:6767";
+                url = "http://localhost:${toString bazarrPort}";
                 key = "{{HOMEPAGE_FILE_BAZARR_API_KEY}}";
               };
             };
@@ -155,7 +163,7 @@
               href = "https://qbittorrent.${config.server.domain}";
               widget = {
                 type = "qbittorrent";
-                url = "http://localhost:8080";
+                url = "http://localhost:${toString qbittorrentPort}";
                 fields = ["download" "upload"];
               };
             };
@@ -197,7 +205,7 @@
   services.caddy.virtualHosts."dashboard.${config.server.domain}" = {
     extraConfig = ''
       import auth_proxy
-      reverse_proxy localhost:8082
+      reverse_proxy localhost:${toString port}
     '';
   };
 }

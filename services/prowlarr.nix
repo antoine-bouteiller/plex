@@ -1,7 +1,10 @@
-{config, ...}: {
+{config, ...}: let
+  dataDir = "${config.server.paths.app}/prowlarr";
+  port = config.server.ports.prowlarr;
+in {
   services.prowlarr = {
     enable = true;
-    dataDir = "${config.server.paths.app}/prowlarr";
+    inherit dataDir;
 
     settings = {
       auth = {
@@ -13,7 +16,7 @@
   services.caddy.virtualHosts."prowlarr.${config.server.domain}" = {
     extraConfig = ''
       import auth_proxy
-      reverse_proxy localhost:9696 {
+      reverse_proxy localhost:${toString port} {
         header_down -Access-Control-Allow-Origin
       }
     '';

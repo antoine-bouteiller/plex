@@ -1,16 +1,21 @@
-{config, ...}: {
+{config, ...}: let
+  dataDir = "${config.server.paths.app}/authelia-main";
+  port = config.server.ports.authelia;
+  user = "authelia-main";
+  group = "authelia-main";
+in {
   sops.secrets = {
     "authelia/jwt_secret" = {
-      owner = "authelia-main";
-      group = "authelia-main";
+      owner = user;
+      group = group;
     };
     "authelia/storage_encryption_key" = {
-      owner = "authelia-main";
-      group = "authelia-main";
+      owner = user;
+      group = group;
     };
     "authelia/session_secret" = {
-      owner = "authelia-main";
-      group = "authelia-main";
+      owner = user;
+      group = group;
     };
   };
 
@@ -34,7 +39,7 @@
       };
 
       authentication_backend.file = {
-        path = "${config.server.paths.app}/authelia-main/users.yml";
+        path = "${dataDir}/users.yml";
         password.algorithm = "argon2";
       };
 
@@ -84,18 +89,22 @@
         ban_time = "5 minutes";
       };
 
-      storage.local.path = "${config.server.paths.app}/authelia-main/db.sqlite3";
+      storage.local.path = "${dataDir}/db.sqlite3";
 
       notifier = {
         disable_startup_check = false;
         filesystem = {
-          filename = "${config.server.paths.app}/authelia-main/notification.txt";
+          filename = "${dataDir}/notification.txt";
         };
       };
     };
   };
 
   services.caddy.virtualHosts."auth.${config.server.domain}" = {
-    extraConfig = "reverse_proxy localhost:9091";
+    extraConfig = "reverse_proxy localhost:${toString port}";
   };
+
+  systemd.tmpfiles.rules = [
+    "d ${dataDir} 0755 authelia-main authelia-main - -"
+  ];
 }

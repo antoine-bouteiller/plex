@@ -1,12 +1,16 @@
-{config, ...}: {
+{config, ...}: let
+  dataDir = "${config.server.paths.app}/qBittorrent";
+  port = config.server.ports.qbittorrent;
+in {
   services.qbittorrent = {
     enable = true;
+    profileDir = dataDir;
   };
 
   services.caddy.virtualHosts."qbittorrent.${config.server.domain}" = {
     extraConfig = ''
       import auth_proxy
-      reverse_proxy localhost:8080
+      reverse_proxy localhost:${toString port}
     '';
   };
 
@@ -15,4 +19,8 @@
   systemd.services.qbittorrent.serviceConfig = {
     Umask = 002;
   };
+
+  systemd.tmpfiles.rules = [
+    "d ${dataDir} 0755 qbittorrent qbittorrent - -"
+  ];
 }

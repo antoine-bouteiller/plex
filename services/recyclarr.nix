@@ -1,4 +1,7 @@
-{config, ...}: {
+{config, ...}: let
+  sonarrPort = config.server.ports.sonarr;
+  radarrPort = config.server.ports.radarr;
+in {
   sops.secrets = {
     "recyclarr/sonarr_api_key" = {
       owner = "recyclarr";
@@ -23,7 +26,7 @@
     configuration = {
       sonarr = {
         sonarr = {
-          base_url = "http://localhost:8989";
+          base_url = "http://localhost:${toString sonarrPort}";
           api_key = {
             _secret = config.sops.secrets."recyclarr/sonarr_api_key".path;
           };
@@ -54,7 +57,7 @@
 
       radarr = {
         radarr = {
-          base_url = "http://localhost:7878";
+          base_url = "http://localhost:${toString radarrPort}";
           api_key = {
             _secret = config.sops.secrets."recyclarr/radarr_api_key".path;
           };

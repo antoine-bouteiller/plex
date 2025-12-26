@@ -13,5 +13,6 @@
     ./homepage.nix
     ./flaresolverr.nix
     ./coolercontrol.nix
+    ./autoscan.nix
   ];
 }
