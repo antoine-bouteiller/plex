@@ -6,5 +6,6 @@
     ./users.nix
     ./ssh.nix
     ./nix.nix
+    ./journald.nix
   ];
 }
