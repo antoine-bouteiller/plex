@@ -19,7 +19,7 @@ in {
   users.users.qbittorrent.extraGroups = ["media"];
 
   systemd.services.qbittorrent.serviceConfig = {
-    Umask = 002;
+    UMask = "002";
   };
 
   systemd.tmpfiles.rules = [
