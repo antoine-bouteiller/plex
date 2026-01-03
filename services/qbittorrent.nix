@@ -21,8 +21,4 @@ in {
   systemd.services.qbittorrent.serviceConfig = {
     UMask = "002";
   };
-
-  systemd.tmpfiles.rules = [
-    "d ${dataDir} 0755 qbittorrent qbittorrent - -"
-  ];
 }
