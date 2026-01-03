@@ -5,6 +5,7 @@ in {
   services.radarr = {
     enable = true;
     inherit dataDir;
+    group = "media";
 
     settings = {
       auth = {

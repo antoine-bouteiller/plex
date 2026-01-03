@@ -5,6 +5,8 @@ in {
   services.qbittorrent = {
     enable = true;
     profileDir = dataDir;
+
+    group = "media";
   };
 
   services.caddy.virtualHosts."qbittorrent.${config.server.domain}" = {

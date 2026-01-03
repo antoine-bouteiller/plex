@@ -5,6 +5,7 @@ in {
   services.sonarr = {
     enable = true;
     inherit dataDir;
+    group = "media";
 
     settings = {
       auth = {
