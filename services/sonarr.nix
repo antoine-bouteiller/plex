@@ -8,6 +8,7 @@ in {
     group = "media";
 
     settings = {
+      server.bindAddress = "*";
       auth = {
         method = "external";
       };
