@@ -13,7 +13,7 @@ in {
     };
   };
 
-  services.caddy.virtualHosts."prowlarr.${config.server.domain}" = {
+  services.caddy.virtualHosts."prowlarr.${config.server.network.domain}" = {
     extraConfig = ''
       import auth_proxy
       reverse_proxy localhost:${toString port} {

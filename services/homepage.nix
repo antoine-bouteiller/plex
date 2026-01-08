@@ -43,7 +43,7 @@ in {
 
   services.homepage-dashboard = {
     enable = true;
-    allowedHosts = "dashboard.${config.server.domain}";
+    allowedHosts = "dashboard.${config.server.network.domain}";
     settings = {
       title = "Antoine's Dashboard";
       theme = "dark";
@@ -96,7 +96,7 @@ in {
           {
             Plex = {
               icon = "plex.svg";
-              href = "https://plex.${config.server.domain}";
+              href = "https://plex.${config.server.network.domain}";
               widget = {
                 type = "plex";
                 url = "http://localhost:${toString plexPort}";
@@ -107,13 +107,13 @@ in {
           {
             Jellyseerr = {
               icon = "jellyseerr.svg";
-              href = "https://${config.server.domain}";
+              href = "https://${config.server.network.domain}";
             };
           }
           {
             Sonnar = {
               icon = "sonarr.svg";
-              href = "https://sonarr.${config.server.domain}";
+              href = "https://sonarr.${config.server.network.domain}";
               widget = {
                 type = "sonarr";
                 url = "http://localhost:${toString sonarrPort}";
@@ -125,7 +125,7 @@ in {
           {
             Radarr = {
               icon = "radarr.svg";
-              href = "https://radarr.${config.server.domain}";
+              href = "https://radarr.${config.server.network.domain}";
               widget = {
                 type = "radarr";
                 url = "http://localhost:${toString radarrPort}";
@@ -137,7 +137,7 @@ in {
           {
             Prowlarr = {
               icon = "prowlarr.svg";
-              href = "https://prowlarr.${config.server.domain}";
+              href = "https://prowlarr.${config.server.network.domain}";
               widget = {
                 type = "prowlarr";
                 url = "http://localhost:${toString prowlarrPort}";
@@ -149,7 +149,7 @@ in {
           {
             Bazarr = {
               icon = "bazarr.svg";
-              href = "https://bazarr.${config.server.domain}";
+              href = "https://bazarr.${config.server.network.domain}";
               widget = {
                 type = "bazarr";
                 url = "http://localhost:${toString bazarrPort}";
@@ -160,7 +160,7 @@ in {
           {
             qBittorrent = {
               icon = "qbittorrent.svg";
-              href = "https://qbittorrent.${config.server.domain}";
+              href = "https://qbittorrent.${config.server.network.domain}";
               widget = {
                 type = "qbittorrent";
                 url = "http://localhost:${toString qbittorrentPort}";
@@ -202,7 +202,7 @@ in {
     HOMEPAGE_FILE_BAZARR_API_KEY = config.sops.secrets."homepage/bazarr_api_key".path;
   };
 
-  services.caddy.virtualHosts."dashboard.${config.server.domain}" = {
+  services.caddy.virtualHosts."dashboard.${config.server.network.domain}" = {
     extraConfig = ''
       import auth_proxy
       reverse_proxy localhost:${toString port}

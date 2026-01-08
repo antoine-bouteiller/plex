@@ -2,7 +2,6 @@
   fileSystems."/mnt/data" = {
     device = "/dev/disk/by-uuid/20af820e-357e-49fe-a62c-38b6039bffc5";
     fsType = "ext4";
-    options = ["defaults" "nofail"];
   };
 
   systemd.tmpfiles.rules = [

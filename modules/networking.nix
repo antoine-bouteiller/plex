@@ -10,7 +10,7 @@
       22 # SSH
       80 # HTTP (Caddy)
       443 # HTTPS (Caddy)
-      32400 # Plex
+      config.server.ports.plex
       6881 # qBittorrent
     ];
     interfaces."podman0".allowedTCPPorts = [

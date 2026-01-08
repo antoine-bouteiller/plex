@@ -7,7 +7,7 @@ in {
     inherit configDir;
   };
 
-  services.caddy.virtualHosts."${config.server.domain}" = {
+  services.caddy.virtualHosts."${config.server.network.domain}" = {
     extraConfig = "reverse_proxy localhost:${toString port}";
   };
 }

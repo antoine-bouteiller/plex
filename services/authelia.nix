@@ -64,12 +64,12 @@ in {
 
         rules = [
           {
-            domain = "*.${config.server.domain}";
+            domain = "*.${config.server.network.domain}";
             policy = "bypass";
             networks = ["internal"];
           }
           {
-            domain = "*.${config.server.domain}";
+            domain = "*.${config.server.network.domain}";
             policy = "one_factor";
           }
         ];
@@ -78,8 +78,8 @@ in {
       session.cookies = [
         {
           name = "authelia_session";
-          domain = config.server.domain;
-          authelia_url = "https://auth.${config.server.domain}";
+          domain = config.server.network.domain;
+          authelia_url = "https://auth.${config.server.network.domain}";
         }
       ];
 
@@ -100,7 +100,7 @@ in {
     };
   };
 
-  services.caddy.virtualHosts."auth.${config.server.domain}" = {
+  services.caddy.virtualHosts."auth.${config.server.network.domain}" = {
     extraConfig = "reverse_proxy localhost:${toString port}";
   };
 

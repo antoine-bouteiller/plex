@@ -3,7 +3,7 @@
 in {
   programs.coolercontrol.enable = true;
 
-  services.caddy.virtualHosts."coolercontrol.${config.server.domain}" = {
+  services.caddy.virtualHosts."coolercontrol.${config.server.network.domain}" = {
     extraConfig = ''
       import auth_proxy
       reverse_proxy localhost:${toString port}

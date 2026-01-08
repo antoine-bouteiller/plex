@@ -1,11 +1,12 @@
 {config, ...}: let
   dataDir = "${config.server.paths.app}/radarr";
   port = config.server.ports.radarr;
+  mediaGroup = config.server.mediaGroup;
 in {
   services.radarr = {
     enable = true;
     inherit dataDir;
-    group = "media";
+    group = mediaGroup;
 
     settings = {
       server.bindAddress = "*";
@@ -15,7 +16,7 @@ in {
     };
   };
 
-  services.caddy.virtualHosts."radarr.${config.server.domain}" = {
+  services.caddy.virtualHosts."radarr.${config.server.network.domain}" = {
     extraConfig = ''
       import auth_proxy
       reverse_proxy localhost:${toString port} {
@@ -24,7 +25,7 @@ in {
     '';
   };
 
-  users.users.radarr.extraGroups = ["media"];
+  users.users.radarr.extraGroups = [mediaGroup];
 
   systemd.tmpfiles.rules = [
     "d ${dataDir} 0755 radarr radarr - -"

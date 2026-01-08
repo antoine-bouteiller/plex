@@ -1,11 +1,12 @@
 {config, ...}: let
   dataDir = "${config.server.paths.app}/sonarr";
   port = config.server.ports.sonarr;
+  mediaGroup = config.server.mediaGroup;
 in {
   services.sonarr = {
     enable = true;
     inherit dataDir;
-    group = "media";
+    group = mediaGroup;
 
     settings = {
       server.bindAddress = "*";
@@ -15,7 +16,7 @@ in {
     };
   };
 
-  services.caddy.virtualHosts."sonarr.${config.server.domain}" = {
+  services.caddy.virtualHosts."sonarr.${config.server.network.domain}" = {
     extraConfig = ''
       import auth_proxy
       reverse_proxy localhost:${toString port} {
@@ -24,7 +25,7 @@ in {
     '';
   };
 
-  users.users.sonarr.extraGroups = ["media"];
+  users.users.sonarr.extraGroups = [mediaGroup];
 
   systemd.tmpfiles.rules = [
     "d ${dataDir} 0755 sonarr sonarr - -"

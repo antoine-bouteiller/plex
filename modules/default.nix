@@ -1,8 +1,13 @@
 {...}: {
   imports = [
-    ./options.nix
+    ./boot.nix
+    ./journald.nix
+    ./locale.nix
+    ./networking.nix
+    ./nix.nix
     ./secrets.nix
+    ./ssh.nix
     ./storage.nix
-    ./core
+    ./users.nix
   ];
 }

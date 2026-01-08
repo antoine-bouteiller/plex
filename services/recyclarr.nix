@@ -1,4 +1,6 @@
 {config, ...}: let
+  user = "recyclarr";
+  group = "recyclarr";
   sonarrPort = config.server.ports.sonarr;
   radarrPort = config.server.ports.radarr;
 in {
@@ -94,7 +96,7 @@ in {
   };
 
   systemd.services.recylarr.serviceConfig = {
-    User = "recylarr";
-    Group = "recylarr";
+    User = user;
+    Group = group;
   };
 }
