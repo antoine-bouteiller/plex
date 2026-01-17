@@ -1,4 +1,4 @@
-{config, ...}: let
+{config, pkgs, ...}: let
   user = "autoscan";
   group = "autoscan";
   dataDir = "${config.server.paths.app}/autoscan";
@@ -74,4 +74,24 @@ in {
   systemd.tmpfiles.rules = [
     "d ${dataDir} 0755 ${user} ${group} - -"
   ];
+
+  systemd.services.autoscan-update = {
+    description = "Pull and update autoscan container";
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.writeShellScript "autoscan-update" ''
+        ${pkgs.podman}/bin/podman pull antobouteiller/autoscan:latest
+        systemctl restart podman-autoscan.service
+      ''}";
+    };
+  };
+
+  systemd.timers.autoscan-update = {
+    description = "Daily autoscan container update";
+    wantedBy = ["timers.target"];
+    timerConfig = {
+      OnCalendar = "daily";
+      Persistent = true;
+    };
+  };
 }

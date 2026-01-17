@@ -18,11 +18,7 @@
     };
   };
 
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true;
-  };
-
+  programs.zsh.enable = true;
   environment.systemPackages = with pkgs; [
     git
     curl
@@ -30,8 +26,6 @@
     bat
     zoxide
     starship
-    zsh
-    grep
   ];
 
   system.stateVersion = "25.11";

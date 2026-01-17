@@ -14,5 +14,6 @@
     ./flaresolverr.nix
     ./coolercontrol.nix
     ./autoscan.nix
+    ./plextraktsync.nix
   ];
 }

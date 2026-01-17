@@ -5,6 +5,7 @@
     ./locale.nix
     ./networking.nix
     ./nix.nix
+    ./podman.nix
     ./secrets.nix
     ./ssh.nix
     ./storage.nix
