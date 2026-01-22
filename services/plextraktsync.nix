@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }: let
@@ -27,21 +28,17 @@ in {
     };
   };
 
-  systemd.services.plextraktsync-daily = {
-    description = "Pull latest image and run PlexTraktSync";
-    after = ["network-online.target"];
-    wants = ["network-online.target"];
-
+  systemd.services.podman-plextraktsync = {
     serviceConfig = {
-      Type = "oneshot";
-      ExecStart = pkgs.writeShellScript "plextraktsync-run" ''
+      Type = lib.mkForce "oneshot";
+      Restart = lib.mkForce "no";
+      ExecStartPre = pkgs.writeShellScript "plextraktsync-run" ''
         ${pkgs.podman}/bin/podman pull ghcr.io/taxel/plextraktsync:latest
-        ${pkgs.systemd}/bin/systemctl start podman-plextraktsync.service
       '';
     };
   };
 
-  systemd.timers.plextraktsync-daily = {
+  systemd.timers.podman-plextraktsync = {
     description = "Daily PlexTraktSync Task";
     timerConfig = {
       OnCalendar = "daily";

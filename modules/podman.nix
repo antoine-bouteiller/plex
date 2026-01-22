@@ -2,6 +2,11 @@
   virtualisation.podman = {
     enable = true;
     dockerCompat = true;
+
+    autoPrune = {
+      enable = true;
+      dates = "daily";
+    };
   };
 
   sops.secrets."docker_token" = {};
