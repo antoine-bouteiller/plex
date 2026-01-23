@@ -26,6 +26,7 @@
     bat
     zoxide
     starship
+    ffmpeg
   ];
 
   system.stateVersion = "25.11";
