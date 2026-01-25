@@ -8,23 +8,6 @@
     options = "--delete-older-than 7d";
   };
 
-  system.autoUpgrade = {
-    enable = true;
-    dates = "01:00";
-
-    flake = "/etc/nixos";
-    flags = [
-      "--update-input" "nixpkgs"
-      "--commit-lock-file"
-    ];
-
-    allowReboot = true;
-    rebootWindow = {
-      lower = "03:00";
-      upper = "05:00";
-    };
-  };
-
   programs.zsh.enable = true;
   environment.systemPackages = with pkgs; [
     git
