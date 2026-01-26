@@ -1,4 +1,8 @@
-{config, pkgs, ...}: let
+{
+  config,
+  pkgs,
+  ...
+}: let
   user = "autoscan";
   group = "autoscan";
   dataDir = "${config.server.paths.app}/autoscan";
@@ -79,6 +83,7 @@ in {
     description = "Pull and update autoscan container";
     serviceConfig = {
       Type = "oneshot";
+      Environment = "REGISTRY_AUTH_FILE=${config.sops.templates."podman-auth.json".path}";
       ExecStart = "${pkgs.writeShellScript "autoscan-update" ''
         ${pkgs.podman}/bin/podman pull antobouteiller/autoscan:latest
         systemctl restart podman-autoscan.service
