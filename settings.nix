@@ -33,6 +33,7 @@ with lib; {
       homepage = 8082;
       coolercontrol = 11987;
       autoscan = 3030;
+      cockpit = 9090;
     };
   };
 }
