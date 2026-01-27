@@ -10,5 +10,6 @@
     ./ssh.nix
     ./storage.nix
     ./users.nix
+    ./update.nix
   ];
 }
