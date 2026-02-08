@@ -1,1 +1,8 @@
 .env
+
+# nix
+nix.conf
+registry.json
+
+# misc
+.DS_Store
