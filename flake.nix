@@ -12,14 +12,12 @@
   outputs = {
     self,
     nixpkgs,
-    sops-nix,
-  }: {
+    ...
+  }@inputs: {
     nixosConfigurations.plex-server = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      modules = [
-        ./configuration.nix
-        sops-nix.nixosModules.sops
-      ];
+      specialArgs = { inherit inputs; };
+      modules = [ ./hosts/plex-server ];
     };
   };
 }
