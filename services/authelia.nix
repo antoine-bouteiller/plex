@@ -17,6 +17,10 @@ in {
       owner = user;
       group = group;
     };
+    "authelia/resend_api_key" = {
+      owner = user;
+      group = group;
+    };
   };
 
   services.authelia.instances.main = {
@@ -26,6 +30,10 @@ in {
       storageEncryptionKeyFile = config.sops.secrets."authelia/storage_encryption_key".path;
       sessionSecretFile = config.sops.secrets."authelia/session_secret".path;
       jwtSecretFile = config.sops.secrets."authelia/jwt_secret".path;
+    };
+
+    environmentVariables = {
+      AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE = config.sops.secrets."authelia/resend_api_key".path;
     };
 
     settings = {
@@ -93,8 +101,10 @@ in {
 
       notifier = {
         disable_startup_check = false;
-        filesystem = {
-          filename = "${dataDir}/notification.txt";
+        smtp = {
+          address = "submissions://smtp.resend.com:465";
+          username = "resend";
+          sender = "authelia@${config.server.network.domain}";
         };
       };
     };
