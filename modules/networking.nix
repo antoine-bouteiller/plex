@@ -4,6 +4,11 @@
     nameservers = ["1.1.1.1" "9.9.9.9"];
   };
 
+  boot.kernel.sysctl = {
+    "net.ipv6.conf.all.disable_ipv6" = 1;
+    "net.ipv6.conf.default.disable_ipv6" = 1;
+  };
+
   networking.firewall = {
     enable = true;
     allowedTCPPorts = [
