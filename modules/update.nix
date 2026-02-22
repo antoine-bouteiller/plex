@@ -49,7 +49,7 @@ in {
       "-L"
     ];
 
-    allowReboot = true;
+    allowReboot = false;
     rebootWindow = {
       lower = "01:00";
       upper = "03:00";
