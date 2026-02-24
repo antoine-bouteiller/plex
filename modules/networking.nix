@@ -18,9 +18,5 @@
       config.server.ports.plex
       6881 # qBittorrent
     ];
-    interfaces."podman0".allowedTCPPorts = [
-      config.server.ports.sonarr
-      config.server.ports.radarr
-    ];
   };
 }
