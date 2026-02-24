@@ -15,11 +15,11 @@ in {
     dataDir = "${config.server.paths.app}/autoscan";
     inherit port;
     settings = {
-      plexUrl = "http://${containerHost}:${toString plexPort}";
+      plexUrl = "http://localhost:${toString plexPort}";
       domain = config.server.network.domain;
       tmdbApiUrl = "https://api.themoviedb.org/3";
-      sonarrApiUrl = "http://${containerHost}:${toString sonarrPort}";
-      radarrApiUrl = "http://${containerHost}:${toString radarrPort}";
+      sonarrApiUrl = "http://localhost:${toString sonarrPort}";
+      radarrApiUrl = "http://localhost:${toString radarrPort}";
     };
     secrets = {
       plexTokenFile = config.sops.secrets."autoscan/plex_token".path;
