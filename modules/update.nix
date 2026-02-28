@@ -42,14 +42,14 @@ in {
 
   system.autoUpgrade = {
     enable = true;
-    dates = "Mon *-*-* 01:00:00";
+    dates = "Sun *-*-* 01:00:00";
 
     flake = flakePath;
     flags = [
       "-L"
     ];
 
-    allowReboot = false;
+    allowReboot = true;
     rebootWindow = {
       lower = "01:00";
       upper = "03:00";
