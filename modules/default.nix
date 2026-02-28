@@ -3,7 +3,6 @@
     ./boot.nix
     ./journald.nix
     ./locale.nix
-    ./networking.nix
     ./nix.nix
     ./secrets.nix
     ./ssh.nix
