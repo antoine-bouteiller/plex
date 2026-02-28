@@ -6,3 +6,4 @@ registry.json
 
 # misc
 .DS_Store
+settings.local.json

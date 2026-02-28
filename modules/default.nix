@@ -7,7 +7,6 @@
     ./nix.nix
     ./secrets.nix
     ./ssh.nix
-    ./storage.nix
     ./users.nix
     ./update.nix
   ];

@@ -1,18 +1,17 @@
 {config, ...}: let
   user = "autoscan";
-  group = "autoscan";
   port = config.server.ports.autoscan;
   plexPort = config.server.ports.plex;
   sonarrPort = config.server.ports.sonarr;
   radarrPort = config.server.ports.radarr;
-  containerHost = config.server.network.containerHost;
   mediaGroup = config.server.mediaGroup;
 in {
-  users.users.${user}.extraGroups = [mediaGroup];
-
   services.autoscan = {
     enable = true;
     dataDir = "${config.server.paths.app}/autoscan";
+
+    group = mediaGroup;
+
     inherit port;
     settings = {
       plexUrl = "http://localhost:${toString plexPort}";
@@ -37,46 +36,37 @@ in {
   sops.secrets."autoscan/plex_token" = {
     key = "plex_token";
     owner = user;
-    group = group;
   };
   sops.secrets."autoscan/telegram_token" = {
     key = "telegram/token";
     owner = user;
-    group = group;
   };
   sops.secrets."autoscan/telegram_chat_id" = {
     key = "telegram/chat_id";
     owner = user;
-    group = group;
   };
   sops.secrets."autoscan/cloudflare_token" = {
     key = "cloudflare_token";
     owner = user;
-    group = group;
   };
   sops.secrets."autoscan/tmdb_api_token" = {
     key = "tmdb_api_token";
     owner = user;
-    group = group;
   };
   sops.secrets."autoscan/sonarr_api_key" = {
     key = "sonarr_api_key";
     owner = user;
-    group = group;
   };
   sops.secrets."autoscan/radarr_api_key" = {
     key = "radarr_api_key";
     owner = user;
-    group = group;
   };
   sops.secrets."autoscan/trakt_client_id" = {
     key = "trakt/client_id";
     owner = user;
-    group = group;
   };
   sops.secrets."autoscan/trakt_client_secret" = {
     key = "trakt/client_secret";
     owner = user;
-    group = group;
   };
 }
