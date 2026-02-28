@@ -20,6 +20,10 @@
   '';
 in {
   fileSystems."/mnt/data" = {
+    device = "/dev/disk/by-uuid/8059153a-838e-4bfd-82aa-5831c1f5047a";
+    fsType = "ext4";
+  };
+  fileSystems."/mnt/backup" = {
     device = "/dev/disk/by-uuid/20af820e-357e-49fe-a62c-38b6039bffc5";
     fsType = "ext4";
   };
