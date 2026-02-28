@@ -11,7 +11,7 @@
 
         PAYLOAD=$(${pkgs.jq}/bin/jq -n \
           --arg msg "$ALERT_TEXT" \
-          '{ "message": $msg }')
+          '{ "text": $msg }')
 
         ${pkgs.curl}/bin/curl -s -X POST \
           -H "Content-Type: application/json" \
