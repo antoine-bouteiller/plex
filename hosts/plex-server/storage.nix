@@ -33,6 +33,11 @@ in {
     "Z /mnt/data 2775 root media - -"
   ];
 
+  # Spin down the backup disk after 15 minutes of inactivity
+  powerManagement.powerUpCommands = ''
+    ${pkgs.hdparm}/bin/hdparm -S 180 /dev/disk/by-uuid/20af820e-357e-49fe-a62c-38b6039bffc5
+  '';
+
   services.smartd = {
     enable = true;
     autodetect = true;
