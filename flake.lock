@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1771963377,
-        "narHash": "sha256-qZcEZBmwl6tXNkibp5OuiZMg4cxhMcaZeIsOjCuiTTM=",
+        "lastModified": 1772269836,
+        "narHash": "sha256-4U9gnBjt/9ZMPCfz/PE8U7xzU15gNlmpAA/X6IKgo6Q=",
         "owner": "antoine-bouteiller",
         "repo": "autoscan",
-        "rev": "7386432be48d428913466d15023fc73fa59c5de2",
+        "rev": "0cc516f37ac252d6d710f9f2d9cab336725eeeea",
         "type": "github"
       },
       "original": {
@@ -50,11 +50,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1771889317,
-        "narHash": "sha256-YV17Q5lEU0S9ppw08Y+cs4eEQJBuc79AzblFoHORLMU=",
+        "lastModified": 1772048434,
+        "narHash": "sha256-/wA0OaH6kZ/pFA+nXR/tvg5oupOmEDmMS5us79JT60o=",
         "owner": "Mic92",
         "repo": "sops-nix",
-        "rev": "b027513c32e5b39b59f64626b87fbe168ae02094",
+        "rev": "334daa7c273dd8bf7a0cd370e4e16022b64e55e9",
         "type": "github"
       },
       "original": {
