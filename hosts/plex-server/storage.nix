@@ -34,9 +34,16 @@ in {
   ];
 
   # Spin down the backup disk after 15 minutes of inactivity
-  powerManagement.powerUpCommands = ''
-    ${pkgs.hdparm}/bin/hdparm -S 180 /dev/disk/by-uuid/20af820e-357e-49fe-a62c-38b6039bffc5
-  '';
+  systemd.services.backup-disk-spindown = {
+    description = "Set spindown timeout for backup disk";
+    wantedBy = ["multi-user.target"];
+    after = ["local-fs.target"];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = "${pkgs.hdparm}/bin/hdparm -S 180 /dev/disk/by-uuid/20af820e-357e-49fe-a62c-38b6039bffc5";
+    };
+  };
 
   services.smartd = {
     enable = true;
