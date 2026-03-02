@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1772269836,
-        "narHash": "sha256-4U9gnBjt/9ZMPCfz/PE8U7xzU15gNlmpAA/X6IKgo6Q=",
+        "lastModified": 1772727655,
+        "narHash": "sha256-zL3DrJjIBA2upWCRggGXKXXw9D7njL6Ubhj27hBpdR8=",
         "owner": "antoine-bouteiller",
         "repo": "autoscan",
-        "rev": "0cc516f37ac252d6d710f9f2d9cab336725eeeea",
+        "rev": "88441b635eed1edba1cf5e89c6af0598ae03d600",
         "type": "github"
       },
       "original": {
@@ -22,11 +22,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1772198003,
-        "narHash": "sha256-I45esRSssFtJ8p/gLHUZ1OUaaTaVLluNkABkk6arQwE=",
+        "lastModified": 1772624091,
+        "narHash": "sha256-QKyJ0QGWBn6r0invrMAK8dmJoBYWoOWy7lN+UHzW1jc=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "dd9b079222d43e1943b6ebd802f04fd959dc8e61",
+        "rev": "80bdc1e5ce51f56b19791b52b2901187931f5353",
         "type": "github"
       },
       "original": {
@@ -50,11 +50,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1772048434,
-        "narHash": "sha256-/wA0OaH6kZ/pFA+nXR/tvg5oupOmEDmMS5us79JT60o=",
+        "lastModified": 1772495394,
+        "narHash": "sha256-hmIvE/slLKEFKNEJz27IZ8BKlAaZDcjIHmkZ7GCEjfw=",
         "owner": "Mic92",
         "repo": "sops-nix",
-        "rev": "334daa7c273dd8bf7a0cd370e4e16022b64e55e9",
+        "rev": "1d9b98a29a45abe9c4d3174bd36de9f28755e3ff",
         "type": "github"
       },
       "original": {
