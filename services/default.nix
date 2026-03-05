@@ -8,7 +8,7 @@
     ./radarr.nix
     ./prowlarr.nix
     ./bazarr.nix
-    ./qbittorrent.nix
+    ./transmission.nix
     ./recyclarr.nix
     ./homepage.nix
     ./flaresolverr.nix

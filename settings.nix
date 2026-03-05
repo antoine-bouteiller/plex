@@ -27,7 +27,7 @@ with lib; {
       prowlarr = 9696;
       bazarr = 6767;
       jellyseerr = 5055;
-      qbittorrent = 8080;
+      transmission = 9092;
       flaresolverr = 8191;
       authelia = 9091;
       homepage = 8082;
