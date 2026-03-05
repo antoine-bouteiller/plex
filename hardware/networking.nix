@@ -16,7 +16,7 @@
       80 # HTTP (Caddy)
       443 # HTTPS (Caddy)
       config.server.ports.plex
-      6881 # qBittorrent
+      51413 # Transmission peer port
     ];
   };
 }

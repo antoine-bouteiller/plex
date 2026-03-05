@@ -5,7 +5,7 @@
   radarrPort = config.server.ports.radarr;
   prowlarrPort = config.server.ports.prowlarr;
   bazarrPort = config.server.ports.bazarr;
-  qbittorrentPort = config.server.ports.qbittorrent;
+  transmissionPort = config.server.ports.transmission;
 in {
   sops.secrets = {
     "homepage/sonarr_api_key" = {
@@ -158,12 +158,12 @@ in {
             };
           }
           {
-            qBittorrent = {
-              icon = "qbittorrent.svg";
-              href = "https://qbittorrent.${config.server.network.domain}";
+            Transmission = {
+              icon = "transmission.svg";
+              href = "https://torrent.${config.server.network.domain}";
               widget = {
-                type = "qbittorrent";
-                url = "http://localhost:${toString qbittorrentPort}";
+                type = "transmission";
+                url = "http://localhost:${toString transmissionPort}";
                 fields = ["download" "upload"];
               };
             };
