@@ -1,6 +1,11 @@
 {...}: {
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
   boot.kernelModules = ["coretemp" "nct6775"];
   boot.kernelParams = ["reboot=pci"];
+
+  security.polkit.enable = true;
 
   environment = {
     etc = {
