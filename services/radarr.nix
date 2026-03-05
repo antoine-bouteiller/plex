@@ -1,12 +1,12 @@
 {config, ...}: let
   dataDir = "${config.server.paths.app}/radarr";
   port = config.server.ports.radarr;
-  mediaGroup = config.server.mediaGroup;
+  libraryOwnerGroup = config.server.libraryOwner.group;
 in {
   services.radarr = {
     enable = true;
     inherit dataDir;
-    group = mediaGroup;
+    group = libraryOwnerGroup;
 
     settings = {
       server.bindAddress = "*";
@@ -25,9 +25,5 @@ in {
     '';
   };
 
-  users.users.radarr.extraGroups = [mediaGroup];
-
-  systemd.tmpfiles.rules = [
-    "d ${dataDir} 0755 radarr radarr - -"
-  ];
+  users.users.radarr.extraGroups = [libraryOwnerGroup];
 }

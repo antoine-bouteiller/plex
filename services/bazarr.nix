@@ -1,11 +1,11 @@
 {config, ...}: let
   dataDir = "${config.server.paths.app}/bazarr";
   port = config.server.ports.bazarr;
-  mediaGroup = config.server.mediaGroup;
+  libraryOwnerGroup = config.server.libraryOwner.group;
 in {
   services.bazarr = {
     enable = true;
-    group = mediaGroup;
+    group = libraryOwnerGroup;
     inherit dataDir;
   };
 
@@ -17,9 +17,5 @@ in {
   };
 
   users.users.bazarr.isSystemUser = true;
-  users.users.bazarr.group = mediaGroup;
-
-  systemd.tmpfiles.rules = [
-    "d ${dataDir} 0755 bazarr ${mediaGroup} - -"
-  ];
+  users.users.bazarr.group = libraryOwnerGroup;
 }

@@ -1,12 +1,12 @@
 {config, ...}: let
   dataDir = "${config.server.paths.app}/sonarr";
   port = config.server.ports.sonarr;
-  mediaGroup = config.server.mediaGroup;
+  libraryOwnerGroup = config.server.libraryOwner.group;
 in {
   services.sonarr = {
     enable = true;
     inherit dataDir;
-    group = mediaGroup;
+    group = libraryOwnerGroup;
 
     settings = {
       server.bindAddress = "*";
@@ -25,9 +25,5 @@ in {
     '';
   };
 
-  users.users.sonarr.extraGroups = [mediaGroup];
-
-  systemd.tmpfiles.rules = [
-    "d ${dataDir} 0755 sonarr sonarr - -"
-  ];
+  users.users.sonarr.extraGroups = [libraryOwnerGroup];
 }

@@ -13,4 +13,4 @@ nix flake update                             # Update flake inputs
 
 - **Domain:** `antoinebouteiller.fr`
 - **Media group:** `media`
-- **Data paths:** `/mnt/data`, `/mnt/movies`
+- **Data paths:** `/mnt/mediaDir`, `/mnt/movies`

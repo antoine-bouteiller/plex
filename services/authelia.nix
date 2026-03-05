@@ -113,8 +113,4 @@ in {
   services.caddy.virtualHosts."auth.${config.server.network.domain}" = {
     extraConfig = "reverse_proxy localhost:${toString port}";
   };
-
-  systemd.tmpfiles.rules = [
-    "d ${dataDir} 0755 authelia-main authelia-main - -"
-  ];
 }

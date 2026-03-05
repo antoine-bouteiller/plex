@@ -3,21 +3,21 @@ with lib; {
   options.server = mkOption {
     type = types.attrs;
     description = "Server configuration";
-    default = {};
   };
 
   config.server = {
-    mediaGroup = "media";
+    libraryOwner = {
+      user = "root";
+      group = "media";
+    };
 
     paths = {
       app = "/var/lib";
-      data = "/mnt/data";
-      movies = "/mnt/movies";
+      mediaDir = "/mnt/data";
     };
 
     network = {
       domain = "antoinebouteiller.fr";
-      containerHost = "host.containers.internal";
     };
 
     ports = {

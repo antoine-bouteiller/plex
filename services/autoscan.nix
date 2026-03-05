@@ -5,9 +5,9 @@
   plexPort = config.server.ports.plex;
   sonarrPort = config.server.ports.sonarr;
   radarrPort = config.server.ports.radarr;
-  mediaGroup = config.server.mediaGroup;
+  libraryOwnerGroup = config.server.libraryOwner.group;
 in {
-  users.users.autoscan.extraGroups = [mediaGroup];
+  users.users.autoscan.extraGroups = [libraryOwnerGroup];
 
   services.autoscan = {
     enable = true;
@@ -20,6 +20,7 @@ in {
       tmdbApiUrl = "https://api.themoviedb.org/3";
       sonarrApiUrl = "http://localhost:${toString sonarrPort}";
       radarrApiUrl = "http://localhost:${toString radarrPort}";
+      transcodePath = "${config.server.paths.mediaDir}/transcode";
     };
     secrets = {
       plexTokenFile = config.sops.secrets."autoscan/plex_token".path;

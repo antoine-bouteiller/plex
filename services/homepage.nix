@@ -183,7 +183,7 @@ in {
       {
         resources = {
           label = "Storage";
-          disk = ["/" "/mnt/data"];
+          disk = ["/" config.server.paths.mediaDir];
         };
       }
     ];

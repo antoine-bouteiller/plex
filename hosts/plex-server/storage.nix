@@ -18,8 +18,10 @@
           -d "$PAYLOAD" \
           "https://localhost:${toString config.server.ports.autoscan}/send-message" > /dev/null
   '';
+  mediaDir = config.server.paths.mediaDir;
+  libraryOwner = config.server.libraryOwner;
 in {
-  fileSystems."/mnt/data" = {
+  fileSystems.${config.server.paths.mediaDir} = {
     device = "/dev/disk/by-uuid/8059153a-838e-4bfd-82aa-5831c1f5047a";
     fsType = "ext4";
   };
@@ -29,8 +31,11 @@ in {
   };
 
   systemd.tmpfiles.rules = [
-    "d /mnt/data 2775 root media - -"
-    "Z /mnt/data 2775 root media - -"
+    "d '${mediaDir}/media'         0775 ${libraryOwner.user} ${libraryOwner.group} - -"
+    "d '${mediaDir}/media/movies'  0775 ${libraryOwner.user} ${libraryOwner.group} - -"
+    "d '${mediaDir}/media/tv'      0775 ${libraryOwner.user} ${libraryOwner.group} - -"
+    "d '${mediaDir}/torrents'       0775 ${libraryOwner.user} ${libraryOwner.group} - -"
+    "d '${mediaDir}/transcode'     0775 ${libraryOwner.user} ${libraryOwner.group} - -"
   ];
 
   # Spin down the backup disk after 15 minutes of inactivity

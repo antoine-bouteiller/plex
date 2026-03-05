@@ -1,7 +1,7 @@
 {config, ...}: let
   dataDir = "${config.server.paths.app}/plex";
   port = config.server.ports.plex;
-  mediaGroup = config.server.mediaGroup;
+  libraryOwnerGroup = config.server.libraryOwner.group;
 in {
   services.plex = {
     enable = true;
@@ -12,9 +12,5 @@ in {
     extraConfig = "reverse_proxy localhost:${toString port}";
   };
 
-  users.users.plex.extraGroups = [mediaGroup];
-
-  systemd.tmpfiles.rules = [
-    "d ${dataDir} 0755 plex plex - -"
-  ];
+  users.users.plex.extraGroups = [libraryOwnerGroup];
 }
