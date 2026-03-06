@@ -13,7 +13,7 @@ with lib; {
 
     paths = {
       app = "/var/lib";
-      mediaDir = "/mnt/data";
+      mediaDir = "/mnt/media";
     };
 
     network = {
