@@ -2,6 +2,7 @@
   imports = [
     ./caddy.nix
     ./authelia.nix
+    ./postgres.nix
     ./plex.nix
     ./jellyseerr.nix
     ./sonarr.nix

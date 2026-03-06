@@ -14,8 +14,13 @@ in {
 
     settings = {
       server.bindAddress = "*";
-      auth = {
-        method = "external";
+      auth.method = "external";
+      postgres = {
+        host = "/run/postgresql";
+        port = 5432;
+        user = "sonarr";
+        mainDb = "sonarr";
+        logDb = "sonarr-log";
       };
     };
   };
@@ -29,8 +34,24 @@ in {
     '';
   };
 
-  systemd.services.sonarr.serviceConfig = {
-    UMask = pkgs.lib.mkForce "002";
+  services.postgresql = {
+    ensureDatabases = ["sonarr" "sonarr-log"];
+    ensureUsers = [
+      {
+        name = "sonarr";
+      }
+    ];
+  };
+
+  systemd.services.postgresql-setup.script = pkgs.lib.mkAfter ''
+    psql -tAc "ALTER DATABASE \"sonarr\" OWNER TO sonarr"
+    psql -tAc "ALTER DATABASE \"sonarr-log\" OWNER TO sonarr"
+  '';
+
+  systemd.services.sonarr = {
+    after = ["postgresql-setup.service"];
+    requires = ["postgresql-setup.service"];
+    serviceConfig.UMask = pkgs.lib.mkForce "002";
   };
 
   users.users.sonarr.extraGroups = [libraryOwnerGroup];
