@@ -1,4 +1,8 @@
-{config, ...}: let
+{
+  config,
+  pkgs,
+  ...
+}: let
   dataDir = "${config.server.paths.app}/radarr";
   port = config.server.ports.radarr;
   libraryOwnerGroup = config.server.libraryOwner.group;
@@ -23,6 +27,10 @@ in {
         header_down -Access-Control-Allow-Origin
       }
     '';
+  };
+
+  systemd.services.radarr.serviceConfig = {
+    UMask = pkgs.lib.mkForce "002";
   };
 
   users.users.radarr.extraGroups = [libraryOwnerGroup];

@@ -31,11 +31,11 @@ in {
   };
 
   systemd.tmpfiles.rules = [
-    "d '${mediaDir}/media'         0775 ${libraryOwner.user} ${libraryOwner.group} - -"
-    "d '${mediaDir}/media/movies'  0775 ${libraryOwner.user} ${libraryOwner.group} - -"
-    "d '${mediaDir}/media/tv'      0775 ${libraryOwner.user} ${libraryOwner.group} - -"
+    "d '${mediaDir}/media'          0775 ${libraryOwner.user} ${libraryOwner.group} - -"
+    "d '${mediaDir}/media/movies'   0775 ${libraryOwner.user} ${libraryOwner.group} - -"
+    "d '${mediaDir}/media/tv'       0775 ${libraryOwner.user} ${libraryOwner.group} - -"
     "d '${mediaDir}/torrents'       0775 ${libraryOwner.user} ${libraryOwner.group} - -"
-    "d '${mediaDir}/transcode'     0775 ${libraryOwner.user} ${libraryOwner.group} - -"
+    "d '${mediaDir}/transcode'      0775 ${libraryOwner.user} ${libraryOwner.group} - -"
   ];
 
   # Spin down the backup disk after 15 minutes of inactivity
