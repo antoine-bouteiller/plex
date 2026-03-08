@@ -39,12 +39,12 @@ in {
     ensureUsers = [
       {
         name = "radarr";
+        ensureDBOwnership = true;
       }
     ];
   };
 
   systemd.services.postgresql-setup.script = pkgs.lib.mkAfter ''
-    psql -tAc "ALTER DATABASE \"radarr\" OWNER TO radarr"
     psql -tAc "ALTER DATABASE \"radarr-log\" OWNER TO radarr"
   '';
 
