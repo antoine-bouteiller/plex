@@ -13,6 +13,8 @@ in {
       rpc-host-whitelist-enabled = false;
       download-dir = "${mediaDir}/torrents";
       incomplete-dir-enabled = false;
+      ratio-limit-enabled = true;
+      ratio-limit = 0;
       umask = "002";
     };
   };
