@@ -40,7 +40,8 @@
       "inputs": {
         "autoscan": "autoscan",
         "nixpkgs": "nixpkgs",
-        "sops-nix": "sops-nix"
+        "sops-nix": "sops-nix",
+        "ygege": "ygege"
       }
     },
     "sops-nix": {
@@ -60,6 +61,22 @@
       "original": {
         "owner": "Mic92",
         "repo": "sops-nix",
+        "type": "github"
+      }
+    },
+    "ygege": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1772970649,
+        "narHash": "sha256-Z9MEgh1WVFMz4CU+WHbnW1oJNf1o3zyMb5lrcx/xdZ0=",
+        "owner": "UwUDev",
+        "repo": "ygege",
+        "rev": "d0db6cdba075fcb8fd8a84df7782f3a31ae14560",
+        "type": "github"
+      },
+      "original": {
+        "owner": "UwUDev",
+        "repo": "ygege",
         "type": "github"
       }
     }
