@@ -15,5 +15,6 @@ _: {
     ./flaresolverr.nix
     ./coolercontrol.nix
     ./autoscan.nix
+    ./immich.nix
   ];
 }

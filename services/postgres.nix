@@ -14,6 +14,8 @@ in {
   services.postgresql = {
     enable = true;
     enableTCPIP = true;
+    extensions = ps: with ps; [pgvecto-rs];
+    settings.shared_preload_libraries = "vectors.so";
     initdbArgs = ["--auth-host=scram-sha-256" "--pwfile=${config.sops.secrets."postgres/password".path}"];
 
     authentication = pkgs.lib.mkForce ''

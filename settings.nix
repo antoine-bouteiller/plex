@@ -34,6 +34,7 @@ with lib; {
       coolercontrol = 11987;
       autoscan = 3030;
       ygege = 8715;
+      immich = 2283;
     };
   };
 }
