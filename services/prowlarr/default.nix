@@ -6,6 +6,8 @@
   dataDir = "${config.server.paths.app}/prowlarr";
   port = config.server.ports.prowlarr;
 in {
+  imports = ["./custom-def"];
+
   services.prowlarr = {
     enable = true;
     inherit dataDir;

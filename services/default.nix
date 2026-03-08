@@ -1,4 +1,4 @@
-{...}: {
+_: {
   imports = [
     ./caddy.nix
     ./authelia.nix
@@ -7,7 +7,7 @@
     ./jellyseerr.nix
     ./sonarr.nix
     ./radarr.nix
-    ./prowlarr.nix
+    ./prowlarr
     ./bazarr.nix
     ./transmission.nix
     ./recyclarr.nix

@@ -11,6 +11,10 @@
       url = "github:antoine-bouteiller/autoscan";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    ygege = {
+      url = "github:UwUDev/ygege";
+      flake = false;
+    };
   };
 
   outputs = {nixpkgs, ...} @ inputs: {
