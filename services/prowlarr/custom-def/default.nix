@@ -1,3 +1,3 @@
 _: {
-  imports = ["./ygege.nix"];
-};
+  imports = [./ygege.nix];
+}
