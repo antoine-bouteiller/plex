@@ -1,6 +1,6 @@
 {
-  config,
   pkgs,
+  globals,
   ...
 }: let
   smartdWebhook = pkgs.writeShellScript "smartd-webhook" ''
@@ -16,12 +16,10 @@
         ${pkgs.curl}/bin/curl -s -X POST \
           -H "Content-Type: application/json" \
           -d "$PAYLOAD" \
-          "https://localhost:${toString config.server.ports.autoscan}/send-message" > /dev/null
+          "https://localhost:${toString globals.autoscan.port}/send-message" > /dev/null
   '';
-  mediaDir = config.server.paths.mediaDir;
-  libraryOwner = config.server.libraryOwner;
 in {
-  fileSystems.${config.server.paths.mediaDir} = {
+  fileSystems.${globals.paths.mediaDir} = {
     device = "/dev/disk/by-uuid/8059153a-838e-4bfd-82aa-5831c1f5047a";
     fsType = "ext4";
   };
@@ -31,11 +29,11 @@ in {
   };
 
   systemd.tmpfiles.rules = [
-    "d '${mediaDir}/library'          0775 ${libraryOwner.user} ${libraryOwner.group} - -"
-    "d '${mediaDir}/library/movies'   0775 ${libraryOwner.user} ${libraryOwner.group} - -"
-    "d '${mediaDir}/library/tv'       0775 ${libraryOwner.user} ${libraryOwner.group} - -"
-    "d '${mediaDir}/torrents'       0775 ${libraryOwner.user} ${libraryOwner.group} - -"
-    "d '${mediaDir}/transcode'      0775 ${libraryOwner.user} ${libraryOwner.group} - -"
+    "d '${globals.paths.mediaDir}/library'          0775 ${globals.libraryOwner.user} ${globals.libraryOwner.group} - -"
+    "d '${globals.paths.mediaDir}/library/movies'   0775 ${globals.libraryOwner.user} ${globals.libraryOwner.group} - -"
+    "d '${globals.paths.mediaDir}/library/tv'       0775 ${globals.libraryOwner.user} ${globals.libraryOwner.group} - -"
+    "d '${globals.paths.mediaDir}/torrents'         0775 ${globals.libraryOwner.user} ${globals.libraryOwner.group} - -"
+    "d '${globals.paths.mediaDir}/transcode'        0775 ${globals.libraryOwner.user} ${globals.libraryOwner.group} - -"
   ];
 
   # Spin down the backup disk after 15 minutes of inactivity

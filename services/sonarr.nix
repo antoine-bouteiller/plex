@@ -1,16 +1,12 @@
 {
-  config,
   pkgs,
+  globals,
   ...
-}: let
-  dataDir = "${config.server.paths.app}/sonarr";
-  port = config.server.ports.sonarr;
-  libraryOwnerGroup = config.server.libraryOwner.group;
-in {
+}: {
   services.sonarr = {
     enable = true;
-    inherit dataDir;
-    group = libraryOwnerGroup;
+    dataDir = globals.sonarr.dataDir;
+    group = globals.libraryOwner.group;
 
     settings = {
       server.bindAddress = "*";
@@ -25,10 +21,10 @@ in {
     };
   };
 
-  services.caddy.virtualHosts."sonarr.${config.server.network.domain}" = {
+  services.caddy.virtualHosts."sonarr.${globals.network.domain}" = {
     extraConfig = ''
       import auth_proxy
-      reverse_proxy localhost:${toString port} {
+      reverse_proxy localhost:${toString globals.sonarr.port} {
         header_down -Access-Control-Allow-Origin
       }
     '';
@@ -54,5 +50,5 @@ in {
     serviceConfig.UMask = pkgs.lib.mkForce "002";
   };
 
-  users.users.sonarr.extraGroups = [libraryOwnerGroup];
+  users.users.sonarr.extraGroups = [globals.libraryOwner.group];
 }

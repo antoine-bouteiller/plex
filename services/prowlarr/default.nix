@@ -1,16 +1,13 @@
 {
-  config,
   lib,
+  globals,
   ...
-}: let
-  dataDir = "${config.server.paths.app}/prowlarr";
-  port = config.server.ports.prowlarr;
-in {
+}: {
   imports = [./custom-def];
 
   services.prowlarr = {
     enable = true;
-    inherit dataDir;
+    dataDir = globals.prowlarr.dataDir;
 
     settings = {
       auth.method = "external";
@@ -43,10 +40,10 @@ in {
     requires = ["postgresql-setup.service"];
   };
 
-  services.caddy.virtualHosts."prowlarr.${config.server.network.domain}" = {
+  services.caddy.virtualHosts."prowlarr.${globals.network.domain}" = {
     extraConfig = ''
       import auth_proxy
-      reverse_proxy localhost:${toString port} {
+      reverse_proxy localhost:${toString globals.prowlarr.port} {
         header_down -Access-Control-Allow-Origin
       }
     '';

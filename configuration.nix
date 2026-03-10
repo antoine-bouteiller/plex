@@ -1,6 +1,5 @@
 {inputs, ...}: {
   imports = [
-    ./settings.nix
     ./system
     ./hardware
     ./services

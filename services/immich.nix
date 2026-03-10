@@ -1,16 +1,12 @@
 {
-  config,
   pkgs,
+  globals,
   ...
-}: let
-  port = config.server.ports.immich;
-  mediaDir = config.server.paths.mediaDir;
-  libraryOwnerGroup = config.server.libraryOwner.group;
-in {
+}: {
   services.immich = {
     enable = true;
-    inherit port;
-    mediaLocation = "${mediaDir}/immich";
+    port = globals.immich.port;
+    mediaLocation = "${globals.paths.mediaDir}/immich";
 
     database = {
       enable = true;
@@ -22,8 +18,8 @@ in {
     };
   };
 
-  services.caddy.virtualHosts."photo.${config.server.network.domain}" = {
-    extraConfig = "reverse_proxy localhost:${toString port}";
+  services.caddy.virtualHosts."photo.${globals.network.domain}" = {
+    extraConfig = "reverse_proxy localhost:${toString globals.immich.port}";
   };
 
   services.postgresql = {
@@ -46,5 +42,5 @@ in {
     requires = ["postgresql-setup.service"];
   };
 
-  users.users.immich.extraGroups = [libraryOwnerGroup];
+  users.users.immich.extraGroups = [globals.libraryOwner.group];
 }

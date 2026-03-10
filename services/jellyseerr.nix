@@ -1,13 +1,10 @@
-{config, ...}: let
-  configDir = "${config.server.paths.app}/jellyseerr";
-  port = config.server.ports.jellyseerr;
-in {
+{globals, ...}: {
   services.jellyseerr = {
     enable = true;
-    inherit configDir;
+    configDir = globals.jellyseerr.dataDir;
   };
 
-  services.caddy.virtualHosts."${config.server.network.domain}" = {
-    extraConfig = "reverse_proxy localhost:${toString port}";
+  services.caddy.virtualHosts."${globals.network.domain}" = {
+    extraConfig = "reverse_proxy localhost:${toString globals.jellyseerr.port}";
   };
 }

@@ -1,25 +1,20 @@
-{config, ...}: let
-  user = "recyclarr";
-  group = "recyclarr";
-  sonarrPort = config.server.ports.sonarr;
-  radarrPort = config.server.ports.radarr;
-in {
+{config, globals, ...}: {
   sops.secrets = {
     "recyclarr/sonarr_api_key" = {
-      owner = "recyclarr";
-      group = "recyclarr";
+      owner = globals.recyclarr.user;
+      group = globals.recyclarr.group;
       key = "sonarr_api_key";
     };
     "recyclarr/radarr_api_key" = {
-      owner = "recyclarr";
-      group = "recyclarr";
+      owner = globals.recyclarr.user;
+      group = globals.recyclarr.group;
       key = "radarr_api_key";
     };
   };
 
   users.users.recyclarr = {
     isSystemUser = true;
-    group = "recyclarr";
+    group = globals.recyclarr.group;
   };
   users.groups.recyclarr = {};
   services.recyclarr = {
@@ -28,7 +23,7 @@ in {
     configuration = {
       sonarr = {
         sonarr = {
-          base_url = "http://localhost:${toString sonarrPort}";
+          base_url = "http://localhost:${toString globals.sonarr.port}";
           api_key = {
             _secret = config.sops.secrets."recyclarr/sonarr_api_key".path;
           };
@@ -60,7 +55,7 @@ in {
 
       radarr = {
         radarr = {
-          base_url = "http://localhost:${toString radarrPort}";
+          base_url = "http://localhost:${toString globals.radarr.port}";
           api_key = {
             _secret = config.sops.secrets."recyclarr/radarr_api_key".path;
           };
@@ -97,7 +92,7 @@ in {
   };
 
   systemd.services.recylarr.serviceConfig = {
-    User = user;
-    Group = group;
+    User = globals.recyclarr.user;
+    Group = globals.recyclarr.group;
   };
 }

@@ -1,12 +1,8 @@
-{config, ...}: let
-  dataDir = "${config.server.paths.app}/bazarr";
-  port = config.server.ports.bazarr;
-  libraryOwnerGroup = config.server.libraryOwner.group;
-in {
+{globals, ...}: {
   services.bazarr = {
     enable = true;
-    group = libraryOwnerGroup;
-    inherit dataDir;
+    group = globals.libraryOwner.group;
+    dataDir = globals.bazarr.dataDir;
   };
 
   services.postgresql = {
@@ -31,13 +27,13 @@ in {
     };
   };
 
-  services.caddy.virtualHosts."bazarr.${config.server.network.domain}" = {
+  services.caddy.virtualHosts."bazarr.${globals.network.domain}" = {
     extraConfig = ''
       import auth_proxy
-      reverse_proxy localhost:${toString port}
+      reverse_proxy localhost:${toString globals.bazarr.port}
     '';
   };
 
   users.users.bazarr.isSystemUser = true;
-  users.users.bazarr.group = libraryOwnerGroup;
+  users.users.bazarr.group = globals.libraryOwner.group;
 }

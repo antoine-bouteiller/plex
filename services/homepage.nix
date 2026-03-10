@@ -1,12 +1,4 @@
-{config, ...}: let
-  port = config.server.ports.homepage;
-  plexPort = config.server.ports.plex;
-  sonarrPort = config.server.ports.sonarr;
-  radarrPort = config.server.ports.radarr;
-  prowlarrPort = config.server.ports.prowlarr;
-  bazarrPort = config.server.ports.bazarr;
-  transmissionPort = config.server.ports.transmission;
-in {
+{config, globals, ...}: {
   sops.secrets = {
     "homepage/sonarr_api_key" = {
       key = "sonarr_api_key";
@@ -43,7 +35,7 @@ in {
 
   services.homepage-dashboard = {
     enable = true;
-    allowedHosts = "dashboard.${config.server.network.domain}";
+    allowedHosts = "dashboard.${globals.network.domain}";
     settings = {
       title = "Antoine's Dashboard";
       theme = "dark";
@@ -96,10 +88,10 @@ in {
           {
             Plex = {
               icon = "plex.svg";
-              href = "https://plex.${config.server.network.domain}";
+              href = "https://plex.${globals.network.domain}";
               widget = {
                 type = "plex";
-                url = "http://localhost:${toString plexPort}";
+                url = "http://localhost:${toString globals.plex.port}";
                 key = "{{HOMEPAGE_FILE_PLEX_TOKEN}}";
               };
             };
@@ -107,16 +99,16 @@ in {
           {
             Jellyseerr = {
               icon = "jellyseerr.svg";
-              href = "https://${config.server.network.domain}";
+              href = "https://${globals.network.domain}";
             };
           }
           {
             Sonnar = {
               icon = "sonarr.svg";
-              href = "https://sonarr.${config.server.network.domain}";
+              href = "https://sonarr.${globals.network.domain}";
               widget = {
                 type = "sonarr";
-                url = "http://localhost:${toString sonarrPort}";
+                url = "http://localhost:${toString globals.sonarr.port}";
                 key = "{{HOMEPAGE_FILE_SONARR_API_KEY}}";
                 fields = ["wanted"];
               };
@@ -125,10 +117,10 @@ in {
           {
             Radarr = {
               icon = "radarr.svg";
-              href = "https://radarr.${config.server.network.domain}";
+              href = "https://radarr.${globals.network.domain}";
               widget = {
                 type = "radarr";
-                url = "http://localhost:${toString radarrPort}";
+                url = "http://localhost:${toString globals.radarr.port}";
                 key = "{{HOMEPAGE_FILE_RADARR_API_KEY}}";
                 fields = ["wanted"];
               };
@@ -137,10 +129,10 @@ in {
           {
             Prowlarr = {
               icon = "prowlarr.svg";
-              href = "https://prowlarr.${config.server.network.domain}";
+              href = "https://prowlarr.${globals.network.domain}";
               widget = {
                 type = "prowlarr";
-                url = "http://localhost:${toString prowlarrPort}";
+                url = "http://localhost:${toString globals.prowlarr.port}";
                 key = "{{HOMEPAGE_FILE_PROWLARR_API_KEY}}";
                 fields = ["numberOfFailGrabs" "numberOfFailQueries"];
               };
@@ -149,10 +141,10 @@ in {
           {
             Bazarr = {
               icon = "bazarr.svg";
-              href = "https://bazarr.${config.server.network.domain}";
+              href = "https://bazarr.${globals.network.domain}";
               widget = {
                 type = "bazarr";
-                url = "http://localhost:${toString bazarrPort}";
+                url = "http://localhost:${toString globals.bazarr.port}";
                 key = "{{HOMEPAGE_FILE_BAZARR_API_KEY}}";
               };
             };
@@ -160,10 +152,10 @@ in {
           {
             Transmission = {
               icon = "transmission.svg";
-              href = "https://torrent.${config.server.network.domain}";
+              href = "https://torrent.${globals.network.domain}";
               widget = {
                 type = "transmission";
-                url = "http://localhost:${toString transmissionPort}";
+                url = "http://localhost:${toString globals.transmission.port}";
                 fields = ["download" "upload"];
               };
             };
@@ -183,7 +175,7 @@ in {
       {
         resources = {
           label = "Storage";
-          disk = ["/" config.server.paths.mediaDir];
+          disk = ["/" globals.paths.mediaDir];
         };
       }
     ];
@@ -202,10 +194,10 @@ in {
     HOMEPAGE_FILE_BAZARR_API_KEY = config.sops.secrets."homepage/bazarr_api_key".path;
   };
 
-  services.caddy.virtualHosts."dashboard.${config.server.network.domain}" = {
+  services.caddy.virtualHosts."dashboard.${globals.network.domain}" = {
     extraConfig = ''
       import auth_proxy
-      reverse_proxy localhost:${toString port}
+      reverse_proxy localhost:${toString globals.homepage.port}
     '';
   };
 }

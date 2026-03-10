@@ -1,12 +1,10 @@
-{config, ...}: let
-  port = config.server.ports.coolercontrol;
-in {
+{globals, ...}: {
   programs.coolercontrol.enable = true;
 
-  services.caddy.virtualHosts."coolercontrol.${config.server.network.domain}" = {
+  services.caddy.virtualHosts."coolercontrol.${globals.network.domain}" = {
     extraConfig = ''
       import auth_proxy
-      reverse_proxy localhost:${toString port}
+      reverse_proxy localhost:${toString globals.coolercontrol.port}
     '';
   };
 }

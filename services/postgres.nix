@@ -16,11 +16,10 @@ in {
     enableTCPIP = true;
     initdbArgs = ["--auth-host=scram-sha-256" "--pwfile=${config.sops.secrets."postgres/password".path}"];
 
-    extensions = ps:
-      with ps; [
-        ps.pgvector
-        ps.vectorchord
-      ];
+    extensions = ps: [
+      ps.pgvector
+      ps.vectorchord
+    ];
     settings = {
       shared_preload_libraries = ["vchord.so"];
       search_path = "\"$user\", public, vectors";

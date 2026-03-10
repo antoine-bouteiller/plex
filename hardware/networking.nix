@@ -1,4 +1,4 @@
-{config, ...}: {
+{globals, ...}: {
   networking = {
     hostName = "plex-server";
     nameservers = ["1.1.1.1" "9.9.9.9"];
@@ -18,7 +18,7 @@
       22 # SSH
       80 # HTTP (Caddy)
       443 # HTTPS (Caddy)
-      config.server.ports.plex
+      globals.plex.port
       51413 # Transmission peer port
     ];
   };

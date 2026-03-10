@@ -1,17 +1,13 @@
-{config, ...}: let
-  port = config.server.ports.transmission;
-  mediaDir = config.server.paths.mediaDir;
-  libraryOwnerGroup = config.server.libraryOwner.group;
-in {
+{globals, ...}: {
   services.transmission = {
     enable = true;
-    group = libraryOwnerGroup;
+    group = globals.libraryOwner.group;
     openRPCPort = false;
     settings = {
-      rpc-port = port;
+      rpc-port = globals.transmission.port;
       rpc-bind-address = "127.0.0.1";
       rpc-host-whitelist-enabled = false;
-      download-dir = "${mediaDir}/torrents";
+      download-dir = "${globals.paths.mediaDir}/torrents";
       incomplete-dir-enabled = false;
       ratio-limit-enabled = true;
       ratio-limit = 0;
@@ -19,10 +15,10 @@ in {
     };
   };
 
-  services.caddy.virtualHosts."torrent.${config.server.network.domain}" = {
+  services.caddy.virtualHosts."torrent.${globals.network.domain}" = {
     extraConfig = ''
       import auth_proxy
-      reverse_proxy localhost:${toString port}
+      reverse_proxy localhost:${toString globals.transmission.port}
     '';
   };
 }

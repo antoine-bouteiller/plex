@@ -17,10 +17,12 @@
     };
   };
 
-  outputs = {nixpkgs, ...} @ inputs: {
+  outputs = {nixpkgs, ...} @ inputs: let
+    globals = import ./globals.nix;
+  in {
     nixosConfigurations.plex-server = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      specialArgs = {inherit inputs;};
+      specialArgs = {inherit inputs globals;};
       modules = [./configuration.nix];
     };
   };

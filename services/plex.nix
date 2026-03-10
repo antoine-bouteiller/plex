@@ -1,16 +1,12 @@
-{config, ...}: let
-  dataDir = "${config.server.paths.app}/plex";
-  port = config.server.ports.plex;
-  libraryOwnerGroup = config.server.libraryOwner.group;
-in {
+{globals, ...}: {
   services.plex = {
     enable = true;
-    inherit dataDir;
+    dataDir = globals.plex.dataDir;
   };
 
-  services.caddy.virtualHosts."plex.${config.server.network.domain}" = {
-    extraConfig = "reverse_proxy localhost:${toString port}";
+  services.caddy.virtualHosts."plex.${globals.network.domain}" = {
+    extraConfig = "reverse_proxy localhost:${toString globals.plex.port}";
   };
 
-  users.users.plex.extraGroups = [libraryOwnerGroup];
+  users.users.plex.extraGroups = [globals.libraryOwner.group];
 }

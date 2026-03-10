@@ -1,16 +1,12 @@
 {
-  config,
   pkgs,
+  globals,
   ...
-}: let
-  dataDir = "${config.server.paths.app}/radarr";
-  port = config.server.ports.radarr;
-  libraryOwnerGroup = config.server.libraryOwner.group;
-in {
+}: {
   services.radarr = {
     enable = true;
-    inherit dataDir;
-    group = libraryOwnerGroup;
+    dataDir = globals.radarr.dataDir;
+    group = globals.libraryOwner.group;
 
     settings = {
       server.bindAddress = "*";
@@ -25,10 +21,10 @@ in {
     };
   };
 
-  services.caddy.virtualHosts."radarr.${config.server.network.domain}" = {
+  services.caddy.virtualHosts."radarr.${globals.network.domain}" = {
     extraConfig = ''
       import auth_proxy
-      reverse_proxy localhost:${toString port} {
+      reverse_proxy localhost:${toString globals.radarr.port} {
         header_down -Access-Control-Allow-Origin
       }
     '';
@@ -54,5 +50,5 @@ in {
     serviceConfig.UMask = pkgs.lib.mkForce "002";
   };
 
-  users.users.radarr.extraGroups = [libraryOwnerGroup];
+  users.users.radarr.extraGroups = [globals.libraryOwner.group];
 }

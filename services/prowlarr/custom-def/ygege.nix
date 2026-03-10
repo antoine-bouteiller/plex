@@ -1,7 +1,7 @@
 {
-  config,
   pkgs,
   inputs,
+  globals,
   ...
 }: let
   ygege = pkgs.rustPlatform.buildRustPackage {
@@ -23,10 +23,8 @@
     env.LIBCLANG_PATH = "${pkgs.llvmPackages.libclang.lib}/lib";
   };
 
-  port = config.server.ports.ygege;
-  dataDir = "${config.server.paths.app}/prowlarr";
   definitionFile = "${inputs.ygege}/ygege.yml";
-  definitionsDir = "${dataDir}/Definitions/Custom";
+  definitionsDir = "${globals.prowlarr.dataDir}/Definitions/Custom";
 in {
   systemd.services.ygege = {
     description = "Ygege indexer proxy";
@@ -44,7 +42,7 @@ in {
 
     environment = {
       BIND_IP = "127.0.0.1";
-      BIND_PORT = toString port;
+      BIND_PORT = toString globals.ygege.port;
       LOG_LEVEL = "info";
     };
   };

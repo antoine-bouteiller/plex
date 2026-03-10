@@ -1,6 +1,4 @@
-{config, ...}: let
-  dataDir = "${config.server.paths.app}/authelia-main";
-  port = config.server.ports.authelia;
+{config, globals, ...}: let
   user = "authelia-main";
   group = "authelia-main";
 in {
@@ -47,7 +45,7 @@ in {
       };
 
       authentication_backend.file = {
-        path = "${dataDir}/users.yml";
+        path = "${globals.authelia.dataDir}/users.yml";
         password.algorithm = "argon2";
       };
 
@@ -72,12 +70,12 @@ in {
 
         rules = [
           {
-            domain = "*.${config.server.network.domain}";
+            domain = "*.${globals.network.domain}";
             policy = "bypass";
             networks = ["internal"];
           }
           {
-            domain = "*.${config.server.network.domain}";
+            domain = "*.${globals.network.domain}";
             policy = "one_factor";
           }
         ];
@@ -86,8 +84,8 @@ in {
       session.cookies = [
         {
           name = "authelia_session";
-          domain = config.server.network.domain;
-          authelia_url = "https://auth.${config.server.network.domain}";
+          domain = globals.network.domain;
+          authelia_url = "https://auth.${globals.network.domain}";
         }
       ];
 
@@ -97,20 +95,20 @@ in {
         ban_time = "5 minutes";
       };
 
-      storage.local.path = "${dataDir}/db.sqlite3";
+      storage.local.path = "${globals.authelia.dataDir}/db.sqlite3";
 
       notifier = {
         disable_startup_check = false;
         smtp = {
           address = "submissions://smtp.resend.com:465";
           username = "resend";
-          sender = "authelia@${config.server.network.domain}";
+          sender = "authelia@${globals.network.domain}";
         };
       };
     };
   };
 
-  services.caddy.virtualHosts."auth.${config.server.network.domain}" = {
-    extraConfig = "reverse_proxy localhost:${toString port}";
+  services.caddy.virtualHosts."auth.${globals.network.domain}" = {
+    extraConfig = "reverse_proxy localhost:${toString globals.authelia.port}";
   };
 }
