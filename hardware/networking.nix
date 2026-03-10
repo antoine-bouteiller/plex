@@ -1,4 +1,4 @@
-{globals, ...}: {
+_: {
   networking = {
     hostName = "plex-server";
     nameservers = ["1.1.1.1" "9.9.9.9"];
