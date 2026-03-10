@@ -18,8 +18,6 @@
       22 # SSH
       80 # HTTP (Caddy)
       443 # HTTPS (Caddy)
-      globals.plex.port
-      51413 # Transmission peer port
     ];
   };
 }

@@ -29,11 +29,15 @@ in {
   };
 
   systemd.tmpfiles.rules = [
-    "d '${globals.paths.mediaDir}/library'          0775 ${globals.libraryOwner.user} ${globals.libraryOwner.group} - -"
-    "d '${globals.paths.mediaDir}/library/movies'   0775 ${globals.libraryOwner.user} ${globals.libraryOwner.group} - -"
-    "d '${globals.paths.mediaDir}/library/tv'       0775 ${globals.libraryOwner.user} ${globals.libraryOwner.group} - -"
-    "d '${globals.paths.mediaDir}/torrents'         0775 ${globals.libraryOwner.user} ${globals.libraryOwner.group} - -"
-    "d '${globals.paths.mediaDir}/transcode'        0775 ${globals.libraryOwner.user} ${globals.libraryOwner.group} - -"
+    "d '${globals.paths.mediaDir}/library'              0775 ${globals.libraryOwner.user} ${globals.libraryOwner.group} - -"
+    "d '${globals.paths.mediaDir}/library/movies'       0775 ${globals.libraryOwner.user} ${globals.libraryOwner.group} - -"
+    "d '${globals.paths.mediaDir}/library/tv'           0775 ${globals.libraryOwner.user} ${globals.libraryOwner.group} - -"
+    "d '${globals.paths.mediaDir}/torrents'             0775 ${globals.libraryOwner.user} ${globals.libraryOwner.group} - -"
+    "d '${globals.paths.mediaDir}/torrents/sonarr'      0775 ${globals.libraryOwner.user} ${globals.libraryOwner.group} - -"
+    "d '${globals.paths.mediaDir}/torrents/radarr'      0775 ${globals.libraryOwner.user} ${globals.libraryOwner.group} - -"
+    "d '${globals.paths.mediaDir}/torrents/.incomplete' 0755 ${globals.transmission.user} ${globals.transmission.group} - -"
+    "d '${globals.paths.mediaDir}/torrents/.watch'      0755 ${globals.transmission.user} ${globals.transmission.group} - -"
+    "d '${globals.paths.mediaDir}/transcode'            0775 ${globals.libraryOwner.user} ${globals.libraryOwner.group} - -"
   ];
 
   # Spin down the backup disk after 15 minutes of inactivity

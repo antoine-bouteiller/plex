@@ -2,6 +2,7 @@
   services.plex = {
     enable = true;
     dataDir = globals.plex.dataDir;
+    openFirewall = true;
   };
 
   services.caddy.virtualHosts."plex.${globals.network.domain}" = {

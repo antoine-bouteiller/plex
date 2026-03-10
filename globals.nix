@@ -79,6 +79,7 @@ in {
   };
   transmission = {
     port = 9092;
+    peerPort = 51413;
     user = "transmission";
     group = libraryOwnerGroup;
   };

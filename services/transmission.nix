@@ -1,17 +1,43 @@
-{globals, ...}: {
+{
+  globals,
+  pkgs,
+  ...
+}: let
+  downloadDir = "${globals.paths.mediaDir}/torrents";
+in {
   services.transmission = {
     enable = true;
-    group = globals.libraryOwner.group;
+    user = globals.transmission.user;
+    group = globals.transmission.group;
     openRPCPort = false;
+    openPeerPorts = true;
+    webHome = pkgs.flood-for-transmission;
+
     settings = {
+      download-dir = downloadDir;
+
+      incomplete-dir-enabled = true;
+      incomplete-dir = "${downloadDir}/.incomplete";
+
+      watch-dir-enabled = true;
+      watch-dir = "${downloadDir}/.watch";
+
       rpc-port = globals.transmission.port;
       rpc-bind-address = "127.0.0.1";
       rpc-host-whitelist-enabled = false;
-      download-dir = "${globals.paths.mediaDir}/torrents";
-      incomplete-dir-enabled = false;
+
       ratio-limit-enabled = true;
       ratio-limit = 0;
       umask = "002";
+
+      utp-enabled = false;
+      encryption = 1;
+      port-forwarding-enabled = false;
+
+      peer-port = globals.transmission.peerPort;
+
+      anti-brute-force-enabled = true;
+      anti-brute-force-threshold = 10;
     };
   };
 
