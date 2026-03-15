@@ -22,6 +22,13 @@
     extraConfig = "reverse_proxy localhost:${toString globals.immich.port}";
   };
 
+  systemd.services.immich-machine-learning = {
+    serviceConfig = {
+      MemoryMax = "3G";
+      MemorySwapMax = "0B";
+    };
+  };
+
   services.postgresql = {
     ensureDatabases = ["immich"];
     ensureUsers = [

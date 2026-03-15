@@ -19,5 +19,12 @@
     ffmpeg
   ];
 
+  nix.settings.cores = 2;
+
+  zramSwap = {
+    enable = true;
+    memoryPercent = 50;
+  };
+
   system.stateVersion = "25.11";
 }

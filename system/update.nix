@@ -60,6 +60,9 @@ in {
     serviceConfig = {
       Restart = "on-failure";
       RestartSec = "120";
+      MemoryMax = "2G";
+      Nice = 19;
+      IOSchedulingClass = "idle";
     };
     unitConfig = {
       StartLimitIntervalSec = 600;
